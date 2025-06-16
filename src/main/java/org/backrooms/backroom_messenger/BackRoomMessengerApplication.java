@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.backrooms.backroom_messenger.client.Client;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +21,6 @@ public class BackRoomMessengerApplication extends Application {
             stage.setScene(scene);
             stage.show();
         }catch(Exception e){
-            System.out.println(this.getClass());
             System.out.println(e);
         }
     }
