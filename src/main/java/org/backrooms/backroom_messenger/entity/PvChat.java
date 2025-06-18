@@ -1,4 +1,4 @@
 package org.backrooms.backroom_messenger.entity;
 
-public class PvChat {
+public class PvChat extends Chat{
 }

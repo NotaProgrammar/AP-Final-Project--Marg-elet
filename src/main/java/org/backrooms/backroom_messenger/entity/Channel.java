@@ -1,4 +1,4 @@
 package org.backrooms.backroom_messenger.entity;
 
-public class Group extends Chat{
+public class Channel extends Chat{
 }
