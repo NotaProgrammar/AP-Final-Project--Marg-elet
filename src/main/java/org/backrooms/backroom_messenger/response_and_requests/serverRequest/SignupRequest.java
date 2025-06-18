@@ -1,4 +1,4 @@
-package org.backrooms.backroom_messenger.serverRequest;
+package org.backrooms.backroom_messenger.response_and_requests.serverRequest;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -11,10 +11,10 @@ public class SignupRequest extends ServerRequest{
     byte[] salt;
 
     public SignupRequest(@JsonProperty("message") String message) {
-        super(message);
-        username = message.split("--")[0];
-        password = message.split("--")[1];
-        salt = message.split("--")[2].getBytes();
+        super(message,"not logged in");
+        this.username = message.split("--")[0];
+        this.password = message.split("--")[1];
+        this.salt = message.split("--")[2].getBytes();
     }
 
     public String getUsername() {

@@ -4,8 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import org.backrooms.backroom_messenger.entity.User;
-import org.backrooms.backroom_messenger.serverRequest.LoginRequest;
-import org.backrooms.backroom_messenger.serverRequest.SignupRequest;
+import org.backrooms.backroom_messenger.response_and_requests.serverRequest.*;
+import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.AvailableUserResponse;
+import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.SearchedUsersListResponse;
+import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.ServerResponse;
+
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -13,10 +16,10 @@ import java.io.IOException;
 import java.net.Socket;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.List;
 import java.util.Scanner;
 
 import static org.backrooms.backroom_messenger.StaticMethods.generateSalt;
-import static org.backrooms.backroom_messenger.StaticMethods.hashPassword;
 
 public class Client  {
 
@@ -42,46 +45,115 @@ public class Client  {
             case 1:
                 String username = scanner.next();
                 String password = scanner.next();
-                try {
-                    loggedUser = login(username,password);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }finally {
-                    break;
-                }
+                login(username,password);
+                break;
             case 2:
                 System.out.println("name :");
                 String name = scanner.next();
                 System.out.println("password :");
                 String pass = scanner.next();
-                loggedUser = signup(name,pass);
+                signup(name,pass);
+                break;
 
+        }
+        if(loggedUser != null) {
+            System.out.println("Logged in");
+            while(true) {
+                System.out.println("1. search");
+                option = scanner.nextInt();
+                switch (option) {
+                    case 1:
+                        String searchQuery = scanner.next();
+                        search(searchQuery);
+                }
+            }
+        }else{
+            System.out.println("not logged in ");
         }
     }
 
-    public static User login(String username, String password) throws IOException {
+    public static void login(String username, String password) throws Exception {
         String message = username + "--" + password;
         LoginRequest lr = new LoginRequest(message);
         mapper.registerSubtypes(new NamedType(LoginRequest.class, "loginRequest"));
-        String request = mapper.writeValueAsString(lr);
-        System.out.println(request);
-        dos.writeUTF(request);
-        dos.flush();
-        String response = dis.readUTF();
-        return null;
+        sendRequest(lr);
     }
 
-    public static User signup(String username, String password) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+    public static void signup(String username, String password) throws Exception, NoSuchAlgorithmException, InvalidKeySpecException {
         byte[] salt = generateSalt();
 
         String message = username + "--" + password + "--" + salt;
 
         SignupRequest sr = new SignupRequest(message);
         mapper.registerSubtypes(new NamedType(SignupRequest.class, "signupRequest"));
+        sendRequest(sr);
+    }
+
+    private static void responseCheck(ServerResponse sr){
+        if(sr instanceof AvailableUserResponse aur){
+            signupLoginCheck(aur);
+        }else if(sr instanceof SearchedUsersListResponse sulr){
+            userListHandle(sulr);
+        }
+    }
+
+    private static void userListHandle(SearchedUsersListResponse sulr) {
+        Scanner scn = new Scanner(System.in);
+        List<User> users = sulr.getUsers();
+        int i = 0;
+        for(User user : users){
+            System.out.println(++i +"-"+user);
+        }
+        System.out.println("choose");
+        int option = scn.nextInt();
+        User selectedUser = users.get(option-1);
+        System.out.println(selectedUser.getUsername());
+        System.out.println("do you want to chat?");
+        System.out.println("1.yes, 2.no");
+        option = scn.nextInt();
+        switch(option){
+            case 1:
+                startChat(selectedUser);
+                break;
+            case 2:
+                return;
+        }
+    }
+
+    private static void startChat(User selectedUser) {
+        if(selectedUser.equals(loggedUser)){
+            System.out.println("that's you motherfucker");
+        }else{
+            try {
+                NewChatRequest ncr = new NewChatRequest(mapper.writeValueAsString(selectedUser),loggedUser.getUsername());
+                mapper.registerSubtypes(new NamedType(NewChatRequest.class, "newChatRequest"));
+                sendRequest(ncr);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }
+    }
+
+    private static void signupLoginCheck(AvailableUserResponse aur){
+        if(aur.isUserFound()){
+            loggedUser = aur.getUser();
+        }
+    }
+
+    private static void search(String searchedString) throws Exception {
+        String search = searchedString;
+        SearchRequest sr = new SearchRequest(search,loggedUser.getUsername());
+        mapper.registerSubtypes(new NamedType(SearchRequest.class, "searchRequest"));
+        sendRequest(sr);
+    }
+
+    private static void sendRequest(ServerRequest sr) throws Exception {
         String request = mapper.writeValueAsString(sr);
         dos.writeUTF(request);
         dos.flush();
         String response = dis.readUTF();
-        return null;
+        ServerResponse serverResponse = mapper.readValue(response,ServerResponse.class);
+        responseCheck(serverResponse);
     }
+
 }

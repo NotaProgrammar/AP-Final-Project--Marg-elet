@@ -1,14 +1,10 @@
 package org.backrooms.backroom_messenger.server;
 
-import org.backrooms.backroom_messenger.entity.User;
-import org.backrooms.backroom_messenger.serverRequest.SignupRequest;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-import java.sql.SQLException;
+
 
 
 import static org.backrooms.backroom_messenger.StaticMethods.hashPassword;
@@ -28,10 +24,5 @@ public class Server {
             throw new RuntimeException(e);
         }
     }
-
-
-
-
-
 
 }
