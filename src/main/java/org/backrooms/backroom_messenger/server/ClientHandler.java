@@ -18,8 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.backrooms.backroom_messenger.StaticMethods.hashPassword;
-import static org.backrooms.backroom_messenger.server.DataBaseManager.addPvChat;
-import static org.backrooms.backroom_messenger.server.DataBaseManager.searchForPV;
+import static org.backrooms.backroom_messenger.server.DataBaseManager.*;
 
 public class ClientHandler implements Runnable {
     private User activeUser;
@@ -136,13 +135,18 @@ public class ClientHandler implements Runnable {
         }
         UUID chatId = searchForPV(user1,user2);
         if(chatId != null){
-            //openChat(chatId);
+            openChat(chatId);
         }else{
             createChat(user1,user2);
         }
     }
 
+    private void openChat(UUID chatId) {
+    }
+
     private void createChat(String user1, String user2) throws SQLException {
-        UUID chatId = addPvChat(user1,user2);
+        UUID chatId = UUID.randomUUID();
+        addPvChat(chatId, user1,user2);
+        createChatTable(chatId);
     }
 }
