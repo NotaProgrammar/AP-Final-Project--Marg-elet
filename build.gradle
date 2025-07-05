@@ -25,8 +25,8 @@ tasks.withType(JavaCompile) {
 }
 
 application {
-    mainModule = 'org.backrooms.backroom_messager'
-    mainClass = 'org.backrooms.backroom_messager.HelloApplication'
+    mainModule = 'org.backrooms.backroom_messenger'
+    mainClass = 'org.backrooms.backroom_messenger.HelloApplication'
 }
 
 javafx {

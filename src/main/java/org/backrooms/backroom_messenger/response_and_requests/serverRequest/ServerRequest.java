@@ -29,4 +29,8 @@ public abstract class ServerRequest {
         this.username = username;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
 }
