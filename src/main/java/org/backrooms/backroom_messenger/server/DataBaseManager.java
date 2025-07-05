@@ -92,18 +92,20 @@ public class DataBaseManager {
        return uuid;
     }
 
-//    public static UUID createChatTable(String user1, String user2) throws SQLException {
-//        Connection conn = connectToDataBase();
-//        String sql = "CREATE TABLE ? ( id uuid, sender text, message text, datetime datetime, PRIMARY KEY (id))";
-//        PreparedStatement ps = conn.prepareStatement(sql);
-//
-//    }
+    public static void createChatTable(UUID chatId) throws SQLException {
+        Connection conn = connectToDataBase();
+        String sql = "CREATE TABLE ? ( id uuid, sender text, message text, datetime datetime, PRIMARY KEY (id))";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, chatId.toString());
+        ps.executeUpdate();
+        ps.close();
+        conn.close();
+    }
 
     public static void addPvChat(UUID chatId, String user1, String user2) throws SQLException {
         Connection conn = connectToDataBase();
         String sql = "INSERT INTO public.pv_chats (id, user1, user2) VALUES (?, ?, ?)";
         PreparedStatement ps = conn.prepareStatement(sql);
-        UUID chatId = UUID.randomUUID();
         ps.setObject(1, chatId);
         ps.setString(2, user1);
         ps.setString(3, user2);
