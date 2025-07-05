@@ -19,4 +19,8 @@ public class NewChatRequest extends ServerRequest{
             System.out.println(e.getMessage());
         }
     }
+
+    public User getUser() {
+        return user;
+    }
 }
