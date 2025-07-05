@@ -1,6 +1,5 @@
 package org.backrooms.backroom_messenger.server;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.backrooms.backroom_messenger.entity.User;
 import org.backrooms.backroom_messenger.response_and_requests.serverRequest.*;
@@ -16,8 +15,11 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.UUID;
 
 import static org.backrooms.backroom_messenger.StaticMethods.hashPassword;
+import static org.backrooms.backroom_messenger.server.DataBaseManager.addPvChat;
+import static org.backrooms.backroom_messenger.server.DataBaseManager.searchForPV;
 
 public class ClientHandler implements Runnable {
     private User activeUser;
@@ -54,7 +56,7 @@ public class ClientHandler implements Runnable {
             }else if(sr instanceof SearchRequest search){
                 searchUser(search);
             }else if(sr instanceof NewChatRequest ncr){
-                openChat(ncr);
+                checkChat(ncr);
             }
     }
 
@@ -99,7 +101,9 @@ public class ClientHandler implements Runnable {
         }
 
         activeUser = signedUser;
+        if(activeUser != null){
 
+        }
         AvailableUserResponse aur = new AvailableUserResponse(mapper.writeValueAsString(activeUser));
         String response = mapper.writeValueAsString(aur);
         out.writeUTF(response);
@@ -122,7 +126,23 @@ public class ClientHandler implements Runnable {
         System.out.println(e);
     }
 
-    private void openChat(NewChatRequest ncr){
-        
+    private void checkChat(NewChatRequest ncr) throws SQLException {
+        String user1 =  ncr.getUsername();
+        String user2 = ncr.getUser().getUsername();
+        if (user2.compareTo(user1) < 0){
+            String temp = user2;
+            user2 = user1;
+            user1 = temp;
+        }
+        UUID chatId = searchForPV(user1,user2);
+        if(chatId != null){
+            //openChat(chatId);
+        }else{
+            createChat(user1,user2);
+        }
+    }
+
+    private void createChat(String user1, String user2) throws SQLException {
+        UUID chatId = addPvChat(user1,user2);
     }
 }

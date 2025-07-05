@@ -5,6 +5,7 @@ import org.backrooms.backroom_messenger.entity.User;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -72,5 +73,42 @@ public class DataBaseManager {
         ps.close();
         con.close();
         return users;
+    }
+
+    public static UUID searchForPV(String user1, String user2) throws SQLException {
+       Connection conn = connectToDataBase();
+       String sql = "SELECT * FROM public.pv_chats WHERE user1 = ? AND user2 = ?";
+       PreparedStatement ps = conn.prepareStatement(sql);
+       ps.setString(1, user1);
+       ps.setString(2, user2);
+       ResultSet rs = ps.executeQuery();
+       UUID uuid = null;
+       if(rs.next()) {
+           uuid = UUID.fromString(rs.getString("id"));
+       }
+       rs.close();
+       ps.close();
+       conn.close();
+       return uuid;
+    }
+
+//    public static UUID createChatTable(String user1, String user2) throws SQLException {
+//        Connection conn = connectToDataBase();
+//        String sql = "CREATE TABLE ? ( id uuid, sender text, message text, datetime datetime, PRIMARY KEY (id))";
+//        PreparedStatement ps = conn.prepareStatement(sql);
+//
+//    }
+
+    public static void addPvChat(UUID chatId, String user1, String user2) throws SQLException {
+        Connection conn = connectToDataBase();
+        String sql = "INSERT INTO public.pv_chats (id, user1, user2) VALUES (?, ?, ?)";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        UUID chatId = UUID.randomUUID();
+        ps.setObject(1, chatId);
+        ps.setString(2, user1);
+        ps.setString(3, user2);
+        ps.executeUpdate();
+        ps.close();
+        conn.close();
     }
 }

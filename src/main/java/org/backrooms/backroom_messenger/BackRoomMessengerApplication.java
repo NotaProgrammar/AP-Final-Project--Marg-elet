@@ -4,11 +4,6 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.backrooms.backroom_messenger.client.Client;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
 
 public class BackRoomMessengerApplication extends Application {
     @Override
