@@ -4,26 +4,26 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.backrooms.backroom_messenger.entity.PrivateUser;
 import org.backrooms.backroom_messenger.entity.User;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class SearchedUsersListResponse extends ServerResponse {
     @JsonProperty
-    private List<User> users = new ArrayList<>();
+    private List<PrivateUser> users = new ArrayList<>();
     ObjectMapper mapper = new ObjectMapper();
     public SearchedUsersListResponse(@JsonProperty("message") String message) {
         super(message);
         try {
-            this.users.addAll(mapper.readValue(message, new TypeReference<List<User>>() {}));
+            this.users.addAll(mapper.readValue(message, new TypeReference<List<PrivateUser>>() {}));
         } catch (JsonProcessingException e) {
             System.err.println("Error parsing JSON: " + e.getMessage());
         }
     }
 
-    public List<User> getUsers() {
+    public List<PrivateUser> getUsers() {
         return users;
     }
 }

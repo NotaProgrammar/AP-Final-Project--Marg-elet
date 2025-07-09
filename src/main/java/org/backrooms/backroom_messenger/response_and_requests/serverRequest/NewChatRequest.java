@@ -4,12 +4,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.backrooms.backroom_messenger.entity.PrivateUser;
 import org.backrooms.backroom_messenger.entity.User;
 
 
 public class NewChatRequest extends ServerRequest{
     @JsonProperty
-    User user;
+    PrivateUser user;
     ObjectMapper mapper = new ObjectMapper();
     public NewChatRequest(@JsonProperty("message") String message,@JsonProperty("username") String username) {
         super(message, username);
@@ -20,7 +21,7 @@ public class NewChatRequest extends ServerRequest{
         }
     }
 
-    public User getUser() {
+    public PrivateUser getUser() {
         return user;
     }
 }

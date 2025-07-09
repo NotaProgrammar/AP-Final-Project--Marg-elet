@@ -1,6 +1,9 @@
 package org.backrooms.backroom_messenger.server;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.NamedType;
+import org.backrooms.backroom_messenger.entity.PrivateUser;
+import org.backrooms.backroom_messenger.entity.PvChat;
 import org.backrooms.backroom_messenger.entity.User;
 import org.backrooms.backroom_messenger.response_and_requests.serverRequest.*;
 import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.AvailableUserResponse;
@@ -66,6 +69,7 @@ public class ClientHandler implements Runnable {
         User loggedUser = null;
         try{
             loggedUser = DataBaseManager.getUserFromDataBase(username);
+            loggedUser.getChats().addAll(DataBaseManager.getUserChats(loggedUser.getUsername()));
             String hashedPassword = hashPassword(password, loggedUser.getSalt());
             if(hashedPassword.equals(loggedUser.getPassword())){
                 activeUser = loggedUser;
@@ -76,6 +80,7 @@ public class ClientHandler implements Runnable {
             notify(e);
         }
 
+        mapper.registerSubtypes(new NamedType(PvChat.class, "PvChat"));
         AvailableUserResponse aur = new AvailableUserResponse(mapper.writeValueAsString(activeUser));
         String response = mapper.writeValueAsString(aur);
         System.out.println("response: " + response);
@@ -96,23 +101,22 @@ public class ClientHandler implements Runnable {
             signedUser = new User(username,hashedPassword,salt);
             DataBaseManager.addUserToDataBase(signedUser);
         } catch (SQLException e) {
+            signedUser = null;
             notify(e);
         }
 
         activeUser = signedUser;
-        if(activeUser != null){
-
-        }
         AvailableUserResponse aur = new AvailableUserResponse(mapper.writeValueAsString(activeUser));
         String response = mapper.writeValueAsString(aur);
         out.writeUTF(response);
         out.flush();
+
     }
 
     private void searchUser(SearchRequest searchRequest) throws Exception {
         String searched = searchRequest.getSearchTerm();
         //todo to be updated
-        List<User> searchedUsers = DataBaseManager.searchUser(searched);
+        List<PrivateUser> searchedUsers = DataBaseManager.searchUser(searched);
         String responseMessage = mapper.writeValueAsString(searchedUsers);
 
         SearchedUsersListResponse sulr = new SearchedUsersListResponse(responseMessage);
@@ -133,20 +137,29 @@ public class ClientHandler implements Runnable {
             user2 = user1;
             user1 = temp;
         }
+
         UUID chatId = searchForPV(user1,user2);
-        if(chatId != null){
-            openChat(chatId);
-        }else{
-            createChat(user1,user2);
+
+        if(chatId == null) {
+            chatId = createChat(user1, user2);
         }
+
+        PrivateUser us1 = getPrivateUser(user1);
+        PrivateUser us2 = getPrivateUser(user2);
+
+        PvChat pv = new PvChat(chatId,us1,us2);
+        pv.getMessage().addAll(returnMessages(pv));
+
+        openChat(pv);
     }
 
-    private void openChat(UUID chatId) {
+    private void openChat(PvChat pv) {
+        System.out.println("chat opened");
     }
 
-    private void createChat(String user1, String user2) throws SQLException {
+    private UUID createChat(String user1, String user2) throws SQLException {
         UUID chatId = UUID.randomUUID();
         addPvChat(chatId, user1,user2);
-        createChatTable(chatId);
+        return chatId;
     }
 }
