@@ -7,9 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-public class User {
-    @JsonProperty
-    private String username;
+public class User extends PrivateUser{
     @JsonProperty
     private String password;
     @JsonProperty
@@ -17,11 +15,10 @@ public class User {
     @JsonProperty
     private byte[] salt;
 
-    //todo add profile picture
-    List<Chat> chats = new ArrayList<Chat>();
+    List<Chat> chats = new ArrayList<>();
 
     public User(@JsonProperty("username") String username,@JsonProperty("password") String password,@JsonProperty("salt") byte[] salt) {
-        this.username = username;
+        super(username,username);
         this.password = password;
         this.salt = salt;
     }
@@ -37,12 +34,12 @@ public class User {
         return dateOfBirth;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
     public String getPassword() {
         return password;
+    }
+
+    public List<Chat> getChats() {
+        return chats;
     }
 
 

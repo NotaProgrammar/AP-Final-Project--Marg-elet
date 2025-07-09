@@ -3,6 +3,9 @@ package org.backrooms.backroom_messenger.client;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
+import org.backrooms.backroom_messenger.entity.Chat;
+import org.backrooms.backroom_messenger.entity.PrivateUser;
+import org.backrooms.backroom_messenger.entity.PvChat;
 import org.backrooms.backroom_messenger.entity.User;
 import org.backrooms.backroom_messenger.response_and_requests.serverRequest.*;
 import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.AvailableUserResponse;
@@ -43,7 +46,9 @@ public class Client  {
         int option = scanner.nextInt();
         switch (option) {
             case 1:
+                System.out.println("name :");
                 String username = scanner.next();
+                System.out.println("password :");
                 String password = scanner.next();
                 login(username,password);
                 break;
@@ -60,16 +65,35 @@ public class Client  {
             System.out.println("Logged in");
             while(true) {
                 System.out.println("1. search");
+                System.out.println("2. chats");
                 option = scanner.nextInt();
                 switch (option) {
                     case 1:
                         String searchQuery = scanner.next();
                         search(searchQuery);
+                    case 2:
+                        showChats();
                 }
             }
         }else{
             System.out.println("not logged in ");
         }
+    }
+
+    private static void showChats() {
+        int k = 0;
+        for(Chat chat : loggedUser.getChats()) {
+            System.out.println(++k + chat.getName(loggedUser));
+        }
+        Scanner scanner = new Scanner(System.in);
+        int option = scanner.nextInt() - 1;
+        Chat chat = loggedUser.getChats().get(option);
+        switch(chat.getType()){
+            case "pv_chat":
+                PvChat pv = (PvChat) chat;
+
+        }
+
     }
 
     public static void login(String username, String password) throws Exception {
@@ -99,14 +123,14 @@ public class Client  {
 
     private static void userListHandle(SearchedUsersListResponse sulr) {
         Scanner scn = new Scanner(System.in);
-        List<User> users = sulr.getUsers();
+        List<PrivateUser> users = sulr.getUsers();
         int i = 0;
-        for(User user : users){
-            System.out.println(++i +"-"+user);
+        for(PrivateUser user : users){
+            System.out.println(++i +"-"+ user.getUsername());
         }
         System.out.println("choose");
         int option = scn.nextInt();
-        User selectedUser = users.get(option-1);
+        PrivateUser selectedUser = users.get(option-1);
         System.out.println(selectedUser.getUsername());
         System.out.println("do you want to chat?");
         System.out.println("1.yes, 2.no");
@@ -120,8 +144,8 @@ public class Client  {
         }
     }
 
-    private static void startChat(User selectedUser) {
-        if(selectedUser.equals(loggedUser)){
+    private static void startChat(PrivateUser selectedUser) {
+        if(selectedUser.getUsername().equals(loggedUser.getUsername())){
             System.out.println("that's you motherfucker");
         }else{
             try {
@@ -141,8 +165,7 @@ public class Client  {
     }
 
     private static void search(String searchedString) throws Exception {
-        String search = searchedString;
-        SearchRequest sr = new SearchRequest(search,loggedUser.getUsername());
+        SearchRequest sr = new SearchRequest(searchedString,loggedUser.getUsername());
         mapper.registerSubtypes(new NamedType(SearchRequest.class, "searchRequest"));
         sendRequest(sr);
     }
