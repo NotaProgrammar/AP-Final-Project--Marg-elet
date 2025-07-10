@@ -162,9 +162,9 @@ public class DataBaseManager {
     private static void addPVChatToUsers(UUID chatId,String user1,String user2) throws SQLException {
         Connection conn = connectToDataBase();
         String tableName = "users.user_" + user1;
-        String sql1 = "INSERT INTO" + tableName + " (id, name, type) VALUES (?, ?, ?)";
+        String sql1 = "INSERT INTO " + tableName + " (id, name, type) VALUES (?, ?, ?)";
         tableName = "users.user_" + user2;
-        String sql2 = "INSERT INTO" + tableName + " (id, name, type) VALUES (?, ?, ?)";
+        String sql2 = "INSERT INTO " + tableName + " (id, name, type) VALUES (?, ?, ?)";
         PreparedStatement ps1 = conn.prepareStatement(sql1);
         ps1.setObject(1, chatId);
         ps1.setString(2, user2);

@@ -7,7 +7,6 @@ import java.net.Socket;
 
 
 
-import static org.backrooms.backroom_messenger.StaticMethods.hashPassword;
 
 
 public class Server {

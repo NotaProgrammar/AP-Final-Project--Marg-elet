@@ -41,6 +41,7 @@ public class Client  {
         dis = new DataInputStream(socket.getInputStream());
         dos = new DataOutputStream(socket.getOutputStream());
 
+
         System.out.println("1.Login\n 2.sign up");
         Scanner scanner = new Scanner(System.in);
         int option = scanner.nextInt();
@@ -91,6 +92,14 @@ public class Client  {
         switch(chat.getType()){
             case "pv_chat":
                 PvChat pv = (PvChat) chat;
+                if(loggedUser.getUsername().equals(pv.getUser1().getUsername())){
+                    startChat(pv.getUser2());
+                } else if (loggedUser.getUsername().equals(pv.getUser2().getUsername())) {
+                    startChat(pv.getUser1());
+                }else{
+                    System.out.println("what the fuck??");
+                }
+                break;
 
         }
 
@@ -100,7 +109,12 @@ public class Client  {
         String message = username + "--" + password;
         LoginRequest lr = new LoginRequest(message);
         mapper.registerSubtypes(new NamedType(LoginRequest.class, "loginRequest"));
-        sendRequest(lr);
+        mapper.registerSubtypes(new NamedType(PvChat.class,"PvChat"));
+        try {
+            sendRequest(lr);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
     }
 
     public static void signup(String username, String password) throws Exception, NoSuchAlgorithmException, InvalidKeySpecException {

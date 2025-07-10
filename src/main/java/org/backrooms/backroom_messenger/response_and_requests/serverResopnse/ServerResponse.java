@@ -23,4 +23,8 @@ public abstract class ServerResponse {
     public ServerResponse(String message) {
         this.message = message;
     }
+
+    public String getMessage() {
+        return message;
+    }
 }

@@ -1,6 +1,7 @@
 package org.backrooms.backroom_messenger.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,7 +16,14 @@ public class User extends PrivateUser{
     @JsonProperty
     private byte[] salt;
 
+    @JsonProperty
     List<Chat> chats = new ArrayList<>();
+
+//    public User(String username, String password,byte[] salt) {
+//        super(username,username);
+//        this.password = password;
+//        this.salt = salt;
+//    }
 
     public User(@JsonProperty("username") String username,@JsonProperty("password") String password,@JsonProperty("salt") byte[] salt) {
         super(username,username);
