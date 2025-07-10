@@ -3,6 +3,7 @@ package org.backrooms.backroom_messenger.response_and_requests.serverRequest;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.backrooms.backroom_messenger.entity.PrivateUser;
 
 
 @JsonTypeInfo(
@@ -22,15 +23,15 @@ public abstract class ServerRequest {
     @JsonProperty
     private String message;
     @JsonProperty
-    private String username;
+    private PrivateUser sender;
 
-    public ServerRequest(String message,String username) {
+    public ServerRequest(@JsonProperty("message") String message,@JsonProperty("sender") PrivateUser sender) {
         this.message = message;
-        this.username = username;
+        this.sender = sender;
     }
 
-    public String getUsername() {
-        return username;
+    public PrivateUser getSender() {
+        return sender;
     }
 
 }

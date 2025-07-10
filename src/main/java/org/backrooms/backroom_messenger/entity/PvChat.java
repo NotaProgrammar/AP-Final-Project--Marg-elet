@@ -13,7 +13,7 @@ public class PvChat extends Chat{
     private PrivateUser user2;
 
     public PvChat(@JsonProperty("id") UUID id,@JsonProperty("user1") PrivateUser user1,@JsonProperty("user2") PrivateUser user2) {
-        super(id,"pv_chat");
+        super(id);
         this.user1 = user1;
         this.user2 = user2;
     }

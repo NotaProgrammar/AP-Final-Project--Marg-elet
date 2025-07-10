@@ -19,12 +19,6 @@ public class User extends PrivateUser{
     @JsonProperty
     List<Chat> chats = new ArrayList<>();
 
-//    public User(String username, String password,byte[] salt) {
-//        super(username,username);
-//        this.password = password;
-//        this.salt = salt;
-//    }
-
     public User(@JsonProperty("username") String username,@JsonProperty("password") String password,@JsonProperty("salt") byte[] salt) {
         super(username,username);
         this.password = password;
@@ -48,6 +42,11 @@ public class User extends PrivateUser{
 
     public List<Chat> getChats() {
         return chats;
+    }
+
+    public static PrivateUser changeToPrivate(User user){
+        PrivateUser privateUser = new PrivateUser(user.getUsername(),user.getName());
+        return privateUser;
     }
 
 
