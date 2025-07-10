@@ -1,12 +1,15 @@
 package org.backrooms.backroom_messenger.server;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
+import org.backrooms.backroom_messenger.entity.Chat;
 import org.backrooms.backroom_messenger.entity.PrivateUser;
 import org.backrooms.backroom_messenger.entity.PvChat;
 import org.backrooms.backroom_messenger.entity.User;
 import org.backrooms.backroom_messenger.response_and_requests.serverRequest.*;
 import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.AvailableUserResponse;
+import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.ChatOpenedResponse;
 import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.SearchedUsersListResponse;
 
 
@@ -17,6 +20,7 @@ import java.net.Socket;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -114,8 +118,17 @@ public class ClientHandler implements Runnable {
     private void searchUser(SearchRequest searchRequest) throws Exception {
         String searched = searchRequest.getSearchTerm();
         //todo to be updated
+        List<Chat> chats = new ArrayList<>();
         List<PrivateUser> searchedUsers = DataBaseManager.searchUser(searched);
-        String responseMessage = mapper.writeValueAsString(searchedUsers);
+        for(PrivateUser pu : searchedUsers){
+            PvChat pv = new PvChat(null,pu,searchRequest.getSender());
+            chats.add(pv);
+        }
+
+        mapper.registerSubtypes(new NamedType(PvChat.class,"PvChat"));
+        String responseMessage = mapper
+                .writerFor(new TypeReference<List<Chat>>() {})
+                .writeValueAsString(chats);
 
 
         SearchedUsersListResponse sulr = new SearchedUsersListResponse(responseMessage);
@@ -128,8 +141,8 @@ public class ClientHandler implements Runnable {
         System.out.println(e);
     }
 
-    private void checkChat(NewChatRequest ncr) throws SQLException {
-        String user1 =  ncr.getUsername();
+    private void checkChat(NewChatRequest ncr) throws Exception {
+        String user1 =  ncr.getSender().getUsername();
         String user2 = ncr.getUser().getUsername();
         if (user2.compareTo(user1) < 0){
             String temp = user2;
@@ -147,13 +160,19 @@ public class ClientHandler implements Runnable {
         PrivateUser us2 = getPrivateUser(user2);
 
         PvChat pv = new PvChat(chatId,us1,us2);
-        pv.getMessage().addAll(returnMessages(pv));
 
         openChat(pv);
     }
 
-    private void openChat(PvChat pv) {
-        System.out.println("chat opened");
+    private void openChat(PvChat pv) throws IOException, SQLException {
+
+        pv.getMessage().addAll(DataBaseManager.returnMessages(pv));
+        mapper.registerSubtypes(new NamedType(PvChat.class,"PvChat"));
+        mapper.registerSubtypes(new NamedType(ChatOpenedResponse.class, "chatOpenedResponse"));
+        ChatOpenedResponse cor = new ChatOpenedResponse(mapper.writeValueAsString(pv));
+        String responseMessage = mapper.writeValueAsString(cor);
+        out.writeUTF(responseMessage);
+        out.flush();
     }
 
     private UUID createChat(String user1, String user2) throws SQLException {

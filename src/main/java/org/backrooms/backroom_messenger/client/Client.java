@@ -1,6 +1,4 @@
 package org.backrooms.backroom_messenger.client;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import org.backrooms.backroom_messenger.entity.Chat;
@@ -9,20 +7,16 @@ import org.backrooms.backroom_messenger.entity.PvChat;
 import org.backrooms.backroom_messenger.entity.User;
 import org.backrooms.backroom_messenger.response_and_requests.serverRequest.*;
 import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.AvailableUserResponse;
+import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.ChatOpenedResponse;
 import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.SearchedUsersListResponse;
-import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.ServerResponse;
-
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 import java.util.Scanner;
-
 import static org.backrooms.backroom_messenger.StaticMethods.generateSalt;
+
 
 public class Client  {
 
@@ -32,15 +26,21 @@ public class Client  {
     static Socket socket;
     static DataInputStream dis;
     static DataOutputStream dos;
-    public Client(String host) throws IOException {
 
+    //for GUI
+    public Client() throws IOException {
+        socket = new Socket("localhost",8888);
+        dis = new DataInputStream(socket.getInputStream());
+        dos = new DataOutputStream(socket.getOutputStream());
     }
 
+
+
+    //TODO should be removed
     public static void main(String[] args) throws Exception {
         socket = new Socket("localhost",8888);
         dis = new DataInputStream(socket.getInputStream());
         dos = new DataOutputStream(socket.getOutputStream());
-
 
         System.out.println("1.Login\n 2.sign up");
         Scanner scanner = new Scanner(System.in);
@@ -60,11 +60,11 @@ public class Client  {
                 String pass = scanner.next();
                 signup(name,pass);
                 break;
-
         }
+
         if(loggedUser != null) {
             System.out.println("Logged in");
-            while(true) {
+            //while(true) {
                 System.out.println("1. search");
                 System.out.println("2. chats");
                 option = scanner.nextInt();
@@ -72,52 +72,58 @@ public class Client  {
                     case 1:
                         String searchQuery = scanner.next();
                         search(searchQuery);
+                        break;
                     case 2:
                         showChats();
                 }
-            }
+            //}
         }else{
             System.out.println("not logged in ");
         }
     }
 
+    //todo should be removed
     private static void showChats() {
         int k = 0;
         for(Chat chat : loggedUser.getChats()) {
-            System.out.println(++k + chat.getName(loggedUser));
+            System.out.println(++k + "-" + chat.getName(loggedUser));
         }
         Scanner scanner = new Scanner(System.in);
         int option = scanner.nextInt() - 1;
         Chat chat = loggedUser.getChats().get(option);
-        switch(chat.getType()){
-            case "pv_chat":
-                PvChat pv = (PvChat) chat;
-                if(loggedUser.getUsername().equals(pv.getUser1().getUsername())){
-                    startChat(pv.getUser2());
-                } else if (loggedUser.getUsername().equals(pv.getUser2().getUsername())) {
-                    startChat(pv.getUser1());
-                }else{
-                    System.out.println("what the fuck??");
-                }
-                break;
-
-        }
-
+        openChat(chat);
     }
 
-    public static void login(String username, String password) throws Exception {
+
+
+    //for GUI
+    public static void openChat(Chat chat){
+        if (chat instanceof PvChat pv) {
+            if(loggedUser.getUsername().equals(pv.getUser1().getUsername())){
+                startChat(pv.getUser2());
+            } else if (loggedUser.getUsername().equals(pv.getUser2().getUsername())) {
+                startChat(pv.getUser1());
+            }else{
+                System.out.println("what the fuck??");
+            }
+        }
+    }
+
+    //for GUI
+    public static User login(String username, String password) {
         String message = username + "--" + password;
         LoginRequest lr = new LoginRequest(message);
         mapper.registerSubtypes(new NamedType(LoginRequest.class, "loginRequest"));
-        mapper.registerSubtypes(new NamedType(PvChat.class,"PvChat"));
         try {
             sendRequest(lr);
         }catch (Exception e){
             System.out.println(e.getMessage());
         }
+        return loggedUser;
     }
 
-    public static void signup(String username, String password) throws Exception, NoSuchAlgorithmException, InvalidKeySpecException {
+    //for GUI
+    public static User signup(String username, String password) throws Exception {
         byte[] salt = generateSalt();
 
         String message = username + "--" + password + "--" + salt;
@@ -125,36 +131,62 @@ public class Client  {
         SignupRequest sr = new SignupRequest(message);
         mapper.registerSubtypes(new NamedType(SignupRequest.class, "signupRequest"));
         sendRequest(sr);
+        return loggedUser;
     }
 
-    private static void responseCheck(ServerResponse sr){
-        if(sr instanceof AvailableUserResponse aur){
-            signupLoginCheck(aur);
-        }else if(sr instanceof SearchedUsersListResponse sulr){
-            userListHandle(sulr);
-        }
+    //for GUI
+    private static void search(String searchedString) throws Exception {
+        SearchRequest sr = new SearchRequest(searchedString,User.changeToPrivate(loggedUser));
+        mapper.registerSubtypes(new NamedType(PvChat.class,"PvChat"));
+        mapper.registerSubtypes(new NamedType(SearchRequest.class, "searchRequest"));
+        sendRequest(sr);
     }
 
-    private static void userListHandle(SearchedUsersListResponse sulr) {
+
+
+    //calls GUI
+    static void userListHandle(SearchedUsersListResponse sulr) {
         Scanner scn = new Scanner(System.in);
-        List<PrivateUser> users = sulr.getUsers();
+        List<Chat> chats = sulr.getChats();
+        //TODO call GUI and send users list
+        //redundant
         int i = 0;
-        for(PrivateUser user : users){
-            System.out.println(++i +"-"+ user.getUsername());
+        for(Chat chat : chats){
+            System.out.println(++i +"-"+ chat.getName(loggedUser));
         }
         System.out.println("choose");
         int option = scn.nextInt();
-        PrivateUser selectedUser = users.get(option-1);
-        System.out.println(selectedUser.getUsername());
+        Chat selectedChat = chats.get(option-1);
+        System.out.println(selectedChat.getName(loggedUser));
         System.out.println("do you want to chat?");
         System.out.println("1.yes, 2.no");
         option = scn.nextInt();
-        switch(option){
-            case 1:
-                startChat(selectedUser);
-                break;
-            case 2:
-                return;
+        if (option == 1){
+            openChat(selectedChat);
+        }
+    }
+
+    //calls GUI
+    public static void openChat(ChatOpenedResponse cor){
+        Chat chat = cor.getChat();
+        if (!loggedUser.getChats().contains(chat)) {
+            loggedUser.getChats().add(chat);
+        }
+        System.out.println("chat opened");
+
+    }
+
+
+
+    private static void sendRequest(ServerRequest sr) throws Exception {
+        String request = mapper.writeValueAsString(sr);
+        dos.writeUTF(request);
+        dos.flush();
+        if (loggedUser == null){
+            String response = dis.readUTF();
+            mapper.registerSubtypes(new NamedType(PvChat.class,"PvChat"));
+            AvailableUserResponse aur = mapper.readValue(response,AvailableUserResponse.class);
+            signupLoginCheck(aur);
         }
     }
 
@@ -163,7 +195,7 @@ public class Client  {
             System.out.println("that's you motherfucker");
         }else{
             try {
-                NewChatRequest ncr = new NewChatRequest(mapper.writeValueAsString(selectedUser),loggedUser.getUsername());
+                NewChatRequest ncr = new NewChatRequest(mapper.writeValueAsString(selectedUser),User.changeToPrivate(loggedUser));
                 mapper.registerSubtypes(new NamedType(NewChatRequest.class, "newChatRequest"));
                 sendRequest(ncr);
             } catch (Exception e) {
@@ -172,25 +204,16 @@ public class Client  {
         }
     }
 
-    private static void signupLoginCheck(AvailableUserResponse aur){
+    private static void signupLoginCheck(AvailableUserResponse aur) {
         if(aur.isUserFound()){
             loggedUser = aur.getUser();
+            clientReceiverStarter();
         }
     }
 
-    private static void search(String searchedString) throws Exception {
-        SearchRequest sr = new SearchRequest(searchedString,loggedUser.getUsername());
-        mapper.registerSubtypes(new NamedType(SearchRequest.class, "searchRequest"));
-        sendRequest(sr);
+    private static void clientReceiverStarter () {
+        ClientReceiver cr = new ClientReceiver(dis);
+        Thread tr = new Thread(cr);
+        tr.start();
     }
-
-    private static void sendRequest(ServerRequest sr) throws Exception {
-        String request = mapper.writeValueAsString(sr);
-        dos.writeUTF(request);
-        dos.flush();
-        String response = dis.readUTF();
-        ServerResponse serverResponse = mapper.readValue(response,ServerResponse.class);
-        responseCheck(serverResponse);
-    }
-
 }

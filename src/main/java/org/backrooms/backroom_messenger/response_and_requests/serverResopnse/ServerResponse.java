@@ -11,8 +11,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         property = "type"
 )
 @JsonSubTypes({
-    @JsonSubTypes.Type(value = AvailableUserResponse.class, name = "availableUserResponse"),
-    @JsonSubTypes.Type(value = SearchedUsersListResponse.class , name = "searchedUsersListResponse"),
+        @JsonSubTypes.Type(value = AvailableUserResponse.class, name = "availableUserResponse"),
+        @JsonSubTypes.Type(value = ChatOpenedResponse.class,name = "chatOpenedResponse"),
+        @JsonSubTypes.Type(value = SearchedUsersListResponse.class , name = "searchedUsersListResponse")
 })
 
 

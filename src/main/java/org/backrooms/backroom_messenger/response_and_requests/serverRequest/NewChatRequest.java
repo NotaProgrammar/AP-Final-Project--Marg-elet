@@ -12,7 +12,7 @@ public class NewChatRequest extends ServerRequest{
     @JsonProperty
     PrivateUser user;
     ObjectMapper mapper = new ObjectMapper();
-    public NewChatRequest(@JsonProperty("message") String message,@JsonProperty("username") String username) {
+    public NewChatRequest(@JsonProperty("message") String message,@JsonProperty("username") PrivateUser username) {
         super(message, username);
         try {
             this.user = mapper.readValue(message, PrivateUser.class);

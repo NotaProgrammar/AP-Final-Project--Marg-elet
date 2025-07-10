@@ -5,7 +5,7 @@ import java.util.UUID;
 public class Group extends Chat{
     public String name;
     public Group(UUID id) {
-        super(id,"group");
+        super(id);
     }
     @Override
     public String getName(User user) {
