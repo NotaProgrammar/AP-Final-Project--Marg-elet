@@ -15,7 +15,7 @@ public class NewChatRequest extends ServerRequest{
     public NewChatRequest(@JsonProperty("message") String message,@JsonProperty("username") String username) {
         super(message, username);
         try {
-            this.user = mapper.readValue(message, User.class);
+            this.user = mapper.readValue(message, PrivateUser.class);
         } catch (JsonProcessingException e) {
             System.out.println(e.getMessage());
         }

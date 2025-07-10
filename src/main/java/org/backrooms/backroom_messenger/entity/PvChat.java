@@ -27,4 +27,11 @@ public class PvChat extends Chat{
         }
     }
 
+    public PrivateUser getUser1() {
+        return user1;
+    }
+    public PrivateUser getUser2() {
+        return user2;
+    }
+
 }

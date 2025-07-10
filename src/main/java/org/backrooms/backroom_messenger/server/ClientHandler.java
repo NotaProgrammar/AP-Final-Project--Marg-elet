@@ -41,7 +41,6 @@ public class ClientHandler implements Runnable {
         while(true){
             try {
                 String request = in.readUTF();
-                System.out.println(request);
                 ServerRequest sr = mapper.readValue(request, ServerRequest.class);
                 CheckRequest(sr);
             } catch (Exception e) {
@@ -83,7 +82,6 @@ public class ClientHandler implements Runnable {
         mapper.registerSubtypes(new NamedType(PvChat.class, "PvChat"));
         AvailableUserResponse aur = new AvailableUserResponse(mapper.writeValueAsString(activeUser));
         String response = mapper.writeValueAsString(aur);
-        System.out.println("response: " + response);
         out.writeUTF(response);
         out.flush();
     }
@@ -118,6 +116,7 @@ public class ClientHandler implements Runnable {
         //todo to be updated
         List<PrivateUser> searchedUsers = DataBaseManager.searchUser(searched);
         String responseMessage = mapper.writeValueAsString(searchedUsers);
+
 
         SearchedUsersListResponse sulr = new SearchedUsersListResponse(responseMessage);
         String response = mapper.writeValueAsString(sulr);
