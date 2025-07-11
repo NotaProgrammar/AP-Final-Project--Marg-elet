@@ -16,7 +16,7 @@ public class BackRoomMessengerApplication extends Application {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
             fxmlLoader.setLocation(BackRoomMessengerApplication.class.getResource("MainPage.fxml"));
-            Scene scene = new Scene(fxmlLoader.load(), 320, 240);
+            Scene scene = new Scene(fxmlLoader.load(), 520, 350);
             stage.setTitle("Margelet");
             stage.setScene(scene);
             stage.show();

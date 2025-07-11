@@ -2,10 +2,16 @@ package org.backrooms.backroom_messenger;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 import org.backrooms.backroom_messenger.entity.User;
+
+import java.io.IOException;
 
 public class LoginPageController {
 
@@ -17,7 +23,7 @@ public class LoginPageController {
     private Label ErrorMessage;
 
     @FXML
-    public void Enter(ActionEvent event) {
+    public void Enter(ActionEvent event) throws IOException {
         String Username = this.Username.getText();
         String Password = this.Password.getText();
 
@@ -36,7 +42,7 @@ public class LoginPageController {
             }
             else if(Password.equals(selectedUser.getPassword()))
             {
-                //toWelcomePage(event, selectedUser);
+                toMainDisplay(event, selectedUser);
             }
             else
             {
@@ -44,5 +50,15 @@ public class LoginPageController {
                 ErrorMessage.setText("password does not match");
             }
         }
+    }
+
+    public void toMainDisplay(ActionEvent event, User user) throws IOException {
+        FXMLLoader displayLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("MainDisplay.fxml"));
+        Scene scene = new Scene(displayLoader.load(), 900, 500);
+        MainDisplayController mdc = displayLoader.getController();
+        mdc.setUser(user);
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(scene);
+        stage.show();
     }
 }
