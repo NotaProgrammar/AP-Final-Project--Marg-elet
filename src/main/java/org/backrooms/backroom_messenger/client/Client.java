@@ -135,7 +135,7 @@ public class Client  {
     }
 
     //for GUI
-    private static void search(String searchedString) throws Exception {
+    public static void search(String searchedString) throws Exception {
         SearchRequest sr = new SearchRequest(searchedString,User.changeToPrivate(loggedUser));
         mapper.registerSubtypes(new NamedType(PvChat.class,"PvChat"));
         mapper.registerSubtypes(new NamedType(SearchRequest.class, "searchRequest"));
