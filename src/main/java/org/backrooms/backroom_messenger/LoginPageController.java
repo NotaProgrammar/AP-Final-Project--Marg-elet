@@ -10,6 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import org.backrooms.backroom_messenger.client.Client;
 import org.backrooms.backroom_messenger.entity.User;
 import java.io.IOException;
 
@@ -36,20 +37,14 @@ public class LoginPageController {
 
         else {
             User selectedUser = null;
-            //todo : search in data base something like this :
-            // todo : selectedUser = DatabaseManager.Select_User(username);
+            selectedUser = Client.login(Username, Password);
             if(selectedUser == null) {
                 ErrorMessage.setTextFill(Color.RED);
-                ErrorMessage.setText("username not found");
-            }
-            else if(Password.equals(selectedUser.getPassword()))
-            {
-                toMainDisplay(event, selectedUser);
+                ErrorMessage.setText("login failed");
             }
             else
             {
-                ErrorMessage.setTextFill(Color.RED);
-                ErrorMessage.setText("password does not match");
+                toMainDisplay(event, selectedUser);
             }
         }
     }

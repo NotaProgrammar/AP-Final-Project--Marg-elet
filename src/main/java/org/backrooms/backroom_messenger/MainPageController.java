@@ -11,6 +11,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import org.backrooms.backroom_messenger.client.Client;
 import org.backrooms.backroom_messenger.entity.User;
 
 import java.io.IOException;
@@ -45,13 +46,11 @@ public class MainPageController {
                 ErrorMessage.setText("Please Fill All Fields");
             } else {
                 User selectedUser = null;
-                //todo : make a fanction wich it search usernames and if it is token, something like this :
-                // todo : selectedUser = DatabaseManager.Select_User(username);
+                selectedUser = Client.signup(Username, Password);
                 if (selectedUser != null) {
                     ErrorMessage.setTextFill(Color.RED);
                     ErrorMessage.setText("username already taken");
                 } else {
-                    //todo : make a new user and add it to data base
                     toMainDisplay(event, selectedUser);
                 }
             }
