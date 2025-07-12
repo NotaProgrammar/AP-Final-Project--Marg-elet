@@ -1,0 +1,3 @@
+jdbc:postgresql://localhost:5432/Margelet
+postgres
+D29011385m
