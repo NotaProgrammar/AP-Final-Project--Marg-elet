@@ -2,21 +2,34 @@ package org.backrooms.backroom_messenger.server;
 
 import org.backrooms.backroom_messenger.entity.*;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.sql.Date;
+import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class DataBaseManager {
-    private static final String JDBC_URL = "jdbc:postgresql://localhost:5432/Margelet";
-    private static final String USERNAME = "postgres";
-    private static final String PASSWORD = "D29011385m";
+    private static  String JDBC_URL = null;
+    private static  String USERNAME = null;
+    private static  String PASSWORD = null;
 
     private static final Lock usersLock = new ReentrantLock();
+    
     public static Connection connectToDataBase() throws SQLException {
+        if(JDBC_URL == null || USERNAME == null || PASSWORD == null){
+            String filePath = "src\\main\\resources\\org\\backrooms\\backroom_messenger\\database_details.txt";
+            File file = new File(filePath);
+            try {
+                Scanner sc = new Scanner(file);
+                JDBC_URL = sc.nextLine();
+                USERNAME = sc.nextLine();
+                PASSWORD = sc.nextLine();
+            } catch (FileNotFoundException e) {
+                System.out.println(e);
+            }
+        }
         return DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD);
     }
 
