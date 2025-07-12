@@ -8,7 +8,7 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.backrooms.backroom_messenger.MainPageController">
    <children>
-      <Label layoutX="263.0" layoutY="32.0" prefHeight="17.0" prefWidth="39.0" text="Singup" />
+      <Label layoutX="263.0" layoutY="32.0" prefHeight="17.0" prefWidth="39.0" text="SingIn" />
       <Label layoutX="140.0" layoutY="86.0" text="Username" />
       <Label layoutX="140.0" layoutY="127.0" text="Password" />
       <TextField fx:id="Username" layoutX="217.0" layoutY="82.0" />
