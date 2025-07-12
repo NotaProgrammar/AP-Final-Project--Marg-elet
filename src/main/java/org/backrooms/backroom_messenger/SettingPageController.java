@@ -8,7 +8,7 @@ public class SettingPageController {
     private User user = null;
 
     @FXML
-    private DatePicker datePicker
+    private DatePicker datePicker;
 
     @FXML
     public void setUser(User user) {
