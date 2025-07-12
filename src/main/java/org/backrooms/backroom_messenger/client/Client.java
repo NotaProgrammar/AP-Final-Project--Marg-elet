@@ -27,8 +27,7 @@ public class Client  {
     static DataInputStream dis;
     static DataOutputStream dos;
 
-    //for GUI
-    public Client() throws IOException {
+    public static void initializeClient() throws IOException {
         socket = new Socket("localhost",8888);
         dis = new DataInputStream(socket.getInputStream());
         dos = new DataOutputStream(socket.getOutputStream());
@@ -110,7 +109,10 @@ public class Client  {
     }
 
     //for GUI
-    public static User login(String username, String password) {
+    public static User login(String username, String password) throws IOException {
+        if(dis == null || dos ==null || socket == null){
+            initializeClient();
+        }
         String message = username + "--" + password;
         LoginRequest lr = new LoginRequest(message);
         mapper.registerSubtypes(new NamedType(LoginRequest.class, "loginRequest"));
@@ -124,6 +126,9 @@ public class Client  {
 
     //for GUI
     public static User signup(String username, String password) throws Exception {
+        if(dis == null || dos ==null || socket == null){
+            initializeClient();
+        }
         byte[] salt = generateSalt();
 
         String message = username + "--" + password + "--" + salt;
