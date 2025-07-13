@@ -21,14 +21,12 @@ public class LoginPageController {
     @FXML
     private TextField password;
     @FXML
-    private TextField Password;
-    @FXML
     private Label ErrorMessage;
 
     @FXML
     public void Enter(ActionEvent event) throws IOException {
         String Username = this.username.getText();
-        String Password = this.Password.getText();
+        String Password = this.password.getText();
 
         if((Username == null || Username.isEmpty()) || (Password == null || Password.isEmpty())) {
             ErrorMessage.setTextFill(Color.RED);

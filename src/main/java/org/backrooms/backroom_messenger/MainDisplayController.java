@@ -33,6 +33,7 @@ public class MainDisplayController implements Initializable {
         this.user = user;
     }
 
+
     public void toSettingPage(ActionEvent event) throws IOException {
         try {
             FXMLLoader settingLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("SettingPage.fxml"));
@@ -47,6 +48,7 @@ public class MainDisplayController implements Initializable {
         }
     }
 
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         chatListView.setCellFactory(listView -> new ListCell<>() {
@@ -60,8 +62,11 @@ public class MainDisplayController implements Initializable {
                 openButton.setOnAction(event -> {
                     Chat selectedChat = getItem();
                     if (selectedChat != null) {
-                        // اینجا باید به صفحه چت منتقل بشید
-                        //todo : goToChatPage(selectedChat);
+                        try {
+                            goToChatPage(event, selectedChat);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 });
             }
@@ -84,10 +89,23 @@ public class MainDisplayController implements Initializable {
         }
     }
 
+
+    public void goToChatPage(ActionEvent event, Chat chat) throws IOException {
+        FXMLLoader chatLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("ChatPage.fxml"));
+        Scene scene = new Scene(chatLoader.load(), 900, 500);
+        ChatPageController cpc = chatLoader.getController();
+        cpc.setChatAndUser(chat, user);
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(scene);
+        stage.show();
+    }
+
+
     public static void searchResult(List<Chat> chats){
         searchedChatList.clear();
         searchedChatList.addAll(chats);
     }
+
 
     public void search(ActionEvent event)
     {

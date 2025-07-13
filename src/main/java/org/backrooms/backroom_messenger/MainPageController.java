@@ -47,7 +47,7 @@ public class MainPageController {
             } else {
                 User selectedUser = null;
                 selectedUser = Client.signup(Username, Password);
-                if (selectedUser != null) {
+                if (selectedUser == null) {
                     ErrorMessage.setTextFill(Color.RED);
                     ErrorMessage.setText("username already taken");
                 } else {
