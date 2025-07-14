@@ -109,6 +109,11 @@ public class Client  {
     }
 
     //for GUI
+    public static void sendMessage(String messageString,Chat chat){
+        
+    }
+
+    //for GUI
     public static User login(String username, String password) throws IOException {
         if(dis == null || dos ==null || socket == null){
             initializeClient();
