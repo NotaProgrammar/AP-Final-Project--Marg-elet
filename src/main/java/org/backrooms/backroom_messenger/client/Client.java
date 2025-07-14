@@ -1,10 +1,7 @@
 package org.backrooms.backroom_messenger.client;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
-import org.backrooms.backroom_messenger.entity.Chat;
-import org.backrooms.backroom_messenger.entity.PrivateUser;
-import org.backrooms.backroom_messenger.entity.PvChat;
-import org.backrooms.backroom_messenger.entity.User;
+import org.backrooms.backroom_messenger.entity.*;
 import org.backrooms.backroom_messenger.response_and_requests.serverRequest.*;
 import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.AvailableUserResponse;
 import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.ChatOpenedResponse;
@@ -109,7 +106,7 @@ public class Client  {
     }
 
     //for GUI
-    public static void sendMessage(String messageString,Chat chat){
+    public static Message sendMessage(String messageString, Chat chat){
         
     }
 
