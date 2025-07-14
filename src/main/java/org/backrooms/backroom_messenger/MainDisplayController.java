@@ -31,6 +31,9 @@ public class MainDisplayController implements Initializable {
     @FXML
     public void setUser(User user) {
         this.user = user;
+        if (user != null && user.getChats() != null) {
+            chatListView.getItems().setAll(user.getChats());
+        }
     }
 
 
@@ -82,11 +85,6 @@ public class MainDisplayController implements Initializable {
                 }
             }
         });
-
-        // مقداردهی اولیه لیست
-        if (user != null && user.getChats() != null) {
-            chatListView.getItems().setAll(user.getChats());
-        }
     }
 
 
