@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.*;
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -16,7 +18,7 @@ public class DataBaseManager {
     private static  String PASSWORD = null;
 
     private static final Lock usersLock = new ReentrantLock();
-    
+
     public static Connection connectToDataBase() throws SQLException {
         if(JDBC_URL == null || USERNAME == null || PASSWORD == null){
             String filePath = "src\\main\\resources\\org\\backrooms\\backroom_messenger\\database_details.txt";
@@ -31,6 +33,44 @@ public class DataBaseManager {
             }
         }
         return DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD);
+    }
+
+    public static void addMessage(Message message) throws SQLException{
+        String type = getChatType(message.getChat());
+        switch(type){
+            case "pv_chat":
+                addMessageToChat(message);
+                break;
+
+        }
+
+    }
+
+    private static void addMessageToChat(Message message) throws SQLException{
+        Connection connection = connectToDataBase();
+        String tableName = "pv_chats.chat_" + message.getChat().toString().replace("-","_");
+        String sql = "INSERT INTO " + tableName + " (id,sender,message,datetime) VALUES (?,?,?,?)";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setObject(1,message.getId());
+        ps.setString(2,message.getSender());
+        ps.setObject(3,message.getMessage());
+        ps.setDate(4,java.sql.Date.valueOf(message.getTimeDate()));
+        ps.executeUpdate();
+        ps.close();
+        connection.close();
+    }
+
+    private static String getChatType(UUID chat) throws SQLException{
+        Connection connection = connectToDataBase();
+        String sql = "SELECT * FROM public.chats WHERE id = ?";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setObject(1, chat);
+        ResultSet rs = ps.executeQuery();
+        String type = null;
+        if(rs.next()){
+            type = rs.getString("type");
+        }
+        return type;
     }
 
     public static void addUserToDataBase(User user) throws SQLException {
@@ -110,7 +150,7 @@ public class DataBaseManager {
         while(rs.next()) {
             String username = rs.getString("username");
             String name = rs.getString("name");
-           user = new PrivateUser(username, name);
+            user = new PrivateUser(username, name);
             users.add(user);
         }
         rs.close();
@@ -120,20 +160,20 @@ public class DataBaseManager {
     }
 
     public static UUID searchForPV(String user1, String user2) throws SQLException {
-       Connection conn = connectToDataBase();
-       String sql = "SELECT * FROM pv_chats WHERE user1 = ? AND user2 = ?";
-       PreparedStatement ps = conn.prepareStatement(sql);
-       ps.setString(1, user1);
-       ps.setString(2, user2);
-       ResultSet rs = ps.executeQuery();
-       UUID uuid = null;
-       if(rs.next()) {
-           uuid = UUID.fromString(rs.getString("id"));
-       }
-       rs.close();
-       ps.close();
-       conn.close();
-       return uuid;
+        Connection conn = connectToDataBase();
+        String sql = "SELECT * FROM pv_chats WHERE user1 = ? AND user2 = ?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, user1);
+        ps.setString(2, user2);
+        ResultSet rs = ps.executeQuery();
+        UUID uuid = null;
+        if(rs.next()) {
+            uuid = UUID.fromString(rs.getString("id"));
+        }
+        rs.close();
+        ps.close();
+        conn.close();
+        return uuid;
     }
 
     private static void createChatTable(UUID chatId) throws SQLException {
@@ -201,11 +241,12 @@ public class DataBaseManager {
         PreparedStatement ps = conn.prepareStatement(sql);
         ResultSet rs = ps.executeQuery();
         while(rs.next()) {
-            User sender = getUserFromDataBase(rs.getString("sender"));
+            String sender = rs.getString("sender");
             String text = rs.getString("message");
             UUID messageId = UUID.fromString(rs.getString("id"));
-            Date date = rs.getDate("datetime");
-            Message message = new Message(messageId,sender,chat,text,date);
+            LocalDate localDate = rs.getDate("datetime").toLocalDate();
+            java.util.Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            Message message = new Message(messageId,sender,chat.getId(),text,date);
             messages.add(message);
         }
         rs.close();

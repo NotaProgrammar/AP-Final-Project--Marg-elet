@@ -94,7 +94,13 @@ public class MainDisplayController implements Initializable {
 
     public void goToPvChatPage(ActionEvent event, Chat chat) throws IOException {
         Client.openChat(chat);
-        while(chosenChat == null){}
+        while(chosenChat == null){
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
         FXMLLoader pvChatLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("PvChatPage.fxml"));
         Scene scene = new Scene(pvChatLoader.load(), 900, 550);
         PvChatPageController cpc = pvChatLoader.getController();

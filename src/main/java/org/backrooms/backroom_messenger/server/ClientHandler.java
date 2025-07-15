@@ -1,12 +1,10 @@
 package org.backrooms.backroom_messenger.server;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
-import org.backrooms.backroom_messenger.entity.Chat;
-import org.backrooms.backroom_messenger.entity.PrivateUser;
-import org.backrooms.backroom_messenger.entity.PvChat;
-import org.backrooms.backroom_messenger.entity.User;
+import org.backrooms.backroom_messenger.entity.*;
 import org.backrooms.backroom_messenger.response_and_requests.serverRequest.*;
 import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.AvailableUserResponse;
 import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.ChatOpenedResponse;
@@ -54,15 +52,22 @@ public class ClientHandler implements Runnable {
     }
 
     private void CheckRequest(ServerRequest sr) throws Exception {
-            if(sr instanceof LoginRequest lr){
-                loginHandle(lr);
-            }else if(sr instanceof SignupRequest sur){
-                signupHandle(sur);
-            }else if(sr instanceof SearchRequest search){
-                searchUser(search);
-            }else if(sr instanceof NewChatRequest ncr){
-                checkChat(ncr);
-            }
+        if(sr instanceof LoginRequest lr){
+            loginHandle(lr);
+        }else if(sr instanceof SignupRequest sur){
+            signupHandle(sur);
+        }else if(sr instanceof SearchRequest search){
+            searchUser(search);
+        }else if(sr instanceof NewChatRequest ncr){
+            checkChat(ncr);
+        }else if(sr instanceof SendMessageRequest smr){
+            sendMessage(smr);
+        }
+    }
+
+    private void sendMessage(SendMessageRequest smr) throws SQLException {
+        Message message = smr.getSendedMessage();
+        addMessage(message);
     }
 
     private void loginHandle(LoginRequest loginRequest) throws IOException {
