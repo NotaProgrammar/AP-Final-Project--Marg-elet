@@ -25,35 +25,40 @@ public class LoginPageController {
 
     @FXML
     public void Enter(ActionEvent event) throws IOException {
-        String Username = this.username.getText();
-        String Password = this.password.getText();
+        try {
+            String Username = this.username.getText();
+            String Password = this.password.getText();
 
-        if((Username == null || Username.isEmpty()) || (Password == null || Password.isEmpty())) {
-            ErrorMessage.setTextFill(Color.RED);
-            ErrorMessage.setText("Please Fill All Fields");
-        }
-
-        else {
-            User selectedUser = null;
-            selectedUser = Client.login(Username, Password);
-            if(selectedUser == null) {
+            if ((Username == null || Username.isEmpty()) || (Password == null || Password.isEmpty())) {
                 ErrorMessage.setTextFill(Color.RED);
-                ErrorMessage.setText("login failed");
+                ErrorMessage.setText("Please Fill All Fields");
+            } else {
+                User selectedUser = null;
+                selectedUser = Client.login(Username, Password);
+                if (selectedUser == null) {
+                    ErrorMessage.setTextFill(Color.RED);
+                    ErrorMessage.setText("login failed");
+                } else {
+                    toMainDisplay(event, selectedUser);
+                }
             }
-            else
-            {
-                toMainDisplay(event, selectedUser);
-            }
+        }
+        catch (Exception e) {
+            System.out.println(e);
         }
     }
 
     public void toMainDisplay(ActionEvent event, User user) throws IOException {
-        FXMLLoader displayLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("MainDisplay.fxml"));
-        Scene scene = new Scene(displayLoader.load(), 900, 500);
-        MainDisplayController mdc = displayLoader.getController();
-        mdc.setUser(user);
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(scene);
-        stage.show();
+        try {
+            FXMLLoader displayLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("MainDisplay.fxml"));
+            Scene scene = new Scene(displayLoader.load(), 900, 500);
+            MainDisplayController mdc = displayLoader.getController();
+            mdc.setUser(user);
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 }

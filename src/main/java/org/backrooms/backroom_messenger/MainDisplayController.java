@@ -108,7 +108,7 @@ public class MainDisplayController implements Initializable {
     public void search(ActionEvent event)
     {
         String searchText = searchTextField.getText();
-        //Client.search(searchText);
+        //todo : Client.search(searchText);
         while(searchedChatList.isEmpty()){}
         //todo : enter search page
     }
