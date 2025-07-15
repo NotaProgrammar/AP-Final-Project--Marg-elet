@@ -12,6 +12,7 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import org.backrooms.backroom_messenger.client.Client;
 import org.backrooms.backroom_messenger.entity.Chat;
+import org.backrooms.backroom_messenger.entity.PvChat;
 import org.backrooms.backroom_messenger.entity.User;
 
 import java.io.IOException;
@@ -22,6 +23,7 @@ import java.util.ResourceBundle;
 public class MainDisplayController implements Initializable {
     private User user = null;
     private static List<Chat> searchedChatList = null;
+    private static Chat chosenChat = null;
 
     @FXML
     private ListView<Chat> chatListView;
@@ -66,7 +68,9 @@ public class MainDisplayController implements Initializable {
                     Chat selectedChat = getItem();
                     if (selectedChat != null) {
                         try {
-                            goToChatPage(event, selectedChat);
+                            if(selectedChat instanceof PvChat){
+                                goToPvChatPage(event, selectedChat);
+                            }
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
@@ -88,14 +92,21 @@ public class MainDisplayController implements Initializable {
     }
 
 
-    public void goToChatPage(ActionEvent event, Chat chat) throws IOException {
-        FXMLLoader chatLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("ChatPage.fxml"));
-        Scene scene = new Scene(chatLoader.load(), 900, 500);
-        ChatPageController cpc = chatLoader.getController();
-        cpc.setChatAndUser(chat, user);
+    public void goToPvChatPage(ActionEvent event, Chat chat) throws IOException {
+        Client.openChat(chat);
+        while(chosenChat == null){}
+        FXMLLoader pvChatLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("PvChatPage.fxml"));
+        Scene scene = new Scene(pvChatLoader.load(), 900, 550);
+        PvChatPageController cpc = pvChatLoader.getController();
+        cpc.setChatAndUser(chosenChat, user);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(scene);
         stage.show();
+    }
+
+
+    public static void pvChatResult(Chat selectedChat) {
+        chosenChat = selectedChat;
     }
 
 
