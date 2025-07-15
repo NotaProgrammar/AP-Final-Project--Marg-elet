@@ -5,22 +5,34 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import org.backrooms.backroom_messenger.client.Client;
 import org.backrooms.backroom_messenger.entity.Chat;
 import org.backrooms.backroom_messenger.entity.User;
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 
-public class ChatPageController {
+public class PvChatPageController {
 
     private User user = null;
     private Chat chat = null;
+
+    @FXML
+    private TextField Message;
 
     @FXML
 
     public void setChatAndUser(Chat chat, User user) {
         this.chat = chat;
         this.user = user;
+    }
+
+
+    public void sendMessage(ActionEvent event) {
+        String message = Message.getText();
+        chat.getMessage().add(Client.sendMessage(message, chat));
     }
 
 
