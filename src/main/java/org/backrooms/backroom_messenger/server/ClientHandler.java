@@ -68,6 +68,7 @@ public class ClientHandler implements Runnable {
     private void sendMessage(SendMessageRequest smr) throws SQLException {
         Message message = smr.getSendedMessage();
         addMessage(message);
+
     }
 
     private void loginHandle(LoginRequest loginRequest) throws IOException {
@@ -184,5 +185,9 @@ public class ClientHandler implements Runnable {
         UUID chatId = UUID.randomUUID();
         addPvChat(chatId, user1,user2);
         return chatId;
+    }
+
+    public User getActiveUser(){
+        return activeUser;
     }
 }
