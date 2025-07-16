@@ -1,5 +1,6 @@
 package org.backrooms.backroom_messenger.server;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,6 +9,7 @@ import org.backrooms.backroom_messenger.entity.*;
 import org.backrooms.backroom_messenger.response_and_requests.serverRequest.*;
 import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.AvailableUserResponse;
 import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.ChatOpenedResponse;
+import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.ReceivedMessage;
 import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.SearchedUsersListResponse;
 
 
@@ -68,7 +70,7 @@ public class ClientHandler implements Runnable {
     private void sendMessage(SendMessageRequest smr) throws SQLException {
         Message message = smr.getSendedMessage();
         addMessage(message);
-
+        Server.broadcast(message);
     }
 
     private void loginHandle(LoginRequest loginRequest) throws IOException {
@@ -147,6 +149,19 @@ public class ClientHandler implements Runnable {
         System.out.println(e);
     }
 
+    public void receiveMessage(Message message) throws SQLException {
+        try {
+            String messageJson = mapper.writeValueAsString(message);
+            ReceivedMessage rm = new ReceivedMessage(messageJson);
+            mapper.registerSubtypes(new NamedType(ReceivedMessage.class,"ReceivedMessage"));
+            String sending = mapper.writeValueAsString(rm);
+            out.writeUTF(sending);
+            out.flush();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
     private void checkChat(NewChatRequest ncr) throws Exception {
         String user1 =  ncr.getSender().getUsername();
         String user2 = ncr.getUser().getUsername();
@@ -171,7 +186,6 @@ public class ClientHandler implements Runnable {
     }
 
     private void openChat(PvChat pv) throws IOException, SQLException {
-
         pv.getMessage().addAll(DataBaseManager.returnMessages(pv));
         mapper.registerSubtypes(new NamedType(PvChat.class,"PvChat"));
         mapper.registerSubtypes(new NamedType(ChatOpenedResponse.class, "chatOpenedResponse"));

@@ -6,6 +6,7 @@ import org.backrooms.backroom_messenger.entity.Message;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +30,11 @@ public class Server {
 
     public static void broadcast(Message message) {
         for(ClientHandler clientHandler : onlineClients) {
-
+            try {
+                clientHandler.receiveMessage(message);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
