@@ -48,6 +48,7 @@ public class LoginPageController {
         }
     }
 
+
     public void toMainDisplay(ActionEvent event, User user) throws IOException {
         try {
             FXMLLoader displayLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("MainDisplay.fxml"));
@@ -61,4 +62,15 @@ public class LoginPageController {
             System.out.println(e);
         }
     }
+
+
+    public void toSignupPage(ActionEvent event) throws IOException {
+        FXMLLoader signupLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("MainPage.fxml"));
+        Scene scene = new Scene(signupLoader.load(), 900, 500);
+        MainPageController mpc = signupLoader.getController();
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(scene);
+        stage.show();
+    }
+    
 }

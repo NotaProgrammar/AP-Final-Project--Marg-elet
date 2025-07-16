@@ -71,7 +71,7 @@ public class MainDisplayController implements Initializable {
                             if(selectedChat instanceof PvChat){
                                 goToPvChatPage(event, selectedChat);
                             }
-                        } catch (IOException e) {
+                        } catch (IOException | InterruptedException e) {
                             throw new RuntimeException(e);
                         }
                     }
@@ -92,9 +92,11 @@ public class MainDisplayController implements Initializable {
     }
 
 
-    public void goToPvChatPage(ActionEvent event, Chat chat) throws IOException {
+    public void goToPvChatPage(ActionEvent event, Chat chat) throws IOException, InterruptedException {
         Client.openChat(chat);
-        while(chosenChat == null){}
+        while(chosenChat == null){
+            Thread.sleep(100);
+        }
         FXMLLoader pvChatLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("PvChatPage.fxml"));
         Scene scene = new Scene(pvChatLoader.load(), 900, 550);
         PvChatPageController cpc = pvChatLoader.getController();
@@ -116,11 +118,18 @@ public class MainDisplayController implements Initializable {
     }
 
 
-    public void search(ActionEvent event)
-    {
+    public void search(ActionEvent event) throws Exception {
         String searchText = searchTextField.getText();
-        //todo : Client.search(searchText);
-        while(searchedChatList.isEmpty()){}
-        //todo : enter search page
+        Client.search(searchText);
+        while(searchedChatList.isEmpty()){
+            Thread.sleep(100);
+        }
+        FXMLLoader searchLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("SearchPage.fxml"));
+        Scene scene = new Scene(searchLoader.load(), 900, 550);
+        SearchPageController spc = searchLoader.getController();
+        spc.setChatList(searchedChatList);
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(scene);
+        stage.show();
     }
 }

@@ -15,5 +15,7 @@
       <PasswordField fx:id="password" layoutX="226.0" layoutY="163.0" />
       <Button layoutX="279.0" layoutY="222.0" mnemonicParsing="false" onAction="#Enter" text="Enter" />
       <Label fx:id="ErrorMessage" layoutX="44.0" layoutY="234.0" prefHeight="17.0" prefWidth="239.0" />
+      <Label layoutX="150.0" layoutY="346.0" text="Wanna creat account?" />
+      <Button layoutX="275.0" layoutY="342.0" mnemonicParsing="false" onAction="#toSignupPage" text="Signup" />
    </children>
 </AnchorPane>
