@@ -9,6 +9,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.backrooms.backroom_messenger.client.Client;
 import org.backrooms.backroom_messenger.entity.Chat;
+import org.backrooms.backroom_messenger.entity.Message;
 import org.backrooms.backroom_messenger.entity.User;
 import org.w3c.dom.Text;
 
@@ -17,7 +18,7 @@ import java.io.IOException;
 public class PvChatPageController {
 
     private User user = null;
-    private Chat chat = null;
+    private static Chat chat = null;
 
     @FXML
     private TextField Message;
@@ -33,6 +34,11 @@ public class PvChatPageController {
     public void sendMessage(ActionEvent event) {
         String message = Message.getText();
         chat.getMessage().add(Client.sendMessage(message, chat));
+    }
+
+
+    public static void saveReceivedMessage(Message message) {
+        chat.getMessage().add(message);
     }
 
 

@@ -1,6 +1,7 @@
 package org.backrooms.backroom_messenger;
 
 import org.backrooms.backroom_messenger.entity.Chat;
+import org.backrooms.backroom_messenger.entity.Message;
 
 import java.util.List;
 
@@ -12,5 +13,10 @@ public class ClientReceiverGUI {
 
     public static void openPvChat(Chat chat){
         MainDisplayController.pvChatResult(chat);
+    }
+
+
+    public static void addReceivedMessage(Message message){
+        PvChatPageController.saveReceivedMessage(message);
     }
 }
