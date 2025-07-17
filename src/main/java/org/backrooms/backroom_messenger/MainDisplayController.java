@@ -101,6 +101,7 @@ public class MainDisplayController implements Initializable {
         Scene scene = new Scene(pvChatLoader.load(), 900, 550);
         PvChatPageController cpc = pvChatLoader.getController();
         cpc.setChatAndUser(chosenChat, user);
+        cpc.setupCellFactories();
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(scene);
         stage.show();

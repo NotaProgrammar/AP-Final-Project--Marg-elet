@@ -5,8 +5,10 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -19,6 +21,7 @@ import java.io.IOException;
 
 public class PvChatPageController {
 
+    private static PvChatPageController instance;
     private User user = null;
     private static Chat chat = null;
     private ObservableList<Message> messages = FXCollections.observableArrayList();
@@ -30,24 +33,61 @@ public class PvChatPageController {
     @FXML
     private ListView<Message> receiverListView;
 
+    public PvChatPageController() {
+        instance = this;
+    }
+
+
     @FXML
+    public void initialize() {
+        instance = this;
+    }
+
 
     public void setChatAndUser(Chat chat, User user) {
         PvChatPageController.chat = chat;
         this.user = user;
         messages.clear();
         messages.setAll(chat.getMessage());
+    }
 
+
+    public void setupCellFactories() {
         senderListView.setItems(messages);
         receiverListView.setItems(messages);
 
-        //setupSenderCellFactory();
-        //setupReceiverCellFactory();
+        senderListView.setCellFactory(listView -> new ListCell<>() {
+            @Override
+            protected void updateItem(Message message, boolean empty) {
+                super.updateItem(message, empty);
+                if (empty || message == null) {
+                    setText(null);
+                } else if (message.getSender().equals(user.getUsername())) {
+                    setText(message);
+                } else {
+                    setText(" ");
+                }
+            }
+        });
+
+        receiverListView.setCellFactory(listView -> new ListCell<>() {
+            @Override
+            protected void updateItem(Message message, boolean empty) {
+                super.updateItem(message, empty);
+                if (empty || message == null) {
+                    setText(null);
+                } else if (!message.getSender().equals(user.getUsername())) {
+                    setText(message);
+                } else {
+                    setText(" ");
+                }
+            }
+        });
     }
 
 
     public void sendMessage(ActionEvent event) {
-        String message = Message.getText();
+        String message = Message.getText().trim();
         chat.getMessage().add(Client.sendMessage(message, chat));
         messages.setAll(chat.getMessage());
         Message.clear();
@@ -56,6 +96,9 @@ public class PvChatPageController {
 
     public static void saveReceivedMessage(Message message) {
         chat.getMessage().add(message);
+        if (instance != null) {
+            instance.messages.add(message);
+        }
     }
 
 
@@ -67,5 +110,10 @@ public class PvChatPageController {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(scene);
         stage.show();
+    }
+
+
+    public static PvChatPageController getInstance() {
+        return instance;
     }
 }
