@@ -32,9 +32,11 @@ public class Server {
     public static void broadcast(Message message) {
         for(ClientHandler clientHandler : onlineClients) {
             try {
-                for(Chat chat : clientHandler.getActiveUser().getChats()) {
-                    if(chat.getId().equals(message.getChat())) {
-                        clientHandler.receiveMessage(message);
+                if(clientHandler.getActiveUser() != null) {
+                    for(Chat chat : clientHandler.getActiveUser().getChats()) {
+                        if( chat.getId().equals(message.getChat()) && ! message.getSender().equals(clientHandler.getActiveUser().getUsername())) {
+                            clientHandler.receiveMessage(message);
+                        }
                     }
                 }
             } catch (SQLException e) {

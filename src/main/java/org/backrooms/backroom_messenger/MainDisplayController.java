@@ -34,6 +34,7 @@ public class MainDisplayController implements Initializable {
     public void setUser(User user) {
         this.user = user;
         if (user != null && user.getChats() != null) {
+            chatListView.getItems().clear();
             chatListView.getItems().setAll(user.getChats());
         }
     }

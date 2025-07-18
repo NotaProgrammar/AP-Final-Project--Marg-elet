@@ -114,11 +114,17 @@ public class Client  {
 
     //calls GUI
     public static void openChat(ChatOpenedResponse cor){
-        Chat chat = cor.getChat();
-        if (!loggedUser.getChats().contains(chat)) {
-            loggedUser.getChats().add(chat);
+        Chat newChat = cor.getChat();
+        boolean flag = false;
+        for(Chat chat : loggedUser.getChats()){
+            if(chat.getId().equals(newChat.getId())){
+                flag = true;
+            }
         }
-        ClientReceiverGUI.openPvChat(chat);
+        if(!flag){
+            loggedUser.getChats().add(newChat);
+        }
+        ClientReceiverGUI.openPvChat(newChat);
 
     }
 

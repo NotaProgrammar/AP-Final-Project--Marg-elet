@@ -63,7 +63,7 @@ public class PvChatPageController {
                 if (empty || message == null) {
                     setText(null);
                 } else if (message.getSender().equals(user.getUsername())) {
-                    setText(message);
+                    setText(message.getMessage());
                 } else {
                     setText(" ");
                 }
@@ -77,7 +77,7 @@ public class PvChatPageController {
                 if (empty || message == null) {
                     setText(null);
                 } else if (!message.getSender().equals(user.getUsername())) {
-                    setText(message);
+                    setText(message.getMessage());
                 } else {
                     setText(" ");
                 }
@@ -96,9 +96,7 @@ public class PvChatPageController {
 
     public static void saveReceivedMessage(Message message) {
         chat.getMessage().add(message);
-        if (instance != null) {
-            instance.messages.add(message);
-        }
+        instance.messages.setAll(chat.getMessage());
     }
 
 

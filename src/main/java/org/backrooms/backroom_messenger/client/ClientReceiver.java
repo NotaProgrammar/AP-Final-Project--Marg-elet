@@ -2,6 +2,7 @@ package org.backrooms.backroom_messenger.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
+import org.backrooms.backroom_messenger.ClientReceiverGUI;
 import org.backrooms.backroom_messenger.entity.PvChat;
 import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.ChatOpenedResponse;
 import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.ReceivedMessage;
@@ -29,10 +30,11 @@ public class ClientReceiver implements Runnable {
     @Override
     public void run() {
         try {
-            String response = dis.readUTF();
-            ServerResponse serverResponse = mapper.readValue(response,ServerResponse.class);
-            responseCheck(serverResponse);
-
+            while(true){
+                String response = dis.readUTF();
+                ServerResponse serverResponse = mapper.readValue(response,ServerResponse.class);
+                responseCheck(serverResponse);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -44,7 +46,7 @@ public class ClientReceiver implements Runnable {
         }else if(sr instanceof ChatOpenedResponse cor){
             openChat(cor);
         }else if(sr instanceof ReceivedMessage rm){
-            System.out.println(rm.getMessageObject().getMessage());
+            ClientReceiverGUI.addReceivedMessage(rm.getMessageObject());
         }
     }
 }
