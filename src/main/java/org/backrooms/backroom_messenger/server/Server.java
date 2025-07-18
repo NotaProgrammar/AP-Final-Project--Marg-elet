@@ -1,6 +1,7 @@
 package org.backrooms.backroom_messenger.server;
 
 
+import org.backrooms.backroom_messenger.entity.Chat;
 import org.backrooms.backroom_messenger.entity.Message;
 
 import java.io.IOException;
@@ -31,7 +32,11 @@ public class Server {
     public static void broadcast(Message message) {
         for(ClientHandler clientHandler : onlineClients) {
             try {
-                clientHandler.receiveMessage(message);
+                for(Chat chat : clientHandler.getActiveUser().getChats()) {
+                    if(chat.getId().equals(message.getChat())) {
+                        clientHandler.receiveMessage(message);
+                    }
+                }
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
