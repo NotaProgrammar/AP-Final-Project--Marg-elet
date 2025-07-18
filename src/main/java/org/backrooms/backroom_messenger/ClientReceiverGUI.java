@@ -17,6 +17,8 @@ public class ClientReceiverGUI {
 
 
     public static void addReceivedMessage(Message message){
-        PvChatPageController.saveReceivedMessage(message);
+        if(PvChatPageController.getChat().getUserName(PvChatPageController.getUser()).equals(message.getSender())){
+            PvChatPageController.saveReceivedMessage(message);
+        }
     }
 }

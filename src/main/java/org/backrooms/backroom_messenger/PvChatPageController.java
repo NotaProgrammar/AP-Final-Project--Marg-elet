@@ -10,20 +10,20 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.backrooms.backroom_messenger.client.Client;
-import org.backrooms.backroom_messenger.entity.Chat;
-import org.backrooms.backroom_messenger.entity.Message;
-import org.backrooms.backroom_messenger.entity.User;
+import org.backrooms.backroom_messenger.entity.*;
 
 import java.io.IOException;
+import java.util.Set;
 
 public class PvChatPageController {
 
     private static PvChatPageController instance;
-    private User user = null;
-    private static Chat chat = null;
+    private static User user = null;
+    private static PvChat chat = null;
     private ObservableList<Message> messages = FXCollections.observableArrayList();
 
     @FXML
@@ -44,11 +44,19 @@ public class PvChatPageController {
     }
 
 
-    public void setChatAndUser(Chat chat, User user) {
+    public void setChatAndUser(PvChat chat, User user) {
         PvChatPageController.chat = chat;
-        this.user = user;
+        PvChatPageController.user = user;
         messages.clear();
         messages.setAll(chat.getMessage());
+        javafx.application.Platform.runLater(() -> {
+            ScrollBar scrollBar1 = getVerticalScrollBar(senderListView);
+            ScrollBar scrollBar2 = getVerticalScrollBar(receiverListView);
+
+            if (scrollBar1 != null && scrollBar2 != null) {
+                scrollBar1.valueProperty().bindBidirectional(scrollBar2.valueProperty());
+            }
+        });
     }
 
 
@@ -79,7 +87,14 @@ public class PvChatPageController {
                 } else if (!message.getSender().equals(user.getUsername())) {
                     setText(message.getMessage());
                 } else {
-                    setText(" ");
+                    StringBuilder nextLine = new StringBuilder();
+                    int c = 0;
+                    for(int i=0; i<message.getMessage().length(); i++) {
+                        if(message.getMessage().charAt(i) == '\n') {
+                            nextLine.append("\n");
+                        }
+                    }
+                    setText(nextLine.toString());
                 }
             }
         });
@@ -113,5 +128,26 @@ public class PvChatPageController {
 
     public static PvChatPageController getInstance() {
         return instance;
+    }
+
+    public static User getUser() {
+        return user;
+    }
+
+    public static PvChat getChat() {
+        return chat;
+    }
+
+    private ScrollBar getVerticalScrollBar(ListView<?> listView) {
+        Set<Node> nodes = listView.lookupAll(".scroll-bar");
+        for (Node node : nodes) {
+            if (node instanceof ScrollBar) {
+                ScrollBar scrollBar = (ScrollBar) node;
+                if (scrollBar.getOrientation() == javafx.geometry.Orientation.VERTICAL) {
+                    return scrollBar;
+                }
+            }
+        }
+        return null;
     }
 }

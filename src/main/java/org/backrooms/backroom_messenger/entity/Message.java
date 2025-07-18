@@ -29,7 +29,7 @@ public class Message {
         this.id = id;
         this.sender = sender;
         this.chat = chat;
-        this.message = message;
+        this.message = formatMessage(message);
         this.timeDate = timeDate;
     }
 
@@ -60,5 +60,34 @@ public class Message {
     @Override
     public String toString() {
         return message;
+    }
+
+    public String formatMessage(String input) {
+        int maxLineLength = 30;
+
+        StringBuilder result = new StringBuilder();
+        String line = input.replaceAll("\n", " ");
+
+            int index = 0;
+
+            while (index < line.length()) {
+                int endIndex = Math.min(index + maxLineLength, line.length());
+
+                // Try to break at the last space before maxLineLength
+                int lastSpace = line.lastIndexOf(' ', endIndex);
+                if (lastSpace > index) {
+                    endIndex = lastSpace;
+                }
+
+                result.append(line, index, endIndex).append("\n");
+
+                // Move to the next segment, skipping leading spaces
+                index = endIndex;
+                while (index < line.length() && line.charAt(index) == ' ') {
+                    index++;
+                }
+            }
+
+        return result.toString();
     }
 }
