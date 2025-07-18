@@ -1,5 +1,6 @@
 package org.backrooms.backroom_messenger.response_and_requests.serverResopnse;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,6 +20,7 @@ public class ReceivedMessage extends ServerResponse{
         }
     }
 
+    @JsonIgnore
     public Message getMessageObject() {
         return message;
     }

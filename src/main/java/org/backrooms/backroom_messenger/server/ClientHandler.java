@@ -153,7 +153,7 @@ public class ClientHandler implements Runnable {
         try {
             String messageJson = mapper.writeValueAsString(message);
             ReceivedMessage rm = new ReceivedMessage(messageJson);
-            mapper.registerSubtypes(new NamedType(ReceivedMessage.class,"ReceivedMessage"));
+            mapper.registerSubtypes(new NamedType(ReceivedMessage.class,"receivedMessage"));
             String sending = mapper.writeValueAsString(rm);
             out.writeUTF(sending);
             out.flush();
