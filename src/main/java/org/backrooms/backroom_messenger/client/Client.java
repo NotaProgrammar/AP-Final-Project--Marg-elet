@@ -140,7 +140,12 @@ public class Client  {
         if(!flag){
             loggedUser.getChats().add(newChat);
         }
-        ClientReceiverGUI.openPvChat(newChat);
+        if(sender==1){
+            ClientReceiverGUI.openPvChat(newChat);
+        }else if(sender==2){
+            ClientReceiverGUI.openChatInSearch(newChat);
+        }
+
 
     }
 
