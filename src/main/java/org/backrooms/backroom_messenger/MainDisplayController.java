@@ -134,4 +134,15 @@ public class MainDisplayController implements Initializable {
         stage.setScene(scene);
         stage.show();
     }
+
+
+    public void goToCreatChannel(ActionEvent event) throws IOException, InterruptedException {
+        FXMLLoader creatChannelLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("CreatChannelPage.fxml"));
+        Scene scene = new Scene(creatChannelLoader.load(), 900, 550);
+        CreatChannelPageController ccpc = creatChannelLoader.getController();
+        ccpc.setUser(user);
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(scene);
+        stage.show();
+    }
 }
