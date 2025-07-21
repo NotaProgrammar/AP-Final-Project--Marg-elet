@@ -9,15 +9,15 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+
 
 public class DataBaseManager {
     private static  String JDBC_URL = null;
     private static  String USERNAME = null;
     private static  String PASSWORD = null;
 
-    private static final Lock usersLock = new ReentrantLock();
+    //todo adding locks
+
 
     public static Connection connectToDataBase() throws SQLException {
         if(JDBC_URL == null || USERNAME == null || PASSWORD == null){
@@ -29,7 +29,7 @@ public class DataBaseManager {
                 USERNAME = sc.nextLine();
                 PASSWORD = sc.nextLine();
             } catch (FileNotFoundException e) {
-                System.out.println(e);
+                System.out.println(e.getMessage());
             }
         }
         return DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD);
@@ -41,7 +41,11 @@ public class DataBaseManager {
             case "pv_chat":
                 addMessageToChat(message);
                 break;
-
+            case "channel":
+                //todo
+                break;
+            case "group":
+                //todo
         }
 
     }
@@ -70,11 +74,12 @@ public class DataBaseManager {
         if(rs.next()){
             type = rs.getString("type");
         }
+        ps.close();
+        connection.close();
         return type;
     }
 
     public static void addUserToDataBase(User user) throws SQLException {
-        usersLock.lock();
         Connection con = connectToDataBase();
         String sql = "INSERT INTO public.users (username, password, salt, name) VALUES (?, ?, ?, ?)";
         PreparedStatement ps = con.prepareStatement(sql);
@@ -86,14 +91,13 @@ public class DataBaseManager {
 
         ps.close();
         con.close();
-        usersLock.unlock();
         createUserTable(user.getUsername());
     }
 
     private static void createUserTable(String user) throws SQLException {
         Connection conn = connectToDataBase();
         String tableName = "users.user_" + user;
-        String sql = "CREATE TABLE " + tableName + " (id uuid, name text, type text, PRIMARY KEY (id))";
+        String sql = "CREATE TABLE " + tableName + " (id uuid PRIMARY KEY , name text, type text,  FOREIGN KEY (id) REFERENCES public.chats(id))";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.executeUpdate();
         ps.close();
@@ -176,10 +180,10 @@ public class DataBaseManager {
         return uuid;
     }
 
-    private static void createChatTable(UUID chatId) throws SQLException {
+    private static void createPvChatTable(UUID chatId) throws SQLException {
         Connection conn = connectToDataBase();
         String tableName = "pv_chats.chat_" + chatId.toString().replace("-", "_");
-        String sql = "CREATE TABLE "+ tableName + " ( id uuid, sender text, message text, datetime date, PRIMARY KEY (id))";
+        String sql = "CREATE TABLE "+ tableName + " ( id uuid PRIMARY KEY , sender text, message text, datetime date, FOREIGN KEY (sender) REFERENCES public.users(username))";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.executeUpdate();
         ps.close();
@@ -196,12 +200,12 @@ public class DataBaseManager {
         ps.executeUpdate();
         ps.close();
         conn.close();
-        addtoChatTable(chatId,"pv_chat");
-        createChatTable(chatId);
+        addToChatTable(chatId,"pv_chat");
+        createPvChatTable(chatId);
         addPVChatToUsers(chatId,user1,user2);
     }
 
-    private static void addtoChatTable(UUID chatId, String type) throws SQLException {
+    private static void addToChatTable(UUID chatId, String type) throws SQLException {
         Connection conn = connectToDataBase();
         String sql = "INSERT INTO public.chats (id, type) VALUES (?, ?)";
         PreparedStatement ps = conn.prepareStatement(sql);
@@ -255,7 +259,6 @@ public class DataBaseManager {
         return messages;
     }
 
-
     public static List<Chat> getUserChats(String username) throws SQLException {
         Connection conn = connectToDataBase();
         String tableName = "users.user_" + username;
@@ -291,5 +294,60 @@ public class DataBaseManager {
         ps.close();
         conn.close();
         return chats;
+    }
+
+    public static void addNewChannel(Channel channel) throws SQLException {
+        addToChatTable(channel.getId(),"channel");
+        addChannelToChannelTable(channel);
+        createChannelMessageTable(channel.getId());
+        createChannelUserTable(channel.getId());
+        addUserToChannel(channel,"creator");
+    }
+
+    private static void addUserToChannel(Channel channel,String role) throws SQLException {
+        Connection conn = connectToDataBase();
+        String tableName = "channels.users_" + channel.getId().toString().replace("-","_");
+        String query = "INSERT INTO " + tableName + " values (?,?,?)";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setString(1,channel.getCreator());
+        ps.setString(2,role);
+        ps.setDate(3,java.sql.Date.valueOf(LocalDate.now()));
+        ps.executeUpdate();
+        ps.close();
+        conn.close();
+    }
+
+    private static void createChannelUserTable(UUID channel) throws SQLException {
+        Connection conn = connectToDataBase();
+        String tableName = "channels.users_" + channel.toString().replace("-","_");
+        String query = "CREATE TABLE "+ tableName + " (username text PRIMARY KEY , role text, subdate date,FOREIGN KEY (username) REFERENCES public.users(username))";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.executeUpdate();
+        ps.close();
+        conn.close();
+    }
+
+    private static void createChannelMessageTable(UUID channel) throws SQLException {
+        Connection conn = connectToDataBase();
+        String tableName = "channels.messages_" + channel.toString().replace("-","_");
+        String query = "CREATE TABLE "+ tableName + " ( id uuid PRIMARY KEY , sender text, message text, datetime date, FOREIGN KEY (sender) REFERENCES public.users(username))";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.executeUpdate();
+        ps.close();
+        conn.close();
+    }
+
+    public static void addChannelToChannelTable(Channel channel) throws SQLException {
+        Connection conn = connectToDataBase();
+        String sql = "INSERT INTO public.channels (id, name, description, publicity,creator) VALUES (?,?,?,?,?)";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setObject(1,channel.getId());
+        ps.setString(2,channel.getName(null));
+        ps.setString(3,channel.getDescription());
+        ps.setBoolean(4,channel.getPublicity());
+        ps.setString(5,channel.getCreator());
+        ps.executeUpdate();
+        ps.close();
+        conn.close();
     }
 }
