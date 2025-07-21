@@ -16,7 +16,8 @@ import org.backrooms.backroom_messenger.entity.PrivateUser;
         @JsonSubTypes.Type(value = SignupRequest.class, name = "signupRequest"),
         @JsonSubTypes.Type(value = SearchRequest.class, name = "searchRequest"),
         @JsonSubTypes.Type(value = NewChatRequest.class, name = "newChatRequest"),
-        @JsonSubTypes.Type(value = SendMessageRequest.class, name = "sendMessageRequest")
+        @JsonSubTypes.Type(value = SendMessageRequest.class, name = "sendMessageRequest"),
+        @JsonSubTypes.Type(value = NewChannelRequest.class, name = "newChannelRequest")
 
 })
 

@@ -1,8 +1,6 @@
 package org.backrooms.backroom_messenger.server;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import org.backrooms.backroom_messenger.entity.*;
@@ -33,6 +31,7 @@ public class ClientHandler implements Runnable {
     DataInputStream in;
     DataOutputStream out;
     ObjectMapper mapper = new ObjectMapper();
+
     public ClientHandler(Socket socket) throws IOException {
         this.socket = socket;
         in = new DataInputStream(socket.getInputStream());
@@ -64,7 +63,15 @@ public class ClientHandler implements Runnable {
             checkChat(ncr);
         }else if(sr instanceof SendMessageRequest smr){
             sendMessage(smr);
+        }else if(sr instanceof NewChannelRequest ncr){
+            createChannel(ncr);
         }
+    }
+
+    private void createChannel(NewChannelRequest ncr) throws SQLException {
+        Channel channel = ncr.getChannel();
+        DataBaseManager.addNewChannel(channel);
+
     }
 
     private void sendMessage(SendMessageRequest smr) throws SQLException {

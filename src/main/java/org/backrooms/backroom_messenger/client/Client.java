@@ -27,6 +27,7 @@ public class Client  {
     static Socket socket;
     static DataInputStream dis;
     static DataOutputStream dos;
+    static int sender;
 
     public static void initializeClient() throws IOException {
         socket = new Socket("localhost",8888);
@@ -36,13 +37,14 @@ public class Client  {
 
 
     //for GUI
-    public static void openChat(Chat chat){
+    public static void openChat(Chat chat,int sender){
+        Client.sender = sender;
         if (chat instanceof PvChat pv) {
-            if(loggedUser.getUsername().equals(pv.getUser1().getUsername())){
+            if (loggedUser.getUsername().equals(pv.getUser1().getUsername())) {
                 startChat(pv.getUser2());
             } else if (loggedUser.getUsername().equals(pv.getUser2().getUsername())) {
                 startChat(pv.getUser1());
-            }else{
+            } else {
                 System.out.println("what the fuck??");
             }
         }
@@ -103,6 +105,20 @@ public class Client  {
         sendRequest(sr);
     }
 
+    //for GUI
+    public static void createChannel(String name,String description,boolean publicOrPrivate){
+        Channel newChannel = new Channel(UUID.randomUUID(),name,description,publicOrPrivate,loggedUser.getUsername());
+        try {
+            mapper.registerSubtypes(new NamedType(Channel.class,"channel"));
+            String message = mapper.writeValueAsString(newChannel);
+            NewChannelRequest ncr = new NewChannelRequest(message,User.changeToPrivate(loggedUser));
+            sendRequest(ncr);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+
 
 
     //calls GUI
@@ -137,6 +153,7 @@ public class Client  {
         if (loggedUser == null){
             String response = dis.readUTF();
             mapper.registerSubtypes(new NamedType(PvChat.class,"PvChat"));
+            mapper.registerSubtypes(new NamedType(Channel.class,"channel"));
             AvailableUserResponse aur = mapper.readValue(response,AvailableUserResponse.class);
             signupLoginCheck(aur);
         }
