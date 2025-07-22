@@ -16,6 +16,11 @@ public class ClientReceiverGUI {
     }
 
 
+    public static void openChatInSearch(Chat chat){
+        SearchPageController.openChatInSearchResult(chat);
+    }
+
+
     public static void addReceivedMessage(Message message){
         if(PvChatPageController.getChat().getUserName(PvChatPageController.getUser()).equals(message.getSender())){
             PvChatPageController.saveReceivedMessage(message);

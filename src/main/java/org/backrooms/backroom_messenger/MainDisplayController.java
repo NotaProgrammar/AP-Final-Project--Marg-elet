@@ -11,9 +11,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import org.backrooms.backroom_messenger.client.Client;
-import org.backrooms.backroom_messenger.entity.Chat;
-import org.backrooms.backroom_messenger.entity.PvChat;
-import org.backrooms.backroom_messenger.entity.User;
+import org.backrooms.backroom_messenger.entity.*;
 
 import java.io.IOException;
 import java.net.URL;
@@ -72,6 +70,14 @@ public class MainDisplayController implements Initializable {
                             if(selectedChat instanceof PvChat){
                                 goToPvChatPage(event, selectedChat);
                             }
+                            if(selectedChat instanceof Channel)
+                            {
+                                goToChannelPage(event, selectedChat);
+                            }
+                            if(selectedChat instanceof Group)
+                            {
+                                goToGroupPage(event, selectedChat);
+                            }
                         } catch (IOException | InterruptedException e) {
                             throw new RuntimeException(e);
                         }
@@ -93,8 +99,38 @@ public class MainDisplayController implements Initializable {
     }
 
 
+    public void goToChannelPage(ActionEvent event, Chat chat) throws IOException, InterruptedException {
+        Client.openChat(chat, 1);
+        while(chosenChat == null){
+            Thread.sleep(100);
+        }
+        FXMLLoader channelLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("ChannelChatPage.fxml"));
+        Scene scene = new Scene(channelLoader.load(), 900, 550);
+        ChannelChatPageController ccpc = channelLoader.getController();
+        ccpc.setUserAndChat(user, (Channel) chosenChat);
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(scene);
+        stage.show();
+    }
+
+
+    public void goToGroupPage(ActionEvent event, Chat chat) throws InterruptedException, IOException {
+        Client.openChat(chat, 1);
+        while(chosenChat == null){
+            Thread.sleep(100);
+        }
+        FXMLLoader groupLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("GroupChatPahe.fxml"));
+        Scene scene = new Scene(groupLoader.load(), 900, 550);
+        GroupChatPageController gcpc = groupLoader.getController();
+        gcpc.setUserAndChat(user, (Group) chosenChat);
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(scene);
+        stage.show();
+    }
+
+
     public void goToPvChatPage(ActionEvent event, Chat chat) throws IOException, InterruptedException {
-        Client.openChat(chat);
+        Client.openChat(chat, 1);
         while(chosenChat == null){
             Thread.sleep(100);
         }
@@ -129,7 +165,7 @@ public class MainDisplayController implements Initializable {
         FXMLLoader searchLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("SearchPage.fxml"));
         Scene scene = new Scene(searchLoader.load(), 900, 550);
         SearchPageController spc = searchLoader.getController();
-        spc.setChatList(searchedChatList);
+        spc.setChatList(searchedChatList, user);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(scene);
         stage.show();
