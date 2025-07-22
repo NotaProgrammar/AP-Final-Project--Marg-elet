@@ -106,7 +106,7 @@ public class Client  {
     }
 
     //for GUI
-    public static void createChannel(String name,String description,boolean publicOrPrivate){
+    public static Channel createChannel(String name,String description,boolean publicOrPrivate){
         Channel newChannel = new Channel(UUID.randomUUID(),name,description,publicOrPrivate,loggedUser.getUsername());
         try {
             mapper.registerSubtypes(new NamedType(Channel.class,"channel"));
@@ -116,7 +116,15 @@ public class Client  {
         } catch (Exception e) {
             System.out.println(e);
         }
+        return newChannel;
     }
+
+    //for GUI
+    public static void Subscribe(Channel channel){
+
+    }
+
+    //for GUI
 
 
 

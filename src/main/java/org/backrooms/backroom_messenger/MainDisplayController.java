@@ -36,6 +36,7 @@ public class MainDisplayController implements Initializable {
             chatListView.getItems().clear();
             chatListView.getItems().setAll(user.getChats());
         }
+        chosenChat = null;
     }
 
 

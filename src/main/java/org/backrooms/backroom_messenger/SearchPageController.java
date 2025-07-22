@@ -131,6 +131,8 @@ public class SearchPageController implements Initializable {
     public void setChatList(List<Chat> chatList, User user) {
         this.chatList.addAll(chatList);
         this.user = user;
+        chatListView.getItems().clear();
+        chatListView.getItems().setAll(chatList);
     }
 
 
