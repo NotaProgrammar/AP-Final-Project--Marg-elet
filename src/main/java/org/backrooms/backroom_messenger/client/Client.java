@@ -123,7 +123,6 @@ public class Client  {
 
     //calls GUI
     static void userListHandle(SearchedUsersListResponse sulr) {
-        Scanner scn = new Scanner(System.in);
         List<Chat> chats = sulr.getChats();
         ClientReceiverGUI.searchResult(chats);
     }

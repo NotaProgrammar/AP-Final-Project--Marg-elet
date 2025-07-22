@@ -136,6 +136,9 @@ public class ClientHandler implements Runnable {
         List<Chat> chats = new ArrayList<>();
         List<PrivateUser> searchedUsers = DataBaseManager.searchUser(searched);
         for(PrivateUser pu : searchedUsers){
+            if(pu.getUsername().equals(activeUser.getUsername())){
+                continue;
+            }
             PvChat pv = new PvChat(null,pu,searchRequest.getSender());
             chats.add(pv);
         }

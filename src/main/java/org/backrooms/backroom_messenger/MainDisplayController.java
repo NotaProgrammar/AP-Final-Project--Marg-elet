@@ -15,12 +15,13 @@ import org.backrooms.backroom_messenger.entity.*;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
 public class MainDisplayController implements Initializable {
     private User user = null;
-    private static List<Chat> searchedChatList = null;
+    private static List<Chat> searchedChatList = new ArrayList<>();
     private static Chat chosenChat = null;
 
     @FXML
@@ -163,12 +164,18 @@ public class MainDisplayController implements Initializable {
             Thread.sleep(100);
         }
         FXMLLoader searchLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("SearchPage.fxml"));
-        Scene scene = new Scene(searchLoader.load(), 900, 550);
-        SearchPageController spc = searchLoader.getController();
-        spc.setChatList(searchedChatList, user);
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(scene);
-        stage.show();
+        try{
+            Scene scene = new Scene(searchLoader.load(), 900, 550);
+            SearchPageController spc = searchLoader.getController();
+            spc.setChatList(searchedChatList, user);
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
+        }catch(Exception e){
+            System.out.println(e);
+        }
+
+
     }
 
 

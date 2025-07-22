@@ -202,7 +202,8 @@ public class DataBaseManager {
         conn.close();
         addToChatTable(chatId,"pv_chat");
         createPvChatTable(chatId);
-        addPVChatToUsers(chatId,user1,user2);
+        addChatToUsers(chatId,user1,user2,"pv_chat");
+        addChatToUsers(chatId,user2,user1,"pv_chat");
     }
 
     private static void addToChatTable(UUID chatId, String type) throws SQLException {
@@ -216,24 +217,16 @@ public class DataBaseManager {
         conn.close();
     }
 
-    private static void addPVChatToUsers(UUID chatId,String user1,String user2) throws SQLException {
+    private static void addChatToUsers(UUID chatId, String user, String name, String type) throws SQLException {
         Connection conn = connectToDataBase();
-        String tableName = "users.user_" + user1;
-        String sql1 = "INSERT INTO " + tableName + " (id, name, type) VALUES (?, ?, ?)";
-        tableName = "users.user_" + user2;
-        String sql2 = "INSERT INTO " + tableName + " (id, name, type) VALUES (?, ?, ?)";
-        PreparedStatement ps1 = conn.prepareStatement(sql1);
-        ps1.setObject(1, chatId);
-        ps1.setString(2, user2);
-        ps1.setString(3, "pv_chat");
-        ps1.executeUpdate();
-        ps1.close();
-        PreparedStatement ps2 = conn.prepareStatement(sql2);
-        ps2.setObject(1, chatId);
-        ps2.setString(2, user1);
-        ps2.setString(3, "pv_chat");
-        ps2.executeUpdate();
-        ps2.close();
+        String tableName = "users.user_" + user;
+        String sql = "INSERT INTO " + tableName + " (id, name, type) VALUES (?, ?, ?)";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setObject(1, chatId);
+        ps.setString(2, name);
+        ps.setString(3, type);
+        ps.executeUpdate();
+        ps.close();
         conn.close();
     }
 
@@ -301,6 +294,7 @@ public class DataBaseManager {
         addChannelToChannelTable(channel);
         createChannelMessageTable(channel.getId());
         createChannelUserTable(channel.getId());
+        addChatToUsers(channel.getId(), channel.getCreator() ,channel.getName(null),"channel");
         addUserToChannel(channel,"creator");
     }
 

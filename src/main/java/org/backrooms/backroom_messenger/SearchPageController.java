@@ -18,12 +18,13 @@ import org.backrooms.backroom_messenger.entity.*;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
 public class SearchPageController implements Initializable {
 
-    private List<Chat> chatList;
+    private List<Chat> chatList = new ArrayList<>();
     private User user;
     private static Chat chosenChat;
 
