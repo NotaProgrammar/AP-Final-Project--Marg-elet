@@ -344,4 +344,36 @@ public class DataBaseManager {
         ps.close();
         conn.close();
     }
+
+    public static void joinChannel(Channel channel, User user) throws SQLException {
+        addChatToUsers(channel.getId(),user.getUsername(),channel.getName(null),"channel");
+        addUserToChannel(channel,"normal");
+    }
+
+    public static void leaveChannel(Channel channel, User user) throws SQLException {
+        deleteUsersFromChat(channel.getId(),user.getUsername());
+        deleteChatFromUsers(channel.getId(),user.getUsername());
+    }
+
+    private static void deleteChatFromUsers(UUID id, String username) throws SQLException {
+        Connection conn = connectToDataBase();
+        String tableName = "users.user_" + username;
+        String querry = "DELETE FROM " + tableName + " WHERE username = ?";
+        PreparedStatement ps = conn.prepareStatement(querry);
+        ps.setString(1,username);
+        ps.executeUpdate();
+        ps.close();
+        conn.close();
+    }
+
+    private static void deleteUsersFromChat(UUID id, String username) throws SQLException {
+        Connection conn = connectToDataBase();
+        String tableName = "channels.users_" + id.toString().replace("-","_");
+        String querry = "DELETE FROM " + tableName + " WHERE username = ?";
+        PreparedStatement ps = conn.prepareStatement(querry);
+        ps.setString(1,username);
+        ps.executeUpdate();
+        ps.close();
+        conn.close();
+    }
 }

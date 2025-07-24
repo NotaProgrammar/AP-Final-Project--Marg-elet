@@ -1,10 +1,12 @@
 package org.backrooms.backroom_messenger.client;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import org.backrooms.backroom_messenger.ClientReceiverGUI;
 import org.backrooms.backroom_messenger.entity.*;
 import org.backrooms.backroom_messenger.response_and_requests.serverRequest.*;
 import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.AvailableUserResponse;
+import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.ChatModifyResponse;
 import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.ChatOpenedResponse;
 import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.SearchedUsersListResponse;
 import java.io.DataInputStream;
@@ -121,6 +123,20 @@ public class Client  {
 
     //for GUI
     public static void Subscribe(Channel channel){
+        try {
+            mapper.registerSubtypes(new NamedType(Channel.class,"channel"));
+            String message = mapper.writeValueAsString(channel);
+            SubRequest sr = new SubRequest(message,User.changeToPrivate(loggedUser));
+            sendRequest(sr);
+            for(Chat chat : loggedUser.getChats()){
+                if(chat.getId().equals(channel.getId())){
+                    loggedUser.getChats().remove(chat);
+                }
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
@@ -136,8 +152,7 @@ public class Client  {
     }
 
     //calls GUI
-    public static void openChat(ChatOpenedResponse cor){
-        Chat newChat = cor.getChat();
+    public static void openChat(Chat newChat){
         boolean flag = false;
         for(Chat chat : loggedUser.getChats()){
             if(chat.getId().equals(newChat.getId())){
@@ -152,8 +167,6 @@ public class Client  {
         }else if(sender==2){
             ClientReceiverGUI.openChatInSearch(newChat);
         }
-
-
     }
 
 
@@ -196,5 +209,31 @@ public class Client  {
         ClientReceiver cr = new ClientReceiver(dis);
         Thread tr = new Thread(cr);
         tr.start();
+    }
+
+    public static void chatModifyHandle(ChatModifyResponse cmr){
+        if(cmr.isSuccess()){
+            switch(cmr.getType()){
+                case "pv_chat":
+                    if(cmr.getRole() == "sender"){
+                        openChat(cmr.getChat());
+                    }else{
+                        addChat(cmr.getChat());
+                    }
+
+                    break;
+                case "channel":
+                    addChat(cmr.getChat());
+            }
+        }else{
+
+        }
+
+    }
+
+
+
+    private static void addChat(Chat chat) {
+        loggedUser.getChats().add(chat);
     }
 }

@@ -1,14 +1,12 @@
 package org.backrooms.backroom_messenger.server;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import org.backrooms.backroom_messenger.entity.*;
 import org.backrooms.backroom_messenger.response_and_requests.serverRequest.*;
-import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.AvailableUserResponse;
-import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.ChatOpenedResponse;
-import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.ReceivedMessage;
-import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.SearchedUsersListResponse;
+import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.*;
 
 
 import java.io.DataInputStream;
@@ -65,13 +63,53 @@ public class ClientHandler implements Runnable {
             sendMessage(smr);
         }else if(sr instanceof NewChannelRequest ncr){
             createChannel(ncr);
+        }else if(sr instanceof SubRequest sur){
+            subCheck(sur);
         }
+    }
+
+    private void subCheck(SubRequest sur) throws Exception {
+        Channel channel = sur.getChannel();
+        boolean flag = false;
+        for(Chat chat : activeUser.getChats()){
+            if(channel.getId().equals(chat.getId())){
+                activeUser.getChats().remove(chat);
+                flag = true;
+            }
+        }
+        if(!flag){
+            joinChannel(channel);
+        }else{
+            leaveChannel(channel);
+        }
+    }
+
+    private void leaveChannel(Channel channel) throws Exception {
+        DataBaseManager.leaveChannel(channel,activeUser);
+        String message = "remove##channel##" + mapper.writeValueAsString(channel);
+        ChatModifyResponse cmr = new ChatModifyResponse(message);
+        mapper.registerSubtypes(new NamedType(ChatModifyResponse.class, "chatModifyResponse"));
+        String json = mapper.writeValueAsString(cmr);
+        out.writeUTF(json);
+        out.flush();
+    }
+
+    private void joinChannel(Channel channel) throws Exception {
+        DataBaseManager.joinChannel(channel,activeUser);
+        activeUser.getChats().add(channel);
+        channel.getUsers().put(User.changeToPrivate(activeUser),"normal");
+        String message = "add##channel##" + mapper.writeValueAsString(channel)+"##normal";
+        ChatModifyResponse cmr = new ChatModifyResponse(message);
+        mapper.registerSubtypes(new NamedType(ChatModifyResponse.class, "chatModifyResponse"));
+        String json = mapper.writeValueAsString(cmr);
+        out.writeUTF(json);
+        out.flush();
     }
 
     private void createChannel(NewChannelRequest ncr) throws SQLException {
         Channel channel = ncr.getChannel();
         DataBaseManager.addNewChannel(channel);
-
+        activeUser.getChats().add(channel);
     }
 
     private void sendMessage(SendMessageRequest smr) throws SQLException {
@@ -198,11 +236,18 @@ public class ClientHandler implements Runnable {
     private void openChat(PvChat pv) throws IOException, SQLException {
         pv.getMessage().addAll(DataBaseManager.returnMessages(pv));
         mapper.registerSubtypes(new NamedType(PvChat.class,"PvChat"));
-        mapper.registerSubtypes(new NamedType(ChatOpenedResponse.class, "chatOpenedResponse"));
-        ChatOpenedResponse cor = new ChatOpenedResponse(mapper.writeValueAsString(pv));
-        String responseMessage = mapper.writeValueAsString(cor);
-        out.writeUTF(responseMessage);
+        String message = "add##pv_chat##" + mapper.writeValueAsString(pv) + "##sender";
+        ChatModifyResponse cmr = new ChatModifyResponse(message);
+        mapper.registerSubtypes(new NamedType(ChatModifyResponse.class, "chatModifyResponse"));
+        String response = mapper.writeValueAsString(cmr);
+        out.writeUTF(response);
         out.flush();
+
+        String message2 = "add##pv_chat##" + mapper.writeValueAsString(pv) + "##receiver";
+        ChatModifyResponse cmr2 = new ChatModifyResponse(message2);
+        List<String> usernames = new ArrayList<>();
+        usernames.add(pv.getUserName(activeUser));
+        Server.sendResponse(cmr2,usernames);
     }
 
     private UUID createChat(String user1, String user2) throws SQLException {
@@ -213,5 +258,17 @@ public class ClientHandler implements Runnable {
 
     public User getActiveUser(){
         return activeUser;
+    }
+
+    public void sendResponse(ServerResponse response) {
+        String responseString = null;
+        try {
+            responseString = mapper.writeValueAsString(response);
+            out.writeUTF(responseString);
+            out.flush();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }
