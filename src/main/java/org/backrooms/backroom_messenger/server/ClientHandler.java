@@ -97,7 +97,8 @@ public class ClientHandler implements Runnable {
     private void joinChannel(Channel channel) throws Exception {
         DataBaseManager.joinChannel(channel,activeUser);
         activeUser.getChats().add(channel);
-        channel.getUsers().put(User.changeToPrivate(activeUser),"normal");
+        channel.getUsers().add(User.changeToPrivate(activeUser));
+        channel.getRoles().add("normal");
         String message = "add##channel##" + mapper.writeValueAsString(channel)+"##normal";
         ChatModifyResponse cmr = new ChatModifyResponse(message);
         mapper.registerSubtypes(new NamedType(ChatModifyResponse.class, "chatModifyResponse"));
@@ -110,6 +111,8 @@ public class ClientHandler implements Runnable {
         Channel channel = ncr.getChannel();
         DataBaseManager.addNewChannel(channel);
         activeUser.getChats().add(channel);
+        channel.getUsers().add(User.changeToPrivate(activeUser));
+        channel.getRoles().add("creator");
     }
 
     private void sendMessage(SendMessageRequest smr) throws SQLException {

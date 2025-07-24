@@ -49,6 +49,15 @@ public class User extends PrivateUser{
         return privateUser;
     }
 
+    public boolean isSubed(Channel channel){
+        for(Chat chat : chats){
+            if(chat.getId().equals(channel.getId())){
+                return true;
+            }
+        }
+        return false;
+    }
+
 
 
 }

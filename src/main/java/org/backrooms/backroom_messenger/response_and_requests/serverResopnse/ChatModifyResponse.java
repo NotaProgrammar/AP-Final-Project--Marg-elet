@@ -26,7 +26,7 @@ public class ChatModifyResponse extends ServerResponse {
         mapper.registerSubtypes(new NamedType(Channel.class, "channel"));
         try{
             String[] tokens = message.split("##");
-            if(tokens[0] == "add"){
+            if(tokens[0].equals("add")){
                 success = true;
                 type = tokens[1];
                 switch(type){
@@ -38,7 +38,7 @@ public class ChatModifyResponse extends ServerResponse {
                         chat = mapper.readValue(tokens[2],Channel.class);
                         role = tokens[3];
                 }
-            }else if(tokens[0] == "remove"){
+            }else if(tokens[0].equals("remove")){
                 success = false;
                 type = tokens[1];
                 switch(type){

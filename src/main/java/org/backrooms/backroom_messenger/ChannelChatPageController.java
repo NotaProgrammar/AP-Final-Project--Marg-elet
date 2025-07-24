@@ -50,7 +50,7 @@ public class ChannelChatPageController {
         stage.show();
     }
 
-
+    
     @FXML
     public void sendMessage(ActionEvent event) {
         String content = messageField.getText().trim();
