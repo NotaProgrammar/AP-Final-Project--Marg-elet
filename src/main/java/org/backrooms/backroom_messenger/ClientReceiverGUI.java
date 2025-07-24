@@ -11,7 +11,7 @@ public class ClientReceiverGUI {
         MainDisplayController.searchResult(chats);
     }
 
-    public static void
+    //public static void
 
     public static void openPvChat(Chat chat){
         MainDisplayController.pvChatResult(chat);
