@@ -31,12 +31,12 @@ public class CreatChannelPageController {
     private RadioButton privateChannel;
 
 
-    public void creat(ActionEvent event){
+    public void create(ActionEvent event){
         String channelName = name.getText();
         String channelDescription = description.getText();
+        if(description.getText().isEmpty() ){}
         channel = Client.createChannel(channelName, channelDescription, publicChannel);
         user.getChats().add(channel);
-
     }
 
 

@@ -9,16 +9,17 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.backrooms.backroom_messenger.CreatChannelPageController">
    <children>
-      <Label layoutX="82.0" layoutY="72.0" text="Name of the channel" />
+      <Label layoutX="82.0" layoutY="72.0" prefHeight="18.0" prefWidth="130.0" text="Name of the channel  : " />
       <TextField fx:id="name" layoutX="226.0" layoutY="68.0" />
-      <Button layoutX="278.0" layoutY="340.0" mnemonicParsing="false" onAction="#creat" text="Creat" />
+      <Button layoutX="278.0" layoutY="340.0" mnemonicParsing="false" onAction="#create" text="Create" />
       <Label fx:id="descriptionField" layoutX="82.0" layoutY="134.0" text="Description" />
-      <TextField fx:id="description" layoutX="166.0" layoutY="130.0" prefHeight="25.0" prefWidth="424.0" />
+      <TextField fx:id="description" layoutX="166.0" layoutY="130.0" prefHeight="26.0" prefWidth="363.0" />
       <RadioButton fx:id="publicity" layoutX="273.0" layoutY="210.0" mnemonicParsing="false" onAction="#setPublicityOfChannel" text="public">
          <toggleGroup>
             <ToggleGroup fx:id="PublicOrPrivate" />
          </toggleGroup>
       </RadioButton>
       <RadioButton fx:id="privateChannel" layoutX="272.0" layoutY="234.0" mnemonicParsing="false" onAction="#setPublicityOfChannel" text="private" />
+      <Label layoutX="287.0" layoutY="286.0" text="Label" />
    </children>
 </AnchorPane>
