@@ -2,6 +2,7 @@ package org.backrooms.backroom_messenger.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -11,9 +12,7 @@ public class Channel extends Chat{
     @JsonProperty
     private String description;
     @JsonProperty
-    private List<PrivateUser> users;
-    @JsonProperty
-    private List<PrivateUser> admins;
+    private HashMap<PrivateUser,String> users = new HashMap<>();
     @JsonProperty
     private String creator;
     @JsonProperty
@@ -42,12 +41,8 @@ public class Channel extends Chat{
         return description;
     }
 
-    public List<PrivateUser> getUsers() {
+    public HashMap<PrivateUser, String> getUsers() {
         return users;
-    }
-
-    public List<PrivateUser> getAdmins() {
-        return admins;
     }
 
     public boolean getPublicity() {

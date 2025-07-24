@@ -4,10 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import org.backrooms.backroom_messenger.ClientReceiverGUI;
 import org.backrooms.backroom_messenger.entity.PvChat;
-import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.ChatOpenedResponse;
-import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.ReceivedMessage;
-import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.SearchedUsersListResponse;
-import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.ServerResponse;
+import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.*;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -43,8 +40,8 @@ public class ClientReceiver implements Runnable {
     private static void responseCheck(ServerResponse sr){
         if(sr instanceof SearchedUsersListResponse sulr){
             userListHandle(sulr);
-        }else if(sr instanceof ChatOpenedResponse cor){
-            openChat(cor);
+        }else if(sr instanceof ChatModifyResponse cmr){
+            Client.chatModifyHandle(cmr);
         }else if(sr instanceof ReceivedMessage rm){
             ClientReceiverGUI.addReceivedMessage(rm.getMessageObject());
         }

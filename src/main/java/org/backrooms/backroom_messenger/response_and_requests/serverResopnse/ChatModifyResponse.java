@@ -1,0 +1,70 @@
+package org.backrooms.backroom_messenger.response_and_requests.serverResopnse;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.NamedType;
+import org.backrooms.backroom_messenger.entity.Channel;
+import org.backrooms.backroom_messenger.entity.Chat;
+import org.backrooms.backroom_messenger.entity.PvChat;
+
+public class ChatModifyResponse extends ServerResponse {
+    @JsonProperty
+    private boolean success;
+    @JsonProperty
+    private Chat chat;
+    @JsonProperty
+    private String type;
+    @JsonProperty
+    private String role;
+
+
+    ObjectMapper mapper = new ObjectMapper();
+
+    public ChatModifyResponse(@JsonProperty("message") String message) {
+        super(message);
+        mapper.registerSubtypes(new NamedType(PvChat.class, "PvChat"));
+        mapper.registerSubtypes(new NamedType(Channel.class, "channel"));
+        try{
+            String[] tokens = message.split("##");
+            if(tokens[0] == "add"){
+                success = true;
+                type = tokens[1];
+                switch(type){
+                    case "pv_chat":
+                        chat = mapper.readValue(tokens[2],PvChat.class);
+                        role = tokens[3];
+                        break;
+                    case "channel":
+                        chat = mapper.readValue(tokens[2],Channel.class);
+                        role = tokens[3];
+                }
+            }else if(tokens[0] == "remove"){
+                success = false;
+                type = tokens[1];
+                switch(type){
+                    case "pv_chat":
+                        chat = mapper.readValue(tokens[2],PvChat.class);
+                        break;
+                    case "channel":
+                        chat = mapper.readValue(tokens[2],Channel.class);
+                }
+            }
+        }catch(Exception e){
+            System.out.println(e);
+        }
+
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
+    public String getType() {
+        return type;
+    }
+    public String getRole() {
+        return role;
+    }
+    public Chat getChat() {
+        return chat;
+    }
+}

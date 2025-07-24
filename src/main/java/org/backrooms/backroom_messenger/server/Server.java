@@ -3,6 +3,7 @@ package org.backrooms.backroom_messenger.server;
 
 import org.backrooms.backroom_messenger.entity.Chat;
 import org.backrooms.backroom_messenger.entity.Message;
+import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.ServerResponse;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -33,14 +34,26 @@ public class Server {
         for(ClientHandler clientHandler : onlineClients) {
             try {
                 if(clientHandler.getActiveUser() != null) {
-                    for(Chat chat : clientHandler.getActiveUser().getChats()) {
-                        if( chat.getId().equals(message.getChat()) && ! message.getSender().equals(clientHandler.getActiveUser().getUsername())) {
+                    for (Chat chat : clientHandler.getActiveUser().getChats()) {
+                        if (chat.getId().equals(message.getChat()) && !message.getSender().equals(clientHandler.getActiveUser().getUsername())) {
                             clientHandler.receiveMessage(message);
                         }
                     }
                 }
             } catch (SQLException e) {
                 throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public static void sendResponse(ServerResponse response,List<String> usernames) {
+        for(ClientHandler clientHandler : onlineClients) {
+            if(clientHandler.getActiveUser() != null) {
+                for(String username: usernames) {
+                    if(clientHandler.getActiveUser().getUsername().equals(username)) {
+                        clientHandler.sendResponse(response);
+                    }
+                }
             }
         }
     }

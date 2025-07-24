@@ -14,7 +14,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = AvailableUserResponse.class, name = "availableUserResponse"),
         @JsonSubTypes.Type(value = ChatOpenedResponse.class,name = "chatOpenedResponse"),
         @JsonSubTypes.Type(value = SearchedUsersListResponse.class , name = "searchedUsersListResponse"),
-        @JsonSubTypes.Type(value = ReceivedMessage.class, name = "receivedMessage")
+        @JsonSubTypes.Type(value = ReceivedMessage.class, name = "receivedMessage"),
+        @JsonSubTypes.Type(value = ChatModifyResponse.class,name = "chatModifyResponse")
 })
 
 

@@ -36,9 +36,9 @@ public class PvChat extends Chat{
 
     public String getUserName(PrivateUser user) {
         if(user1.getUsername().equals(user.getUsername())){
-            return user2.getName();
+            return user2.getUsername();
         }else if(user2.getUsername().equals(user.getUsername())){
-            return user1.getName();
+            return user1.getUsername();
         }
         return null;
     }
