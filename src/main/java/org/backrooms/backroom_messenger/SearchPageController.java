@@ -128,6 +128,17 @@ public class SearchPageController implements Initializable {
     }
 
 
+    public void goBack(ActionEvent event) throws IOException {
+        FXMLLoader displayLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("MainDisplay.fxml"));
+        Scene scene = new Scene(displayLoader.load(), 560, 350);
+        MainDisplayController mdc  = displayLoader.getController();
+        mdc.setUser(this.user);
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(scene);
+        stage.show();
+    }
+
+
     public void setChatList(List<Chat> chatList, User user) {
         this.chatList.addAll(chatList);
         this.user = user;
