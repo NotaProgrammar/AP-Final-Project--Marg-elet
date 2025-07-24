@@ -37,7 +37,7 @@ public class ChannelChatPageController {
 
     public void joinChannel(ActionEvent event) {
         //todo : boolean alreadyJoined = یه تابع توی بک باشه که یوزر رو بهش بدم و بگرده اگر یوزر توی چنل بوده
-        boolean alreadyJoined = User.isSubed(chat);
+        boolean alreadyJoined = user.isSubed(chat);
 
         if(alreadyJoined == false) {
             joinNotification.setTextFill(Color.GREEN);

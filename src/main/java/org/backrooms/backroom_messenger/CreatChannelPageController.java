@@ -33,17 +33,18 @@ public class CreatChannelPageController {
     @FXML
     private Label message;
 
-    public void create(ActionEvent event){
+    public void create(ActionEvent event) throws IOException {
         String channelName = name.getText();
         String channelDescription = description.getText();
         if(description.getText().isEmpty() || name.getText().isEmpty()){
             message.setTextFill(Color.RED);
             message.setText("Please Fill All Fields");
-        }
-        else {
+        } else {
             channel = Client.createChannel(channelName, channelDescription, publicChannel);
             user.getChats().add(channel);
+            goToChannelPage(event);
         }
+
     }
 
 

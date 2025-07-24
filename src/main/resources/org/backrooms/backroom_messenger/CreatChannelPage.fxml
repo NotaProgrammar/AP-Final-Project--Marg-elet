@@ -13,7 +13,7 @@
       <Button layoutX="278.0" layoutY="340.0" mnemonicParsing="false" onAction="#create" text="Create" />
       <Label fx:id="descriptionField" layoutX="82.0" layoutY="134.0" text="Description" />
       <TextField fx:id="description" layoutX="166.0" layoutY="130.0" prefHeight="26.0" prefWidth="363.0" />
-      <Label layoutX="287.0" layoutY="286.0" text="        " />
+      <Label fx:id="message" layoutX="287.0" layoutY="286.0" text="        " />
       <CheckBox fx:id="publicity" layoutX="314.0" layoutY="211.0" mnemonicParsing="false" onAction="#setPublicityOfChannel" text="public" />
       <Label layoutX="82.0" layoutY="211.0" text="Do you want the channel to be public?" />
    </children>

@@ -50,6 +50,7 @@ public class Client  {
                 System.out.println("what the fuck??");
             }
         }
+        //todo channel
     }
 
     //for GUI
@@ -215,7 +216,7 @@ public class Client  {
         if(cmr.isSuccess()){
             switch(cmr.getType()){
                 case "pv_chat":
-                    if(cmr.getRole() == "sender"){
+                    if(cmr.getRole().equals("sender")){
                         openChat(cmr.getChat());
                     }else{
                         addChat(cmr.getChat());
