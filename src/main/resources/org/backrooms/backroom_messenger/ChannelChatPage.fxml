@@ -9,12 +9,13 @@
 <AnchorPane prefHeight="561.0" prefWidth="733.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.backrooms.backroom_messenger.ChannelChatPageController">
    <children>
       <Button layoutX="593.0" layoutY="14.0" mnemonicParsing="false" text="channel informaition" />
-      <ListView layoutX="91.0" layoutY="11.0" prefHeight="492.0" prefWidth="491.0" />
-      <Button layoutX="21.0" layoutY="14.0" mnemonicParsing="false" text="go back" />
-      <Button layoutX="641.0" layoutY="457.0" mnemonicParsing="false" text="     " />
-      <Label layoutX="613.0" layoutY="482.0" text="                          " />
+      <ListView fx:id="messageListView" layoutX="91.0" layoutY="47.0" prefHeight="456.0" prefWidth="491.0" />
+      <Button layoutX="21.0" layoutY="14.0" mnemonicParsing="false" onAction="#goBack" text="go back" />
+      <Button layoutX="640.0" layoutY="441.0" mnemonicParsing="false" onAction="#joinChannel" text="     " />
+      <Label fx:id="joinNotification" layoutX="613.0" layoutY="482.0" text="                          " />
       <Label layoutX="23.0" layoutY="521.0" text="message : " />
-      <TextField layoutX="91.0" layoutY="517.0" prefHeight="25.0" prefWidth="536.0" />
-      <Button layoutX="635.0" layoutY="517.0" mnemonicParsing="false" text="send" />
+      <TextField fx:id="messageField" layoutX="91.0" layoutY="517.0" prefHeight="25.0" prefWidth="536.0" />
+      <Button layoutX="635.0" layoutY="517.0" mnemonicParsing="false" onAction="#sendMessage" text="send" />
+      <Label fx:id="channelName" layoutX="323.0" layoutY="18.0" text="      " />
    </children>
 </AnchorPane>
