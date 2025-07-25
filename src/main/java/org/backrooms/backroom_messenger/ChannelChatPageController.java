@@ -66,15 +66,21 @@ public class ChannelChatPageController {
 
     @FXML
     public void joinChannel(ActionEvent event) throws IOException {
-        Client.Subscribe(chat);
-        if (alreadyJoined) {
-            alreadyJoined = false;
-            goBack(event);
-        }else{
-            alreadyJoined = true;
-            joinNotification.setText("You have joined the channel");
-            joinNotification.setTextFill(Color.GREEN);
+        try{
+            Client.Subscribe(chat);
+            if (alreadyJoined) {
+                alreadyJoined = false;
+                goBack(event);
+            }else{
+                alreadyJoined = true;
+                joinNotification.setText("You have joined the channel");
+                joinNotification.setTextFill(Color.GREEN);
+                joinButton.setText("Leave Channel");
+            }
+        }catch(Exception e){
+            System.out.println(e);
         }
+
     }
 
 

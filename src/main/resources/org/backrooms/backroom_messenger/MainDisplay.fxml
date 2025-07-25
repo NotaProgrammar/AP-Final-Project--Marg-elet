@@ -13,7 +13,8 @@
       <Label layoutX="409.0" layoutY="25.0" prefHeight="17.0" prefWidth="64.0" text="TELEGRAM" />
       <Button fx:id="searchButton" layoutX="314.0" layoutY="113.0" mnemonicParsing="false" onAction="#search" text="Search" />
       <TextField fx:id="searchTextField" layoutX="374.0" layoutY="113.0" />
-      <Button layoutX="384.0" layoutY="149.0" mnemonicParsing="false" onAction="#goToCreatChannel" text="Creat new channel" />
-      <Button layoutX="388.0" layoutY="188.0" mnemonicParsing="false" text="Creat new Group" />
+      <Button layoutX="384.0" layoutY="224.0" mnemonicParsing="false" onAction="#goToCreatChannel" text="Creat new channel" />
+      <Button layoutX="387.0" layoutY="258.0" mnemonicParsing="false" text="Creat new Group" />
+      <Label fx:id="searchResult" layoutX="404.0" layoutY="147.0" prefHeight="17.0" prefWidth="64.0" />
    </children>
 </AnchorPane>

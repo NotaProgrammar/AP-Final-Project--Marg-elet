@@ -143,6 +143,7 @@ public class Client  {
             for(Chat chat : loggedUser.getChats()){
                 if(chat.getId().equals(channel.getId())){
                     loggedUser.getChats().remove(chat);
+                    break;
                 }
             }
 
@@ -151,9 +152,6 @@ public class Client  {
         }
 
     }
-
-    //for GUI
-
 
 
 
@@ -230,6 +228,13 @@ public class Client  {
                     addChat(cmr.getChat());
             }
         }else if(cmr.getModification().equals("remove")){
+            switch(cmr.getType()){
+                case "pv_chat":
+                    break;
+                case "channel":
+                    removeChat(cmr.getChat());
+                    break;
+            }
 
         }else if(cmr.getModification().equals("open")){
             openChat(cmr.getChat());
@@ -237,6 +242,14 @@ public class Client  {
 
     }
 
+    private static void removeChat(Chat removingChat) {
+        for(Chat chat : loggedUser.getChats()){
+            if(removingChat.getId().equals(chat.getId())){
+                loggedUser.getChats().remove(chat);
+                break;
+            }
+        }
+    }
 
 
     private static void addChat(Chat newChat) {
@@ -244,6 +257,7 @@ public class Client  {
         for(Chat chat : loggedUser.getChats()){
             if(chat.getId().equals(newChat.getId())){
                 flag = true;
+                break;
             }
         }
         if(!flag){

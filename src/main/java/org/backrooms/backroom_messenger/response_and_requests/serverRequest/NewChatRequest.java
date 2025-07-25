@@ -1,5 +1,6 @@
 package org.backrooms.backroom_messenger.response_and_requests.serverRequest;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -11,6 +12,8 @@ import org.backrooms.backroom_messenger.entity.User;
 public class NewChatRequest extends ServerRequest{
     @JsonProperty
     PrivateUser user;
+
+    @JsonIgnore
     ObjectMapper mapper = new ObjectMapper();
     public NewChatRequest(@JsonProperty("message") String message,@JsonProperty("username") PrivateUser username) {
         super(message, username);

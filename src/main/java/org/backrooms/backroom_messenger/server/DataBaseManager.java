@@ -385,9 +385,9 @@ public class DataBaseManager {
     private static void deleteChatFromUsers(UUID id, String username) throws SQLException {
         Connection conn = connectToDataBase();
         String tableName = "users.user_" + username;
-        String querry = "DELETE FROM " + tableName + " WHERE username = ?";
+        String querry = "DELETE FROM " + tableName + " WHERE id = ?";
         PreparedStatement ps = conn.prepareStatement(querry);
-        ps.setString(1,username);
+        ps.setObject(1,id);
         ps.executeUpdate();
         ps.close();
         conn.close();

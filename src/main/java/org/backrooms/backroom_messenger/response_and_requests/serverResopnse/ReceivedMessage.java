@@ -10,6 +10,7 @@ public class ReceivedMessage extends ServerResponse{
     @JsonProperty
     private Message message;
 
+    @JsonIgnore
     ObjectMapper mapper = new ObjectMapper();
     public ReceivedMessage(@JsonProperty("message") String message) {
         super(message);

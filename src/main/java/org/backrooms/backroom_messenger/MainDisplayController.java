@@ -9,6 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.backrooms.backroom_messenger.client.Client;
 import org.backrooms.backroom_messenger.entity.*;
@@ -23,11 +24,14 @@ public class MainDisplayController implements Initializable {
     private User user = null;
     private static List<Chat> searchedChatList = new ArrayList<>();
     private static Chat chosenChat = null;
+    private static boolean chatFound = false;
 
     @FXML
     private ListView<Chat> chatListView;
     @FXML
     private TextField searchTextField;
+    @FXML
+    private Label searchResult;
 
     @FXML
     public void setUser(User user) {
@@ -155,28 +159,33 @@ public class MainDisplayController implements Initializable {
     public static void searchResult(List<Chat> chats){
         searchedChatList.clear();
         searchedChatList.addAll(chats);
+        chatFound = true;
     }
 
 
     public void search(ActionEvent event) throws Exception {
+        chatFound = false;
         String searchText = searchTextField.getText();
         Client.search(searchText);
-        while(searchedChatList.isEmpty()){
+        while(!chatFound){
             Thread.sleep(100);
         }
-        FXMLLoader searchLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("SearchPage.fxml"));
-        try{
-            Scene scene = new Scene(searchLoader.load(), 900, 550);
-            SearchPageController spc = searchLoader.getController();
-            spc.setChatList(searchedChatList, user);
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(scene);
-            stage.show();
-        }catch(Exception e){
-            System.out.println(e);
+        if(searchedChatList.isEmpty()){
+            searchResult.setTextFill(Color.RED);
+            searchResult.setText("Nothing Found");
+        }else{
+            FXMLLoader searchLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("SearchPage.fxml"));
+            try{
+                Scene scene = new Scene(searchLoader.load(), 900, 550);
+                SearchPageController spc = searchLoader.getController();
+                spc.setChatList(searchedChatList, user);
+                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                stage.setScene(scene);
+                stage.show();
+            }catch(Exception e){
+                System.out.println(e);
+            }
         }
-
-
     }
 
 

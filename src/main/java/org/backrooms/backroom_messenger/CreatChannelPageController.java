@@ -41,6 +41,8 @@ public class CreatChannelPageController {
             message.setText("Please Fill All Fields");
         } else {
             channel = Client.createChannel(channelName, channelDescription, publicChannel);
+            channel.getUsers().add(User.changeToPrivate(user));
+            channel.getRoles().add("creator");
             user.getChats().add(channel);
             goToChannelPage(event);
         }

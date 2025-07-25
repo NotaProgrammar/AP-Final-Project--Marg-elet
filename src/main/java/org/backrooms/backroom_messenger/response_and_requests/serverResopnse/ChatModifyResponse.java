@@ -1,5 +1,6 @@
 package org.backrooms.backroom_messenger.response_and_requests.serverResopnse;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
@@ -18,6 +19,7 @@ public class ChatModifyResponse extends ServerResponse {
     private String role;
 
 
+    @JsonIgnore
     ObjectMapper mapper = new ObjectMapper();
 
     public ChatModifyResponse(@JsonProperty("message") String message) {

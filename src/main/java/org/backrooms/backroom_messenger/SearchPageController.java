@@ -43,6 +43,7 @@ public class SearchPageController implements Initializable {
                 nameLabel = new Label();
                 openButton = new Button("Open Chat");
                 openButton.setOnAction(event -> {
+                    chosenChat = null;
                     Chat chat = getItem(); // گرفتن آیتم مربوط به این سلول
                     if (chat != null) {
                         try {

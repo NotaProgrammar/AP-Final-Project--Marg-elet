@@ -1,5 +1,6 @@
 package org.backrooms.backroom_messenger.response_and_requests.serverRequest;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,6 +13,7 @@ public class SubRequest extends ServerRequest{
     @JsonProperty
     private Channel channel;
 
+    @JsonIgnore
     ObjectMapper mapper = new ObjectMapper();
 
     public SubRequest(@JsonProperty("message") String message,@JsonProperty("sender") PrivateUser sender) {

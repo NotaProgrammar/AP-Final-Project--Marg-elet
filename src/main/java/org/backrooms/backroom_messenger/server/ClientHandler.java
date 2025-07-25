@@ -96,6 +96,7 @@ public class ClientHandler implements Runnable {
             if(channel.getId().equals(chat.getId())){
                 activeUser.getChats().remove(chat);
                 flag = true;
+                break;
             }
         }
         if(!flag){

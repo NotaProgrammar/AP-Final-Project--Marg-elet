@@ -1,6 +1,7 @@
 package org.backrooms.backroom_messenger.response_and_requests.serverResopnse;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -20,6 +21,7 @@ public class AvailableUserResponse extends ServerResponse {
     private boolean userFound = false;
     private User user = null;
 
+    @JsonIgnore
     ObjectMapper mapper = new ObjectMapper();
 
     public AvailableUserResponse(@JsonProperty("message") String message) {
