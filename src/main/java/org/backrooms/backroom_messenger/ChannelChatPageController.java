@@ -7,10 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.backrooms.backroom_messenger.client.Client;
@@ -38,6 +35,12 @@ public class ChannelChatPageController {
     private ListView<Message> messageListView;
     @FXML
     private Label channelName;
+    @FXML
+    private Button joinButton;
+    @FXML
+    private Label messageLabel;
+    @FXML
+    private Button sendButton;
 
 
     public void goBack(ActionEvent event) throws IOException {
@@ -61,13 +64,49 @@ public class ChannelChatPageController {
         }
     }
 
+    @FXML
+    public void joinChannel(ActionEvent event) throws IOException {
+        Client.Subscribe(chat);
+        if (alreadyJoined) {
+            alreadyJoined = false;
+            goBack(event);
+        }else{
+            alreadyJoined = true;
+            joinNotification.setText("You have joined the channel");
+            joinNotification.setTextFill(Color.GREEN);
+        }
+    }
 
-    public void joinChannel(ActionEvent event) {}
 
-
-    public void setUserAndChat(User user, Channel chat) {
+    public void setUserAndChat(User user, Channel channel) {
         this.user = user;
-        this.chat = chat;
+        this.chat = channel;
+
+        joinButton.setDisable(false);
+        joinButton.setVisible(true);
+        hideMessageField(false);
+
+        if(user.isSubed(channel)){
+            alreadyJoined = true;
+            joinButton.setText("Leave Channel");
+            String role = channel.getRole(User.changeToPrivate(user));
+            switch(role){
+                case "creator":
+                    joinButton.setDisable(true);
+                    joinButton.setVisible(false);
+                    break;
+                case "admin":
+                    break;
+                case "normal":
+                    hideMessageField(true);
+                    break;
+            }
+        }else{
+            alreadyJoined = false;
+            hideMessageField(true);
+            joinButton.setText("Join Channel");
+        }
+
         channelName.setTextFill(Color.BLUE);
         channelName.setText(chat.getName(user));
 
@@ -88,5 +127,15 @@ public class ChannelChatPageController {
                 }
             }
         });
+    }
+
+    private void hideMessageField(boolean bool){
+        messageField.setDisable(bool);
+        messageField.setVisible(!bool);
+
+        messageLabel.setVisible(!bool);
+
+        sendButton.setDisable(bool);
+        sendButton.setVisible(!bool);
     }
 }

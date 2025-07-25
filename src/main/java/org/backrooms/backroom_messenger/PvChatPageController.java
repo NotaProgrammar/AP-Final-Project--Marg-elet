@@ -45,7 +45,6 @@ public class PvChatPageController {
         PvChatPageController.user = user;
         messages.clear();
         messages.setAll(chat.getMessage());
-
     }
 
 

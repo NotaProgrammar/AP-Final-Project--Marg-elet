@@ -138,6 +138,7 @@ public class Client  {
             mapper.registerSubtypes(new NamedType(Channel.class,"channel"));
             String message = mapper.writeValueAsString(channel);
             SubRequest sr = new SubRequest(message,User.changeToPrivate(loggedUser));
+            mapper.registerSubtypes(new NamedType(SubRequest.class,"subRequest"));
             sendRequest(sr);
             for(Chat chat : loggedUser.getChats()){
                 if(chat.getId().equals(channel.getId())){
@@ -164,7 +165,6 @@ public class Client  {
 
     //calls GUI
     public static void openChat(Chat newChat){
-        addChat(newChat);
         if(sender==1){
             ClientReceiverGUI.openPvChat(newChat);
         }else if(sender==2){
@@ -219,6 +219,7 @@ public class Client  {
             switch(cmr.getType()){
                 case "pv_chat":
                     if(cmr.getRole().equals("sender")){
+                        addChat(cmr.getChat());
                         openChat(cmr.getChat());
                     }else{
                         addChat(cmr.getChat());

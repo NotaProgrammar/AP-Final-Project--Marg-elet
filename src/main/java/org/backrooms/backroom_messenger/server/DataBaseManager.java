@@ -322,15 +322,15 @@ public class DataBaseManager {
         createChannelMessageTable(channel.getId());
         createChannelUserTable(channel.getId());
         addChatToUsers(channel.getId(), channel.getCreator() ,channel.getName(null),"channel");
-        addUserToChannel(channel,"creator");
+        addUserToChannel(channel,"creator",channel.getCreator());
     }
 
-    private static void addUserToChannel(Channel channel,String role) throws SQLException {
+    private static void addUserToChannel(Channel channel,String role,String username) throws SQLException {
         Connection conn = connectToDataBase();
         String tableName = "channels.users_" + channel.getId().toString().replace("-","_");
         String query = "INSERT INTO " + tableName + " values (?,?,?)";
         PreparedStatement ps = conn.prepareStatement(query);
-        ps.setString(1,channel.getCreator());
+        ps.setString(1,username);
         ps.setString(2,role);
         ps.setDate(3,java.sql.Date.valueOf(LocalDate.now()));
         ps.executeUpdate();
@@ -374,7 +374,7 @@ public class DataBaseManager {
 
     public static void joinChannel(Channel channel, User user) throws SQLException {
         addChatToUsers(channel.getId(),user.getUsername(),channel.getName(null),"channel");
-        addUserToChannel(channel,"normal");
+        addUserToChannel(channel,"normal",user.getUsername());
     }
 
     public static void leaveChannel(Channel channel, User user) throws SQLException {
