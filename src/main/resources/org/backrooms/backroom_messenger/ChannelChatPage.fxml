@@ -11,9 +11,8 @@
       <Button layoutX="593.0" layoutY="14.0" mnemonicParsing="false" text="channel informaition" />
       <ListView layoutX="91.0" layoutY="11.0" prefHeight="492.0" prefWidth="491.0" />
       <Button layoutX="21.0" layoutY="14.0" mnemonicParsing="false" text="go back" />
-      <Button layoutX="638.0" layoutY="412.0" mnemonicParsing="false" text="join" />
+      <Button layoutX="641.0" layoutY="457.0" mnemonicParsing="false" text="     " />
       <Label layoutX="613.0" layoutY="482.0" text="                          " />
-      <Button layoutX="639.0" layoutY="457.0" mnemonicParsing="false" text="left" />
       <Label layoutX="23.0" layoutY="521.0" text="message : " />
       <TextField layoutX="91.0" layoutY="517.0" prefHeight="25.0" prefWidth="536.0" />
       <Button layoutX="635.0" layoutY="517.0" mnemonicParsing="false" text="send" />
