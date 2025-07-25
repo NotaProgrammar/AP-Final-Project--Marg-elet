@@ -5,8 +5,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.backrooms.backroom_messenger.client.Client;
 import org.backrooms.backroom_messenger.entity.Channel;
@@ -26,26 +29,27 @@ public class CreatChannelPageController {
     @FXML
     private TextField name;
     @FXML
-    private RadioButton publicity;
+    private CheckBox publicity;
     @FXML
-    private RadioButton privateChannel;
-
+    private Label message;
 
     public void create(ActionEvent event){
         String channelName = name.getText();
         String channelDescription = description.getText();
-        if(description.getText().isEmpty() ){}
-        channel = Client.createChannel(channelName, channelDescription, publicChannel);
-        user.getChats().add(channel);
+        if(description.getText().isEmpty() || name.getText().isEmpty()){
+            message.setTextFill(Color.RED);
+            message.setText("Please Fill All Fields");
+        }
+        else {
+            channel = Client.createChannel(channelName, channelDescription, publicChannel);
+            user.getChats().add(channel);
+        }
     }
 
 
     public void setPublicityOfChannel(ActionEvent event){
         if(publicity.isSelected()){
             publicChannel = true;
-        }
-        else if(privateChannel.isSelected()){
-            publicChannel = false;
         }
     }
 
@@ -55,6 +59,17 @@ public class CreatChannelPageController {
         Scene scene = new Scene(channelLoader.load(), 900, 550);
         ChannelChatPageController ccpc = channelLoader.getController();
         ccpc.setUserAndChat(user, channel);
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(scene);
+        stage.show();
+    }
+
+
+    public void goBack(ActionEvent event) throws IOException {
+        FXMLLoader displayLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("MainDisplay.fxml"));
+        Scene scene = new Scene(displayLoader.load(), 560, 350);
+        MainDisplayController mdc  = displayLoader.getController();
+        mdc.setUser(this.user);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(scene);
         stage.show();
