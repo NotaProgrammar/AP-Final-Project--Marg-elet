@@ -233,7 +233,13 @@ public class DataBaseManager {
     public static List<Message> returnMessages(Chat chat) throws SQLException {
         List<Message> messages = new ArrayList<>();
         Connection conn = connectToDataBase();
-        String tableName = "pv_chats.chat_" + chat.getId().toString().replace("-", "_");
+        String tableName = null;
+        if(chat instanceof PvChat){
+            tableName = "pv_chats.chat_" + chat.getId().toString().replace("-", "_");
+        }else if(chat instanceof Channel){
+            tableName = "channels.messages_" + chat.getId().toString().replace("-", "_");
+        }
+
         String sql = "SELECT * FROM " + tableName;
         PreparedStatement ps = conn.prepareStatement(sql);
         ResultSet rs = ps.executeQuery();
@@ -277,7 +283,8 @@ public class DataBaseManager {
                     chat = pv;
                     break;
                 case "channel":
-                    //todo
+                    chat = getChannelDetails(id);
+                    break;
                 case "group" :
                     //todo
             }
@@ -287,6 +294,26 @@ public class DataBaseManager {
         ps.close();
         conn.close();
         return chats;
+    }
+
+    private static Channel getChannelDetails(UUID id) throws SQLException {
+        Connection conn = connectToDataBase();
+        String query = "SELECT * FROM public.channels WHERE id = ?";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setObject(1, id);
+        ResultSet rs = ps.executeQuery();
+        Channel channel = null;
+        if(rs.next()) {
+            String name = rs.getString("name");
+            String description = rs.getString("description");
+            boolean publicity = rs.getBoolean("publicity");
+            String creator = rs.getString("creator");
+            channel = new Channel(id,name,description,publicity,creator);
+        }
+        rs.close();
+        ps.close();
+        conn.close();
+        return channel;
     }
 
     public static void addNewChannel(Channel channel) throws SQLException {
@@ -375,5 +402,49 @@ public class DataBaseManager {
         ps.executeUpdate();
         ps.close();
         conn.close();
+    }
+
+    public static List<Channel> searchChannel(String searched) throws SQLException {
+        Connection conn = connectToDataBase();
+        String query = "SELECT * FROM public.channels WHERE name ~ ?";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setString(1,searched);
+        ResultSet rs = ps.executeQuery();
+        List<Channel> channels = new ArrayList<>();
+        while (rs.next()) {
+            boolean publicity = rs.getBoolean("publicity");
+            if(publicity){
+                String description = rs.getString("description");
+                UUID id = UUID.fromString(rs.getString("id"));
+                String name = rs.getString("name");
+                String creator = rs.getString("creator");
+                channels.add(new Channel(id,name,description,publicity,creator));
+            }
+        }
+        return channels;
+    }
+
+    public static Channel getChannel(UUID id) throws SQLException {
+        Channel channel = DataBaseManager.getChannelDetails(id);
+        channel.getMessage().addAll(returnMessages(channel));
+        return channel;
+    }
+
+    public static String getRole(UUID id, String username) throws SQLException {
+        Connection conn = connectToDataBase();
+        String tableName = "channels.users_" + id.toString().replace("-","_");
+        String query = "SELECT role FROM " + tableName + " WHERE username = ?";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setString(1,username);
+        ResultSet rs = ps.executeQuery();
+        String role = "not a member";
+        if(rs.next()){
+            role = rs.getString("role");
+        }
+        rs.close();
+        ps.close();
+        conn.close();
+
+        return role;
     }
 }

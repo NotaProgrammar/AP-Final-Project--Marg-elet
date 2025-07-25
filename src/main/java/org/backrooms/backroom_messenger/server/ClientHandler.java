@@ -28,12 +28,21 @@ public class ClientHandler implements Runnable {
     Socket socket;
     DataInputStream in;
     DataOutputStream out;
-    ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
 
     public ClientHandler(Socket socket) throws IOException {
         this.socket = socket;
         in = new DataInputStream(socket.getInputStream());
         out = new DataOutputStream(socket.getOutputStream());
+        mapperRegister();
+    }
+
+    private void mapperRegister() {
+        mapper.registerSubtypes(new NamedType(Channel.class,"channel"));
+        mapper.registerSubtypes(new NamedType(ChatModifyResponse.class, "chatModifyResponse"));
+        mapper.registerSubtypes(new NamedType(PvChat.class, "PvChat"));
+        mapper.registerSubtypes(new NamedType(ReceivedMessage.class,"receivedMessage"));
+
     }
 
     @Override
@@ -65,7 +74,19 @@ public class ClientHandler implements Runnable {
             createChannel(ncr);
         }else if(sr instanceof SubRequest sur){
             subCheck(sur);
+        }else if(sr instanceof OpenChannelRequest ocr){
+            openChannel(ocr);
         }
+    }
+
+    private void openChannel(OpenChannelRequest ocr) throws SQLException, JsonProcessingException {
+        Channel channel = DataBaseManager.getChannel(ocr.getId());
+        String role = DataBaseManager.getRole(ocr.getId(),activeUser.getUsername());
+        channel.getUsers().add(User.changeToPrivate(activeUser));
+        channel.getRoles().add(role);
+        String message = "open##channel##" + mapper.writeValueAsString(channel) +"##"+ role ;
+        ChatModifyResponse cmr = new ChatModifyResponse(message);
+        sendResponse(cmr);
     }
 
     private void subCheck(SubRequest sur) throws Exception {
@@ -88,7 +109,7 @@ public class ClientHandler implements Runnable {
         DataBaseManager.leaveChannel(channel,activeUser);
         String message = "remove##channel##" + mapper.writeValueAsString(channel);
         ChatModifyResponse cmr = new ChatModifyResponse(message);
-        mapper.registerSubtypes(new NamedType(ChatModifyResponse.class, "chatModifyResponse"));
+
         String json = mapper.writeValueAsString(cmr);
         out.writeUTF(json);
         out.flush();
@@ -101,7 +122,6 @@ public class ClientHandler implements Runnable {
         channel.getRoles().add("normal");
         String message = "add##channel##" + mapper.writeValueAsString(channel)+"##normal";
         ChatModifyResponse cmr = new ChatModifyResponse(message);
-        mapper.registerSubtypes(new NamedType(ChatModifyResponse.class, "chatModifyResponse"));
         String json = mapper.writeValueAsString(cmr);
         out.writeUTF(json);
         out.flush();
@@ -139,7 +159,7 @@ public class ClientHandler implements Runnable {
             notify(e);
         }
 
-        mapper.registerSubtypes(new NamedType(PvChat.class, "PvChat"));
+
         AvailableUserResponse aur = new AvailableUserResponse(mapper.writeValueAsString(activeUser));
         String response = mapper.writeValueAsString(aur);
         out.writeUTF(response);
@@ -173,9 +193,10 @@ public class ClientHandler implements Runnable {
 
     private void searchUser(SearchRequest searchRequest) throws Exception {
         String searched = searchRequest.getSearchTerm();
-        //todo to be updated
+        //todo to be updated for group
         List<Chat> chats = new ArrayList<>();
         List<PrivateUser> searchedUsers = DataBaseManager.searchUser(searched);
+        List<Channel> searchedChannels = DataBaseManager.searchChannel(searched);
         for(PrivateUser pu : searchedUsers){
             if(pu.getUsername().equals(activeUser.getUsername())){
                 continue;
@@ -183,8 +204,8 @@ public class ClientHandler implements Runnable {
             PvChat pv = new PvChat(null,pu,searchRequest.getSender());
             chats.add(pv);
         }
+        chats.addAll(searchedChannels);
 
-        mapper.registerSubtypes(new NamedType(PvChat.class,"PvChat"));
         String responseMessage = mapper
                 .writerFor(new TypeReference<List<Chat>>() {})
                 .writeValueAsString(chats);
@@ -204,7 +225,7 @@ public class ClientHandler implements Runnable {
         try {
             String messageJson = mapper.writeValueAsString(message);
             ReceivedMessage rm = new ReceivedMessage(messageJson);
-            mapper.registerSubtypes(new NamedType(ReceivedMessage.class,"receivedMessage"));
+
             String sending = mapper.writeValueAsString(rm);
             out.writeUTF(sending);
             out.flush();
@@ -238,10 +259,8 @@ public class ClientHandler implements Runnable {
 
     private void openChat(PvChat pv) throws IOException, SQLException {
         pv.getMessage().addAll(DataBaseManager.returnMessages(pv));
-        mapper.registerSubtypes(new NamedType(PvChat.class,"PvChat"));
         String message = "add##pv_chat##" + mapper.writeValueAsString(pv) + "##sender";
         ChatModifyResponse cmr = new ChatModifyResponse(message);
-        mapper.registerSubtypes(new NamedType(ChatModifyResponse.class, "chatModifyResponse"));
         String response = mapper.writeValueAsString(cmr);
         out.writeUTF(response);
         out.flush();
@@ -272,6 +291,5 @@ public class ClientHandler implements Runnable {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
     }
 }

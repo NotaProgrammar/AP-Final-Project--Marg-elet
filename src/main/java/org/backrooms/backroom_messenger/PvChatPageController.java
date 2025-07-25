@@ -5,19 +5,17 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.control.ScrollBar;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.backrooms.backroom_messenger.client.Client;
 import org.backrooms.backroom_messenger.entity.*;
 
 import java.io.IOException;
-import java.util.Set;
+
 
 public class PvChatPageController {
 
@@ -29,9 +27,7 @@ public class PvChatPageController {
     @FXML
     private TextField Message;
     @FXML
-    private ListView<Message> senderListView;
-    @FXML
-    private ListView<Message> receiverListView;
+    private ListView<Message> MessageListView;
 
     public PvChatPageController() {
         instance = this;
@@ -49,55 +45,32 @@ public class PvChatPageController {
         PvChatPageController.user = user;
         messages.clear();
         messages.setAll(chat.getMessage());
-        javafx.application.Platform.runLater(() -> {
-            ScrollBar scrollBar1 = getVerticalScrollBar(senderListView);
-            ScrollBar scrollBar2 = getVerticalScrollBar(receiverListView);
 
-            if (scrollBar1 != null && scrollBar2 != null) {
-                scrollBar1.valueProperty().bindBidirectional(scrollBar2.valueProperty());
-            }
-        });
     }
 
 
     public void setupCellFactories() {
-        senderListView.setItems(messages);
-        receiverListView.setItems(messages);
+        MessageListView.setItems(messages);
 
-        senderListView.setCellFactory(listView -> new ListCell<>() {
+
+        MessageListView.setCellFactory(listView -> new ListCell<>() {
             @Override
             protected void updateItem(Message message, boolean empty) {
                 super.updateItem(message, empty);
                 if (empty || message == null) {
                     setText(null);
-                } else if (message.getSender().equals(user.getUsername())) {
-                    setText(message.getMessage());
                 } else {
-                    setText(" ");
-                }
-            }
-        });
-
-        receiverListView.setCellFactory(listView -> new ListCell<>() {
-            @Override
-            protected void updateItem(Message message, boolean empty) {
-                super.updateItem(message, empty);
-                if (empty || message == null) {
-                    setText(null);
-                } else if (!message.getSender().equals(user.getUsername())) {
                     setText(message.getMessage());
-                } else {
-                    StringBuilder nextLine = new StringBuilder();
-                    int c = 0;
-                    for(int i=0; i<message.getMessage().length(); i++) {
-                        if(message.getMessage().charAt(i) == '\n') {
-                            nextLine.append("\n");
-                        }
+                    if (message.getSender().equals(user.getUsername())) {
+                        setStyle("-fx-alignment: center-right;");
+                    } else {
+                        setStyle("-fx-alignment: center-left;");
                     }
-                    setText(nextLine.toString());
                 }
+
             }
         });
+
     }
 
 
@@ -138,16 +111,4 @@ public class PvChatPageController {
         return chat;
     }
 
-    private ScrollBar getVerticalScrollBar(ListView<?> listView) {
-        Set<Node> nodes = listView.lookupAll(".scroll-bar");
-        for (Node node : nodes) {
-            if (node instanceof ScrollBar) {
-                ScrollBar scrollBar = (ScrollBar) node;
-                if (scrollBar.getOrientation() == javafx.geometry.Orientation.VERTICAL) {
-                    return scrollBar;
-                }
-            }
-        }
-        return null;
-    }
 }

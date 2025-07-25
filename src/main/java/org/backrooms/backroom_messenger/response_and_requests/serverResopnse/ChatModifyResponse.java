@@ -9,7 +9,7 @@ import org.backrooms.backroom_messenger.entity.PvChat;
 
 public class ChatModifyResponse extends ServerResponse {
     @JsonProperty
-    private boolean success;
+    private String modification;
     @JsonProperty
     private Chat chat;
     @JsonProperty
@@ -26,8 +26,8 @@ public class ChatModifyResponse extends ServerResponse {
         mapper.registerSubtypes(new NamedType(Channel.class, "channel"));
         try{
             String[] tokens = message.split("##");
+            modification = tokens[0];
             if(tokens[0].equals("add")){
-                success = true;
                 type = tokens[1];
                 switch(type){
                     case "pv_chat":
@@ -39,7 +39,6 @@ public class ChatModifyResponse extends ServerResponse {
                         role = tokens[3];
                 }
             }else if(tokens[0].equals("remove")){
-                success = false;
                 type = tokens[1];
                 switch(type){
                     case "pv_chat":
@@ -48,6 +47,19 @@ public class ChatModifyResponse extends ServerResponse {
                     case "channel":
                         chat = mapper.readValue(tokens[2],Channel.class);
                 }
+            }else if(modification.equals("open")){
+                type = tokens[1];
+                switch(type){
+                    case "pv_chat":
+                        chat = mapper.readValue(tokens[2],PvChat.class);
+                        role = tokens[3];
+                        break;
+                    case "channel":
+                        chat = mapper.readValue(tokens[2],Channel.class);
+                        role = tokens[3];
+                        break;
+
+                }
             }
         }catch(Exception e){
             System.out.println(e);
@@ -55,8 +67,8 @@ public class ChatModifyResponse extends ServerResponse {
 
     }
 
-    public boolean isSuccess() {
-        return success;
+    public String getModification() {
+        return modification;
     }
     public String getType() {
         return type;

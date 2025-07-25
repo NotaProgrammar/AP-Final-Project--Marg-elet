@@ -7,7 +7,6 @@ import org.backrooms.backroom_messenger.entity.*;
 import org.backrooms.backroom_messenger.response_and_requests.serverRequest.*;
 import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.AvailableUserResponse;
 import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.ChatModifyResponse;
-import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.ChatOpenedResponse;
 import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.SearchedUsersListResponse;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -49,8 +48,19 @@ public class Client  {
             } else {
                 System.out.println("what the fuck??");
             }
+        }else if(chat instanceof Channel channel){
+            openChannel(channel);
         }
-        //todo channel
+    }
+
+    private static void openChannel(Channel channel) {
+        try {
+            OpenChannelRequest ocr = new OpenChannelRequest(channel.getId().toString(),User.changeToPrivate(loggedUser));
+            mapper.registerSubtypes(new NamedType(OpenChannelRequest.class,"openChannelRequest"));
+            sendRequest(ocr);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     //for GUI
@@ -154,15 +164,7 @@ public class Client  {
 
     //calls GUI
     public static void openChat(Chat newChat){
-        boolean flag = false;
-        for(Chat chat : loggedUser.getChats()){
-            if(chat.getId().equals(newChat.getId())){
-                flag = true;
-            }
-        }
-        if(!flag){
-            loggedUser.getChats().add(newChat);
-        }
+        addChat(newChat);
         if(sender==1){
             ClientReceiverGUI.openPvChat(newChat);
         }else if(sender==2){
@@ -213,7 +215,7 @@ public class Client  {
     }
 
     public static void chatModifyHandle(ChatModifyResponse cmr){
-        if(cmr.isSuccess()){
+        if(cmr.getModification().equals("add")){
             switch(cmr.getType()){
                 case "pv_chat":
                     if(cmr.getRole().equals("sender")){
@@ -226,15 +228,25 @@ public class Client  {
                 case "channel":
                     addChat(cmr.getChat());
             }
-        }else{
+        }else if(cmr.getModification().equals("remove")){
 
+        }else if(cmr.getModification().equals("open")){
+            openChat(cmr.getChat());
         }
 
     }
 
 
 
-    private static void addChat(Chat chat) {
-        loggedUser.getChats().add(chat);
+    private static void addChat(Chat newChat) {
+        boolean flag = false;
+        for(Chat chat : loggedUser.getChats()){
+            if(chat.getId().equals(newChat.getId())){
+                flag = true;
+            }
+        }
+        if(!flag){
+            loggedUser.getChats().add(newChat);
+        }
     }
 }

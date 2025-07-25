@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
+import org.backrooms.backroom_messenger.entity.Channel;
 import org.backrooms.backroom_messenger.entity.Chat;
 
 import org.backrooms.backroom_messenger.entity.PvChat;
@@ -20,6 +21,7 @@ public class SearchedUsersListResponse extends ServerResponse {
         super(message);
         try {
             mapper.registerSubtypes(new NamedType(PvChat.class, "PvChat"));
+            mapper.registerSubtypes(new NamedType(Channel.class, "channel"));
             this.chats.addAll(mapper.readValue(super.getMessage(), new TypeReference<List<Chat>>() {}));
         } catch (JsonProcessingException e) {
             System.err.println("Error parsing JSON: " + e.getMessage());
