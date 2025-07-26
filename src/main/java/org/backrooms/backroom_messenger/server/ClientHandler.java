@@ -138,7 +138,7 @@ public class ClientHandler implements Runnable {
 
     private void sendMessage(SendMessageRequest smr) throws SQLException {
         Message message = smr.getSendedMessage();
-        addMessage(message);
+        addMessageToChat(message,message.getChatType());
         Server.broadcast(message);
     }
 

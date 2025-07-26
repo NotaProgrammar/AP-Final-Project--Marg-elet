@@ -35,24 +35,21 @@ public class DataBaseManager {
         return DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD);
     }
 
-    public static void addMessage(Message message) throws SQLException{
-        String type = getChatType(message.getChat());
+
+    public static void addMessageToChat(Message message,String type) throws SQLException{
+        Connection connection = connectToDataBase();
+        String tableName = null;
         switch(type){
             case "pv_chat":
-                addMessageToChat(message);
+                tableName = "pv_chats.chat_" + message.getChat().toString().replace("-","_");
                 break;
             case "channel":
-                //todo
+                tableName = "channels.messages_" + message.getChat().toString().replace("-","_");
                 break;
             case "group":
                 //todo
+
         }
-
-    }
-
-    private static void addMessageToChat(Message message) throws SQLException{
-        Connection connection = connectToDataBase();
-        String tableName = "pv_chats.chat_" + message.getChat().toString().replace("-","_");
         String sql = "INSERT INTO " + tableName + " (id,sender,message,datetime) VALUES (?,?,?,?)";
         PreparedStatement ps = connection.prepareStatement(sql);
         ps.setObject(1,message.getId());
@@ -249,7 +246,7 @@ public class DataBaseManager {
             UUID messageId = UUID.fromString(rs.getString("id"));
             LocalDate localDate = rs.getDate("datetime").toLocalDate();
             java.util.Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-            Message message = new Message(messageId,sender,chat.getId(),text,date);
+            Message message = new Message(messageId,sender,chat.getId(),text,date,chat.getType());
             messages.add(message);
         }
         rs.close();

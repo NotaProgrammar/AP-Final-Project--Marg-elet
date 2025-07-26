@@ -21,8 +21,10 @@ import java.util.List;
 
 public class ChannelChatPageController {
 
+
+    private static ChannelChatPageController instance;
     private User user = null;
-    private Channel chat = null;
+    private static Channel chat = null;
     boolean alreadyJoined = false;
     private ObservableList<Message> observableMessages;
 
@@ -66,7 +68,6 @@ public class ChannelChatPageController {
 
     @FXML
     public void joinChannel(ActionEvent event) throws IOException {
-        try{
             Client.Subscribe(chat);
             if (alreadyJoined) {
                 alreadyJoined = false;
@@ -77,9 +78,6 @@ public class ChannelChatPageController {
                 joinNotification.setTextFill(Color.GREEN);
                 joinButton.setText("Leave Channel");
             }
-        }catch(Exception e){
-            System.out.println(e);
-        }
 
     }
 
@@ -143,5 +141,14 @@ public class ChannelChatPageController {
 
         sendButton.setDisable(bool);
         sendButton.setVisible(!bool);
+    }
+
+    public static Chat getChat(){
+        return chat;
+    }
+
+    public static void saveReceivedMessage(Message message) {
+        chat.getMessage().add(message);
+        instance.observableMessages.setAll(chat.getMessage());
     }
 }

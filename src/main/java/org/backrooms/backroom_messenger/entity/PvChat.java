@@ -1,5 +1,6 @@
 package org.backrooms.backroom_messenger.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
@@ -25,6 +26,11 @@ public class PvChat extends Chat{
         }else{
             return user1.getName();
         }
+    }
+
+    @Override @JsonIgnore
+    public String getType() {
+        return "pv_chat";
     }
 
     public PrivateUser getUser1() {

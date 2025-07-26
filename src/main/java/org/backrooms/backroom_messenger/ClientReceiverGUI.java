@@ -23,8 +23,17 @@ public class ClientReceiverGUI {
 
 
     public static void addReceivedMessage(Message message){
-        if(PvChatPageController.getChat().getUserName(PvChatPageController.getUser()).equals(message.getSender())){
-            PvChatPageController.saveReceivedMessage(message);
+        switch(message.getChatType()){
+            case "pv_chat":
+                if(PvChatPageController.getChat().getUserName(PvChatPageController.getUser()).equals(message.getSender())){
+                    PvChatPageController.saveReceivedMessage(message);
+                }
+                break;
+            case "channel":
+                if(ChannelChatPageController.getChat().getId().equals(message.getChat())){
+                    ChannelChatPageController.saveReceivedMessage(message);
+                }
         }
+
     }
 }

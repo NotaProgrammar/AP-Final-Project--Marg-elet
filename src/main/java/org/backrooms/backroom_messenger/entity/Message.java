@@ -21,16 +21,21 @@ public class Message {
     private String message;
     @JsonProperty
     private Date timeDate;
+    @JsonProperty
+    private String chatType;
 
-
-    private ObjectMapper mapper = new ObjectMapper();
-
-    public Message(@JsonProperty("id") UUID id,@JsonProperty("sender") String  sender,@JsonProperty("chat") UUID chat,@JsonProperty("message") String message,@JsonProperty("timeDate") Date timeDate) {
+    public Message(@JsonProperty("id") UUID id,
+                   @JsonProperty("sender") String  sender,
+                   @JsonProperty("chat") UUID chat,
+                   @JsonProperty("message") String message,
+                   @JsonProperty("timeDate") Date timeDate,
+                   @JsonProperty("chatType") String chatType) {
         this.id = id;
         this.sender = sender;
         this.chat = chat;
         this.message = formatMessage(message);
         this.timeDate = timeDate;
+        this.chatType = chatType;
     }
 
     public UUID getId() {
@@ -89,5 +94,9 @@ public class Message {
             }
 
         return result.toString();
+    }
+
+    public String getChatType() {
+        return chatType;
     }
 }

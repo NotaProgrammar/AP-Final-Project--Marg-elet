@@ -1,5 +1,6 @@
 package org.backrooms.backroom_messenger.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
@@ -38,6 +39,11 @@ public class Channel extends Chat{
     @Override
     public String getName(User user) {
         return name;
+    }
+
+    @Override @JsonIgnore
+    public String getType() {
+        return "channel";
     }
 
     public String getDescription() {

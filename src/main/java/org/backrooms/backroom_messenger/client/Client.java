@@ -65,9 +65,10 @@ public class Client  {
 
     //for GUI
     public static Message sendMessage(String messageString, Chat chat){
-        Message message = new Message(UUID.randomUUID(), loggedUser.getUsername(), chat.getId(), messageString,new Date());
+        Message message = new Message(UUID.randomUUID(), loggedUser.getUsername(), chat.getId(), messageString,new Date(),chat.getType());
         try {
             mapper.registerSubtypes(new NamedType(PvChat.class, "PvChat"));
+            mapper.registerSubtypes(new NamedType(Channel.class,"channel"));
             String messageJson = mapper.writeValueAsString(message);
             SendMessageRequest smr = new SendMessageRequest(messageJson,User.changeToPrivate(loggedUser));
             sendRequest(smr);
