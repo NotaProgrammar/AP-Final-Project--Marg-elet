@@ -110,13 +110,18 @@ public class MainDisplayController implements Initializable {
         while(chosenChat == null){
             Thread.sleep(100);
         }
-        FXMLLoader channelLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("ChannelChatPage.fxml"));
-        Scene scene = new Scene(channelLoader.load(), 900, 550);
-        ChannelChatPageController ccpc = channelLoader.getController();
-        ccpc.setUserAndChat(user, (Channel) chosenChat);
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(scene);
-        stage.show();
+        try{
+            FXMLLoader channelLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("ChannelChatPage.fxml"));
+            Scene scene = new Scene(channelLoader.load(), 900, 550);
+            ChannelChatPageController ccpc = channelLoader.getController();
+            ccpc.setUserAndChat(user, (Channel) chosenChat);
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
+        }catch(Exception e){
+            System.out.println(e);
+        }
+
     }
 
 

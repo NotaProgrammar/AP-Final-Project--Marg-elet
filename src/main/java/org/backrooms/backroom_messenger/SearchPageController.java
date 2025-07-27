@@ -27,6 +27,7 @@ public class SearchPageController implements Initializable {
     private List<Chat> chatList = new ArrayList<>();
     private User user;
     private static Chat chosenChat;
+    private static boolean chatFound;
 
     @FXML
     private ListView<Chat> chatListView;
@@ -43,6 +44,7 @@ public class SearchPageController implements Initializable {
                 nameLabel = new Label();
                 openButton = new Button("Open Chat");
                 openButton.setOnAction(event -> {
+                    chatFound = false;
                     chosenChat = null;
                     Chat chat = getItem(); // گرفتن آیتم مربوط به این سلول
                     if (chat != null) {
@@ -85,7 +87,7 @@ public class SearchPageController implements Initializable {
 
     public void goToPvChatPage(ActionEvent event, Chat chat) throws IOException, InterruptedException {
         Client.openChat(chat, 2);
-        while(chosenChat == null){
+        while(!chatFound){
             Thread.sleep(100);
         }
         FXMLLoader pvChatLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("PvChatPage.fxml"));
@@ -149,6 +151,7 @@ public class SearchPageController implements Initializable {
 
 
     public static void openChatInSearchResult(Chat selectedChat) {
+        chatFound = true;
         chosenChat = selectedChat;
     }
 

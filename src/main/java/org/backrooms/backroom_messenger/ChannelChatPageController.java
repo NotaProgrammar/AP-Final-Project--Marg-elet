@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -17,16 +18,18 @@ import org.backrooms.backroom_messenger.entity.Message;
 import org.backrooms.backroom_messenger.entity.User;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
+import java.util.ResourceBundle;
 
-public class ChannelChatPageController {
+public class ChannelChatPageController implements Initializable {
 
 
     private static ChannelChatPageController instance;
     private User user = null;
     private static Channel chat = null;
     boolean alreadyJoined = false;
-    private ObservableList<Message> observableMessages;
+    private ObservableList<Message> observableMessages = FXCollections.observableArrayList();
 
 
     @FXML
@@ -43,6 +46,11 @@ public class ChannelChatPageController {
     private Label messageLabel;
     @FXML
     private Button sendButton;
+
+
+    public ChannelChatPageController() {
+        instance = this;
+    }
 
 
     public void goBack(ActionEvent event) throws IOException {
@@ -151,5 +159,10 @@ public class ChannelChatPageController {
     public static void saveReceivedMessage(Message message) {
         chat.getMessage().add(message);
         instance.observableMessages.setAll(chat.getMessage());
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        instance = this;
     }
 }
