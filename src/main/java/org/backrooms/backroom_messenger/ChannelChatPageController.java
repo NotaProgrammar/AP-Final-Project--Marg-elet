@@ -115,6 +115,7 @@ public class ChannelChatPageController {
         channelName.setText(chat.getName(user));
 
         //set list view
+        observableMessages.clear();
         List<Message> messages = chat.getMessage();
         observableMessages = FXCollections.observableArrayList(messages);
         messageListView.setItems(observableMessages);
