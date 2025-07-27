@@ -374,9 +374,9 @@ public class DataBaseManager {
         addUserToChannel(channel,"normal",user.getUsername());
     }
 
-    public static void leaveChannel(Channel channel, User user) throws SQLException {
-        deleteUsersFromChat(channel.getId(),user.getUsername());
-        deleteChatFromUsers(channel.getId(),user.getUsername());
+    public static void leaveChat(UUID chat, String user,String type) throws SQLException {
+        deleteUsersFromChat(chat,user);
+        deleteChatFromUsers(chat,user);
     }
 
     private static void deleteChatFromUsers(UUID id, String username) throws SQLException {
@@ -392,6 +392,7 @@ public class DataBaseManager {
 
     private static void deleteUsersFromChat(UUID id, String username) throws SQLException {
         Connection conn = connectToDataBase();
+        //todo for group
         String tableName = "channels.users_" + id.toString().replace("-","_");
         String querry = "DELETE FROM " + tableName + " WHERE username = ?";
         PreparedStatement ps = conn.prepareStatement(querry);
@@ -443,5 +444,80 @@ public class DataBaseManager {
         conn.close();
 
         return role;
+    }
+
+    public static void returnUsers(Channel channel) throws SQLException {
+        List<PrivateUser> users = new ArrayList<>();
+        List<String> roles = new ArrayList<>();
+        Connection conn = connectToDataBase();
+        String tableName = "channels.users_" + channel.getId().toString().replace("-","_");
+        String querry = "SELECT * FROM " + tableName;
+        PreparedStatement ps = conn.prepareStatement(querry);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            String userName = rs.getString("username");
+            String role = rs.getString("role");
+            PrivateUser user = new PrivateUser(userName,userName);
+            users.add(user);
+            roles.add(role);
+        }
+        rs.close();
+        ps.close();
+        conn.close();
+        channel.getUsers().addAll(users);
+        channel.getRoles().addAll(roles);
+    }
+
+    public static void changeName(String chatType, UUID uuid, String newProperty) throws SQLException {
+        Connection conn = connectToDataBase();
+        String tableName = null;
+        if(chatType.equals("channel")){
+            tableName = "public.channels";
+        }else if(chatType.equals("group")){
+            tableName = "public.groups";
+        }
+
+        String query = "UPDATE " + tableName + " SET name = ? WHERE id = ?";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setString(1,newProperty);
+        ps.setObject(2,uuid);
+        ps.executeUpdate();
+        ps.close();
+        conn.close();
+    }
+
+    public static void changeDescription(String chatType, UUID uuid, String newProperty) throws SQLException {
+        Connection conn = connectToDataBase();
+        String tableName = null;
+        if(chatType.equals("channel")){
+            tableName = "public.channels";
+        }else if(chatType.equals("group")){
+            tableName = "public.groups";
+        }
+
+        String query = "UPDATE " + tableName + " SET description = ? WHERE id = ?";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setString(1,newProperty);
+        ps.setObject(2,uuid);
+        ps.executeUpdate();
+        ps.close();
+        conn.close();
+    }
+
+    public static void changeRole(String chatType, UUID uuid, String user, String role) throws SQLException {
+        Connection conn = connectToDataBase();
+        String tableName = null;
+        if(chatType.equals("channel")){
+            tableName = "channels.users_" + uuid.toString().replace("-","_");
+        }else if(chatType.equals("group")){
+            //todo
+        }
+        String query = "UPDATE " + tableName + " SET role = ? WHERE username = ?";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setString(1,role);
+        ps.setString(2,user);
+        ps.executeUpdate();
+        ps.close();
+        conn.close();
     }
 }

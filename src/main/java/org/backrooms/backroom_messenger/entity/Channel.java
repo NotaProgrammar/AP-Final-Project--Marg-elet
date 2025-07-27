@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-public class Channel extends Chat{
+public class Channel extends MultiUserChat{
     @JsonProperty
     private String name;
     @JsonProperty
@@ -76,4 +76,26 @@ public class Channel extends Chat{
         return creator;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void changeRole(PrivateUser user){
+        int index = 0;
+        for(int i=0; i<users.size(); i++){
+            if(users.get(i).getUsername().equals(user.getUsername())){
+                index = i;
+                break;
+            }
+        }
+        if(roles.get(index).equals("admin")){
+            roles.set(index, "normal");
+        }else if(roles.get(index).equals("normal")){
+            roles.set(index, "admin");
+        }
+    }
 }

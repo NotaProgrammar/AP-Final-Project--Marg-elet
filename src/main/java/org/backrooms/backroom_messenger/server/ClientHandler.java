@@ -76,14 +76,57 @@ public class ClientHandler implements Runnable {
             subCheck(sur);
         }else if(sr instanceof OpenChannelRequest ocr){
             openChannel(ocr);
+        }else if(sr instanceof ChangePropertyRequest cpr){
+            changeProperty(cpr);
+        }else if(sr instanceof ChangeRoleRequest crr){
+             changeRole(crr);
+        }else if(sr instanceof RemoveUserRequest rur){
+            removeUser(rur);
+        }
+    }
+
+    private void removeUser(RemoveUserRequest rur) throws SQLException {
+        String type = rur.getChatType();
+        String userName = rur.getUserName();
+        UUID chatId = rur.getChatId();
+        DataBaseManager.leaveChat(chatId,userName,type);
+        //todo : notify the removed user
+    }
+
+    private void changeRole(ChangeRoleRequest crr) throws SQLException {
+        String role = crr.getRole();
+        if(role.equals("admin")){
+            role = "normal";
+        }else if(role.equals("normal")){
+            role = "admin";
+        }
+        String user = crr.getUserName();
+        String chatType = crr.getChatType();
+        UUID uuid = UUID.randomUUID();
+        DataBaseManager.changeRole(chatType,uuid,user,role);
+    }
+
+    private void changeProperty(ChangePropertyRequest cpr) throws SQLException {
+        String property = cpr.getProperty();
+        UUID uuid = cpr.getId();
+        String newProperty = cpr.getNewProperty();
+        String chatType = cpr.getChatType();
+        if(property.equals("name")){
+            DataBaseManager.changeName(chatType,uuid,newProperty);
+        }else if(property.equals("description")){
+            DataBaseManager.changeDescription(chatType,uuid,newProperty);
         }
     }
 
     private void openChannel(OpenChannelRequest ocr) throws SQLException, JsonProcessingException {
         Channel channel = DataBaseManager.getChannel(ocr.getId());
         String role = DataBaseManager.getRole(ocr.getId(),activeUser.getUsername());
-        channel.getUsers().add(User.changeToPrivate(activeUser));
-        channel.getRoles().add(role);
+        if(role.equals("creator") || role.equals("admin")){
+            DataBaseManager.returnUsers(channel);
+        }else{
+            channel.getUsers().add(User.changeToPrivate(activeUser));
+            channel.getRoles().add(role);
+        }
         String message = "open##channel##" + mapper.writeValueAsString(channel) +"##"+ role ;
         ChatModifyResponse cmr = new ChatModifyResponse(message);
         sendResponse(cmr);
@@ -107,7 +150,7 @@ public class ClientHandler implements Runnable {
     }
 
     private void leaveChannel(Channel channel) throws Exception {
-        DataBaseManager.leaveChannel(channel,activeUser);
+        DataBaseManager.leaveChat(channel.getId(),activeUser.getUsername(),"channel");
         String message = "remove##channel##" + mapper.writeValueAsString(channel);
         ChatModifyResponse cmr = new ChatModifyResponse(message);
 

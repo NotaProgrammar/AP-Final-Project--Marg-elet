@@ -19,7 +19,10 @@ import org.backrooms.backroom_messenger.entity.PrivateUser;
         @JsonSubTypes.Type(value = SendMessageRequest.class, name = "sendMessageRequest"),
         @JsonSubTypes.Type(value = NewChannelRequest.class, name = "newChannelRequest"),
         @JsonSubTypes.Type(value = OpenChannelRequest.class, name = "openChannelRequest"),
-        @JsonSubTypes.Type(value = SubRequest.class, name = "subRequest")
+        @JsonSubTypes.Type(value = SubRequest.class, name = "subRequest"),
+        @JsonSubTypes.Type(value = ChangePropertyRequest.class, name = "changePropertyRequest"),
+        @JsonSubTypes.Type(value = ChangeRoleRequest.class, name = "changeRoleRequest"),
+        @JsonSubTypes.Type(value = RemoveUserRequest.class, name = "removeUserRequest")
 })
 
 public abstract class ServerRequest {

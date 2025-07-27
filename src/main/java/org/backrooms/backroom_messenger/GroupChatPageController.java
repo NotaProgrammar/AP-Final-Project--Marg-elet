@@ -129,6 +129,5 @@ public class GroupChatPageController {
             joinNotif.setTextFill(Color.GREEN);
             joinButton.setText("left");
         }
-
     }
 }

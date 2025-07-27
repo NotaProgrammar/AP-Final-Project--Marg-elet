@@ -1,5 +1,4 @@
 package org.backrooms.backroom_messenger.client;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import org.backrooms.backroom_messenger.ClientReceiverGUI;
@@ -14,7 +13,6 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.Date;
 import java.util.List;
-import java.util.Scanner;
 import java.util.UUID;
 
 import static org.backrooms.backroom_messenger.StaticMethods.generateSalt;
@@ -151,6 +149,69 @@ public class Client  {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
+    }
+
+    //for GUI
+    public static void ChangeName(Chat chat,String newName){
+        try {
+            String message = chat.getId().toString() + "##name##channel##" + newName ;
+            ChangePropertyRequest cpr = new ChangePropertyRequest(message,User.changeToPrivate(loggedUser));
+            mapper.registerSubtypes(new NamedType(ChangePropertyRequest.class,"changePropertyRequest"));
+            sendRequest(cpr);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    //for GUI
+    public static void changeDescription(Chat chat,String newDescription){
+        try{
+            String message = chat.getId().toString() + "##description##channel##" + newDescription;
+            ChangePropertyRequest cpr = new ChangePropertyRequest(message,User.changeToPrivate(loggedUser));
+            mapper.registerSubtypes(new NamedType(ChangePropertyRequest.class,"changePropertyRequest"));
+            sendRequest(cpr);
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    //for GUI
+    public static void changeUserRole(Chat chat,PrivateUser user){
+        String role = null;
+        //todo change
+        if(chat instanceof Channel channel){
+            role = channel.getRole(user);
+            channel.changeRole(user);
+        }
+        //todo group
+        try{
+            String type = chat.getType();
+            String message = chat.getId().toString() + "##" + user.getUsername() + "##" + role + "##" +type  ;
+            ChangeRoleRequest crr = new ChangeRoleRequest(message,User.changeToPrivate(loggedUser));
+            mapper.registerSubtypes(new NamedType(ChangeRoleRequest.class,"changeRoleRequest"));
+            sendRequest(crr);
+        }catch(Exception e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    //for GUI
+    public static void removeUser(PrivateUser user,MultiUserChat chat){
+        try{
+            String type = chat.getType();
+            String message = user.getUsername() + "##" + type + "##" + chat.getId();
+            RemoveUserRequest rur = new RemoveUserRequest(message,User.changeToPrivate(loggedUser));
+            mapper.registerSubtypes(new NamedType(RemoveUserRequest.class,"removeUserRequest"));
+            sendRequest(rur);
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    //for GUI
+    public static void signOut(){
 
     }
 
