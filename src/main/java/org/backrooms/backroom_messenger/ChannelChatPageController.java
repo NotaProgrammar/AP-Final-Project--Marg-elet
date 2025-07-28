@@ -46,6 +46,8 @@ public class ChannelChatPageController implements Initializable {
     private Label messageLabel;
     @FXML
     private Button sendButton;
+    @FXML
+    private Button settingButton;
 
 
     public ChannelChatPageController() {
@@ -58,6 +60,17 @@ public class ChannelChatPageController implements Initializable {
         Scene scene = new Scene(displayLoader.load(), 560, 350);
         MainDisplayController mdc  = displayLoader.getController();
         mdc.setUser(this.user);
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(scene);
+        stage.show();
+    }
+
+
+    public void goToSetting(ActionEvent event) throws IOException {
+        FXMLLoader channelSettingLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("ChannelSettingPage.fxml"));
+        Scene scene = new Scene(channelSettingLoader.load(), 560, 350);
+        ChannelSettingPageController cspc  = channelSettingLoader.getController();
+        cspc.setUserAndChannel(user, chat);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(scene);
         stage.show();
@@ -106,6 +119,7 @@ public class ChannelChatPageController implements Initializable {
                 case "creator":
                     joinButton.setDisable(true);
                     joinButton.setVisible(false);
+                    settingButton.setText("Channel setting");
                     break;
                 case "admin":
                     break;
