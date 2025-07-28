@@ -16,7 +16,6 @@ import org.backrooms.backroom_messenger.entity.Message;
 import org.backrooms.backroom_messenger.entity.User;
 
 import java.io.IOException;
-import java.util.List;
 
 public class GroupChatPageController {
 
@@ -46,25 +45,25 @@ public class GroupChatPageController {
 
         joinButton.setDisable(false);
         joinButton.setVisible(true);
-        if(user.isSubed(chat)) // todo : برای بررسی عضویت فقط چنل میگیره و گروه نمیگیره
-        {
-            alreadyJoined = true;
-            joinButton.setText("left");
-            String role = chat.getRole(User.changeToPrivate(user));
-            switch(role){
-                case "creator":
-                    joinButton.setDisable(true);
-                    joinButton.setVisible(false);
-                    break;
-                case "admin":
-                    break;
-                case "normal":
-                    break;
-            }
-        }else{
-            alreadyJoined = false;
-            joinButton.setText("Join");
-        }
+//        if(user.isSubed(chat)) // todo : برای بررسی عضویت فقط چنل میگیره و گروه نمیگیره
+//        {
+//            alreadyJoined = true;
+//            joinButton.setText("left");
+//            String role = chat.getRole(User.changeToPrivate(user));
+//            switch(role){
+//                case "creator":
+//                    joinButton.setDisable(true);
+//                    joinButton.setVisible(false);
+//                    break;
+//                case "admin":
+//                    break;
+//                case "normal":
+//                    break;
+//            }
+//        }else{
+//            alreadyJoined = false;
+//            joinButton.setText("Join");
+//        }
 
         observableMessages.clear();
         observableMessages.setAll(chat.getMessage());
@@ -119,15 +118,15 @@ public class GroupChatPageController {
 
     @FXML
     public void joinGroup(ActionEvent event) throws IOException {
-        Client.Subscribe(chat);  // todo : این باید درست بشه، ورودی از جنس چنل باید باشه ولی من گروه دارم
-        if (alreadyJoined) {
-            alreadyJoined = false;
-            goBack(event);
-        }else{
-            alreadyJoined = true;
-            joinNotif.setText("you joined");
-            joinNotif.setTextFill(Color.GREEN);
-            joinButton.setText("left");
-        }
+//        Client.Subscribe(chat);  // todo : این باید درست بشه، ورودی از جنس چنل باید باشه ولی من گروه دارم
+//        if (alreadyJoined) {
+//            alreadyJoined = false;
+//            goBack(event);
+//        }else{
+//            alreadyJoined = true;
+//            joinNotif.setText("you joined");
+//            joinNotif.setTextFill(Color.GREEN);
+//            joinButton.setText("left");
+//        }
     }
 }

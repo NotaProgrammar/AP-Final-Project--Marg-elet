@@ -36,16 +36,16 @@ public class CreatGroupPageController {
     public void create(ActionEvent event) throws IOException {
         String groupName = name.getText();
         String groupDescription = description.getText();
-        if(description.getText().isEmpty() || name.getText().isEmpty()){
-            message.setTextFill(Color.RED);
-            message.setText("Please Fill All Fields");
-        } else {
-            group = Client.creatGroup(groupName, groupDescription, publicGroup);
-            group.getUsers().add(User.changeToPrivate(user));
-            group.getRoles().add("creator");
-            user.getChats().add(group);
-            goToGroupPage(event);
-        }
+//        if(description.getText().isEmpty() || name.getText().isEmpty()){
+//            message.setTextFill(Color.RED);
+//            message.setText("Please Fill All Fields");
+//        } else {
+//            group = Client.creatGroup(groupName, groupDescription, publicGroup);
+//            group.getUsers().add(User.changeToPrivate(user));
+//            group.getRoles().add("creator");
+//            user.getChats().add(group);
+//            goToGroupPage(event);
+//        }
 
     }
 

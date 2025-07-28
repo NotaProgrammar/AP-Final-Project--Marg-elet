@@ -153,7 +153,7 @@ public class Client  {
     }
 
     //for GUI
-    public static void ChangeName(Chat chat,String newName){
+    public static void changeName(Chat chat,String newName){
         try {
             String message = chat.getId().toString() + "##name##channel##" + newName ;
             ChangePropertyRequest cpr = new ChangePropertyRequest(message,User.changeToPrivate(loggedUser));

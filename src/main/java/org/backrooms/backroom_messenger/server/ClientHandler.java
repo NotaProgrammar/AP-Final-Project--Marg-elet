@@ -102,7 +102,7 @@ public class ClientHandler implements Runnable {
         }
         String user = crr.getUserName();
         String chatType = crr.getChatType();
-        UUID uuid = UUID.randomUUID();
+        UUID uuid = crr.getId();
         DataBaseManager.changeRole(chatType,uuid,user,role);
     }
 

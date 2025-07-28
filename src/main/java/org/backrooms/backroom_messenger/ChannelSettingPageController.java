@@ -74,6 +74,7 @@ public class ChannelSettingPageController {
         }
         channel.setName(newName);
         nameLabel.setText(newName);
+        Client.changeName(channel, newName);
     }
 
 
@@ -85,6 +86,7 @@ public class ChannelSettingPageController {
         }
         channel.setDescription(newDescription);
         descriptionLabel.setText(newDescription);
+        Client.changeDescription(channel, newDescription);
     }
 
 
@@ -97,10 +99,13 @@ public class ChannelSettingPageController {
         nameLabel.setText(channel.getName(user));
         descriptionLabel.setText(channel.getDescription());
         membersLabel.setText(Integer.toString(count));
-        if(channel.getPublicity() == false) {
+        if(!channel.getPublicity()) {
             idLabel.setText(String.valueOf(channel.getId()));
-        }
-        else {
+            channelIdLabel.setDisable(false);
+            channelIdLabel.setVisible(true);
+            channelIdButton.setDisable(false);
+            channelIdButton.setVisible(true);
+        } else {
             idLabel.setDisable(true);
             idLabel.setVisible(false);
             channelIdLabel.setDisable(true);
@@ -132,8 +137,7 @@ public class ChannelSettingPageController {
                     hideAll();
                     break;
             }
-        }else
-        {
+        }else {
             hideAll();
         }
 
@@ -154,7 +158,7 @@ public class ChannelSettingPageController {
                     HBox.setHgrow(usernameLabel, Priority.ALWAYS);
                     HBox hBox = new HBox(10, nameLabel, usernameLabel);
 
-                    if (Objects.equals(channel.getRole(member), "creator") && !member.equals(user)) {
+                    if (!Objects.equals(channel.getRole(member), "creator") && !member.equals(user)) {
                         Button kickButton = new Button("Kick");
                         kickButton.setOnAction(e -> {
                             Client.removeUser(member, channel);
