@@ -17,6 +17,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -82,7 +83,24 @@ public class ClientHandler implements Runnable {
              changeRole(crr);
         }else if(sr instanceof RemoveUserRequest rur){
             removeUser(rur);
+        }else if(sr instanceof SignOutRequest sor){
+            signOut(sor);
         }
+    }
+
+    private void signOut(SignOutRequest sor) throws SQLException {
+        String username = sor.getUsername();
+        Date lastSeen = new Date();
+        DataBaseManager.setLastSeen(username,lastSeen);
+        String message = username + "##" + lastSeen;
+        UserLoggedOutResponse ulor = new UserLoggedOutResponse(message);
+        List<String> usernames = new ArrayList<>();
+        for(Chat chat : activeUser.getChats()){
+            if(chat instanceof PvChat pv){
+                usernames.add(pv.getUserName(activeUser));
+            }
+        }
+        Server.sendResponse(ulor,usernames);
     }
 
     private void removeUser(RemoveUserRequest rur) throws SQLException {

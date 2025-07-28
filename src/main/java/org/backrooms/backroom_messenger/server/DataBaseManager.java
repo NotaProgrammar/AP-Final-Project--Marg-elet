@@ -520,4 +520,15 @@ public class DataBaseManager {
         ps.close();
         conn.close();
     }
+
+    public static void setLastSeen(String username, java.util.Date date) throws SQLException {
+        Connection conn = connectToDataBase();
+        String query = "UPDATE public.users SET last_seen = ? WHERE username = ?";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setTimestamp(1,new Timestamp(date.getTime()));
+        ps.setString(2,username);
+        ps.executeUpdate();
+        ps.close();
+        conn.close();
+    }
 }

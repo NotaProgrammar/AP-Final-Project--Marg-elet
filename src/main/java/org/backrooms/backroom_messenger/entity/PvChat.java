@@ -22,9 +22,9 @@ public class PvChat extends Chat{
     @Override
     public String getName(User user) {
         if(user1.getUsername().equals(user.getUsername())){
-            return user2.getName();
+            return user2.toString();
         }else{
-            return user1.getName();
+            return user1.toString();
         }
     }
 

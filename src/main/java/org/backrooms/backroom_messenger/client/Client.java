@@ -212,7 +212,13 @@ public class Client  {
 
     //for GUI
     public static void signOut(){
-
+        try{
+            SignOutRequest sor = new SignOutRequest(loggedUser.getUsername(),User.changeToPrivate(loggedUser));
+            mapper.registerSubtypes(new NamedType(SignOutRequest.class,"signOutRequest"));
+            sendRequest(sor);
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }
     }
 
 

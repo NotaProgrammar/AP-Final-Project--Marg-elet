@@ -2,6 +2,7 @@ package org.backrooms.backroom_messenger.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Date;
 
 
 public class PrivateUser {
@@ -9,6 +10,10 @@ public class PrivateUser {
     private String username;
     @JsonProperty
     private String name;
+    @JsonProperty
+    private boolean online;
+    @JsonProperty
+    private Date lastSeen;
     //todo status
     //todo profile
 
@@ -23,5 +28,30 @@ public class PrivateUser {
 
     public String getName() {
         return name;
+    }
+
+    public String toString(){
+        if(online){
+            return " Name: " + name + " Online: " + online;
+        }else{
+            return " Name: " + name + " last seen : " + lastSeen;
+        }
+
+    }
+
+    public boolean isOnline() {
+        return online;
+    }
+
+    public void setOnline(boolean online) {
+        this.online = online;
+    }
+
+    public Date getLastSeen() {
+        return lastSeen;
+    }
+
+    public void setLastSeen(Date lastSeen) {
+        this.lastSeen = lastSeen;
     }
 }

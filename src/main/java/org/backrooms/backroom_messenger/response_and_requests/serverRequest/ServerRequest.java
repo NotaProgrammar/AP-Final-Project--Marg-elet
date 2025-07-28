@@ -22,7 +22,8 @@ import org.backrooms.backroom_messenger.entity.PrivateUser;
         @JsonSubTypes.Type(value = SubRequest.class, name = "subRequest"),
         @JsonSubTypes.Type(value = ChangePropertyRequest.class, name = "changePropertyRequest"),
         @JsonSubTypes.Type(value = ChangeRoleRequest.class, name = "changeRoleRequest"),
-        @JsonSubTypes.Type(value = RemoveUserRequest.class, name = "removeUserRequest")
+        @JsonSubTypes.Type(value = RemoveUserRequest.class, name = "removeUserRequest"),
+        @JsonSubTypes.Type(value = SignOutRequest.class, name = "signOutRequest")
 })
 
 public abstract class ServerRequest {
