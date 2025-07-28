@@ -6,7 +6,6 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.backrooms.backroom_messenger.CreatGroupPageController">
    <children>
       <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#goBack" text="go back" />
@@ -16,7 +15,7 @@
       <TextField fx:id="description" layoutX="160.0" layoutY="156.0" prefHeight="25.0" prefWidth="391.0" />
       <Label layoutX="73.0" layoutY="239.0" text="Do you wnt the group to be public?" />
       <CheckBox fx:id="publicity" layoutX="283.0" layoutY="239.0" mnemonicParsing="false" onAction="#setPublicityOfGroup" text="public" />
-      <Button layoutX="278.0" layoutY="331.0" mnemonicParsing="false" onAction="#create" text="Creat" />
+      <Button layoutX="278.0" layoutY="331.0" mnemonicParsing="false" onAction="#create" text="Create" />
       <Label fx:id="message" layoutX="434.0" layoutY="335.0" text="              " />
    </children>
 </AnchorPane>

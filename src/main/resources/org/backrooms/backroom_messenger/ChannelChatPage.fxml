@@ -8,7 +8,7 @@
 
 <AnchorPane prefHeight="561.0" prefWidth="733.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.backrooms.backroom_messenger.ChannelChatPageController">
    <children>
-      <Button layoutX="593.0" layoutY="14.0" mnemonicParsing="false" text="channel informaition" />
+      <Button fx:id="settingButton" layoutX="622.0" layoutY="14.0" mnemonicParsing="false" onAction="#goToSetting" text="channel info" />
       <ListView fx:id="messageListView" layoutX="91.0" layoutY="47.0" prefHeight="456.0" prefWidth="491.0" />
       <Button layoutX="21.0" layoutY="14.0" mnemonicParsing="false" onAction="#goBack" text="go back" />
       <Button fx:id="joinButton" layoutX="599.0" layoutY="440.0" mnemonicParsing="false" onAction="#joinChannel" prefHeight="26.0" prefWidth="126.0" text="     " />
