@@ -11,7 +11,7 @@ public class PrivateUser {
     @JsonProperty
     private String name;
     @JsonProperty
-    private boolean online;
+    private boolean online = true;
     @JsonProperty
     private Date lastSeen;
     //todo status

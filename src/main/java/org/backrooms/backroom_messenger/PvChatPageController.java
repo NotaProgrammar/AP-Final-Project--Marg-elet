@@ -59,10 +59,12 @@ public class PvChatPageController {
                 if (empty || message == null) {
                     setText(null);
                 } else {
-                    setText(message.getMessage());
+
                     if (message.getSender().equals(user.getUsername())) {
+                        setText(message.toString());
                         setStyle("-fx-alignment: center-right;");
                     } else {
+                        setText(message.getMessage());
                         setStyle("-fx-alignment: center-left;");
                     }
                 }
@@ -83,11 +85,16 @@ public class PvChatPageController {
 
     public static void saveReceivedMessage(Message message) {
         chat.getMessage().add(message);
-        instance.messages.setAll(chat.getMessage());
+        try{
+            instance.messages.setAll(chat.getMessage());
+        }catch (Exception ignored){
+
+        }
     }
 
 
     public void goBack(ActionEvent event) throws IOException {
+        instance = null;
         FXMLLoader displayLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("MainDisplay.fxml"));
         Scene scene = new Scene(displayLoader.load(), 560, 350);
         MainDisplayController mdc  = displayLoader.getController();

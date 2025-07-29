@@ -28,6 +28,14 @@ public class PvChat extends Chat{
         }
     }
 
+    public PrivateUser getUser(User user){
+        if(user1.getUsername().equals(user.getUsername())){
+            return user2;
+        }else{
+            return user1;
+        }
+    }
+
     @Override @JsonIgnore
     public String getType() {
         return "pv_chat";
@@ -40,13 +48,5 @@ public class PvChat extends Chat{
         return user2;
     }
 
-    public String getUserName(PrivateUser user) {
-        if(user1.getUsername().equals(user.getUsername())){
-            return user2.getUsername();
-        }else if(user2.getUsername().equals(user.getUsername())){
-            return user1.getUsername();
-        }
-        return null;
-    }
 
 }

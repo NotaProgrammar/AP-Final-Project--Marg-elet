@@ -50,12 +50,13 @@ public class DataBaseManager {
                 //todo
 
         }
-        String sql = "INSERT INTO " + tableName + " (id,sender,message,datetime) VALUES (?,?,?,?)";
+        String sql = "INSERT INTO " + tableName + " (id,sender,message,datetime,read_status) VALUES (?,?,?,?,?)";
         PreparedStatement ps = connection.prepareStatement(sql);
         ps.setObject(1,message.getId());
         ps.setString(2,message.getSender());
         ps.setObject(3,message.getMessage());
         ps.setDate(4,java.sql.Date.valueOf(message.getTimeDate()));
+        ps.setBoolean(5, message.isRead());
         ps.executeUpdate();
         ps.close();
         connection.close();
@@ -132,6 +133,15 @@ public class DataBaseManager {
         if (rs.next()) {
             String name = rs.getString("name");
             user = new PrivateUser(username, name);
+            try{
+                Timestamp time = rs.getTimestamp("last_seen");
+                Date lastSeen = new Date(time.getTime());
+                Boolean online = rs.getBoolean("online");
+                user.setLastSeen(lastSeen);
+                user.setOnline(online);
+            }catch(Exception e){
+
+            }
         }
 
         rs.close();
@@ -140,6 +150,8 @@ public class DataBaseManager {
         return user;
     }
 
+
+    //todo
     public static List<PrivateUser> searchUser(String searched) throws SQLException {
         List<PrivateUser> users = new ArrayList<>();
         Connection con = connectToDataBase();
@@ -180,7 +192,7 @@ public class DataBaseManager {
     private static void createPvChatTable(UUID chatId) throws SQLException {
         Connection conn = connectToDataBase();
         String tableName = "pv_chats.chat_" + chatId.toString().replace("-", "_");
-        String sql = "CREATE TABLE "+ tableName + " ( id uuid PRIMARY KEY , sender text, message text, datetime date, FOREIGN KEY (sender) REFERENCES public.users(username))";
+        String sql = "CREATE TABLE "+ tableName + " ( id uuid PRIMARY KEY , sender text, message text, datetime date, read_status boolean, FOREIGN KEY (sender) REFERENCES public.users(username))";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.executeUpdate();
         ps.close();
@@ -245,8 +257,9 @@ public class DataBaseManager {
             String text = rs.getString("message");
             UUID messageId = UUID.fromString(rs.getString("id"));
             LocalDate localDate = rs.getDate("datetime").toLocalDate();
+            boolean readStatus = rs.getBoolean("read_status");
             java.util.Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-            Message message = new Message(messageId,sender,chat.getId(),text,date,chat.getType());
+            Message message = new Message(messageId,sender,chat.getId(),text,date,chat.getType(),readStatus);
             messages.add(message);
         }
         rs.close();
@@ -305,7 +318,7 @@ public class DataBaseManager {
             String description = rs.getString("description");
             boolean publicity = rs.getBoolean("publicity");
             String creator = rs.getString("creator");
-            channel = new Channel(id,name,description,publicity,creator);
+            channel = new Channel(id,name,description,publicity,creator,true);
         }
         rs.close();
         ps.close();
@@ -348,7 +361,7 @@ public class DataBaseManager {
     private static void createChannelMessageTable(UUID channel) throws SQLException {
         Connection conn = connectToDataBase();
         String tableName = "channels.messages_" + channel.toString().replace("-","_");
-        String query = "CREATE TABLE "+ tableName + " ( id uuid PRIMARY KEY , sender text, message text, datetime date, FOREIGN KEY (sender) REFERENCES public.users(username))";
+        String query = "CREATE TABLE "+ tableName + " ( id uuid PRIMARY KEY , sender text, message text, datetime date, read_status boolean, FOREIGN KEY (sender) REFERENCES public.users(username))";
         PreparedStatement ps = conn.prepareStatement(query);
         ps.executeUpdate();
         ps.close();
@@ -416,7 +429,7 @@ public class DataBaseManager {
                 UUID id = UUID.fromString(rs.getString("id"));
                 String name = rs.getString("name");
                 String creator = rs.getString("creator");
-                channels.add(new Channel(id,name,description,publicity,creator));
+                channels.add(new Channel(id,name,description,publicity,creator,true));
             }
         }
         return channels;
@@ -521,12 +534,52 @@ public class DataBaseManager {
         conn.close();
     }
 
-    public static void setLastSeen(String username, java.util.Date date) throws SQLException {
+    public static void setLastSeen(String username, java.util.Date date,boolean online) throws SQLException {
         Connection conn = connectToDataBase();
-        String query = "UPDATE public.users SET last_seen = ? WHERE username = ?";
+        String query = "UPDATE public.users SET last_seen = ? ,online = ? WHERE username = ?";
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setTimestamp(1,new Timestamp(date.getTime()));
+        ps.setBoolean(2,online);
+        ps.setString(3,username);
+        ps.executeUpdate();
+        ps.close();
+        conn.close();
+    }
+
+    public static void readAllMessages(UUID chat, String username,String type) throws SQLException {
+        Connection conn = connectToDataBase();
+        String tableName = null;
+        if(type.equals("pv_chat")){
+            tableName = "pv_chats.chat_" + chat.toString().replace("-", "_");
+        }else if(type.equals("channel")){
+            tableName = "channel.messages_" + chat.toString().replace("-", "_");
+        }
+
+        String query = "UPDATE " + tableName + " SET read_status = ? WHERE sender != ?";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setBoolean(1,true);
         ps.setString(2,username);
+        ps.executeUpdate();
+        ps.close();
+        conn.close();
+
+    }
+
+    public static void checkAsRead(UUID chatId, String type, UUID messageId) throws SQLException {
+        Connection conn = connectToDataBase();
+        String tableName = null;
+        switch (type){
+            case "pv_chat":
+                tableName = "pv_chats.chat_" + chatId.toString().replace("-","_");
+                break;
+            case "channel":
+                tableName = "channels.messages_" + chatId.toString().replace("-","_");
+                break;
+        }
+        String query = "UPDATE " + tableName + " SET read_status = ? WHERE id = ?";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setBoolean(1,true);
+        ps.setObject(2,messageId);
         ps.executeUpdate();
         ps.close();
         conn.close();

@@ -40,7 +40,7 @@ public class CreatChannelPageController {
             message.setTextFill(Color.RED);
             message.setText("Please Fill All Fields");
         } else {
-            channel = Client.createChannel(channelName, channelDescription, publicChannel);
+            channel = Client.createChannel(channelName, channelDescription, publicChannel,true);
             channel.getUsers().add(User.changeToPrivate(user));
             channel.getRoles().add("creator");
             user.getChats().add(channel);

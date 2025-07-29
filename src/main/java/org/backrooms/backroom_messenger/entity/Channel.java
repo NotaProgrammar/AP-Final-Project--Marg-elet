@@ -21,18 +21,22 @@ public class Channel extends MultiUserChat{
     private String creator;
     @JsonProperty
     private boolean publicity;
+    @JsonProperty
+    private boolean isChannel;
 
 
     public Channel(@JsonProperty("id") UUID id,
                    @JsonProperty("name") String name,
                    @JsonProperty("description") String description,
                    @JsonProperty("publicity") boolean publicity,
-                   @JsonProperty("creator") String creator) {
+                   @JsonProperty("creator") String creator,
+                   @JsonProperty("isChannel")boolean isChannel) {
         super(id);
         this.name = name;
         this.description = description;
         this.publicity = publicity;
         this.creator = creator;
+        this.isChannel = isChannel;
     }
 
 
@@ -97,5 +101,10 @@ public class Channel extends MultiUserChat{
         }else if(roles.get(index).equals("normal")){
             roles.set(index, "admin");
         }
+    }
+
+    @JsonIgnore
+    public boolean isChannel(){
+        return isChannel;
     }
 }

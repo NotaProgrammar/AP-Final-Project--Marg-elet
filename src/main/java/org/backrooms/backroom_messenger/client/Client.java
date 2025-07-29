@@ -4,9 +4,8 @@ import com.fasterxml.jackson.databind.jsontype.NamedType;
 import org.backrooms.backroom_messenger.ClientReceiverGUI;
 import org.backrooms.backroom_messenger.entity.*;
 import org.backrooms.backroom_messenger.response_and_requests.serverRequest.*;
-import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.AvailableUserResponse;
-import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.ChatModifyResponse;
-import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.SearchedUsersListResponse;
+import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.*;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -63,7 +62,7 @@ public class Client  {
 
     //for GUI
     public static Message sendMessage(String messageString, Chat chat){
-        Message message = new Message(UUID.randomUUID(), loggedUser.getUsername(), chat.getId(), messageString,new Date(),chat.getType());
+        Message message = new Message(UUID.randomUUID(), loggedUser.getUsername(), chat.getId(), messageString,new Date(),chat.getType(),false);
         try {
             mapper.registerSubtypes(new NamedType(PvChat.class, "PvChat"));
             mapper.registerSubtypes(new NamedType(Channel.class,"channel"));
@@ -118,8 +117,8 @@ public class Client  {
     }
 
     //for GUI
-    public static Channel createChannel(String name,String description,boolean publicOrPrivate){
-        Channel newChannel = new Channel(UUID.randomUUID(),name,description,publicOrPrivate,loggedUser.getUsername());
+    public static Channel createChannel(String name,String description,boolean publicOrPrivate,boolean isChannel){
+        Channel newChannel = new Channel(UUID.randomUUID(),name,description,publicOrPrivate,loggedUser.getUsername(),isChannel);
         try {
             mapper.registerSubtypes(new NamedType(Channel.class,"channel"));
             String message = mapper.writeValueAsString(newChannel);
@@ -331,5 +330,33 @@ public class Client  {
         if(!flag){
             loggedUser.getChats().add(newChat);
         }
+    }
+
+    public static void setLastSeen(UserLogResponse ulr) {
+        boolean online = ulr.isOnline();
+        String username = ulr.getUsername();
+        for(Chat chat : loggedUser.getChats()){
+            if(chat instanceof PvChat pv && pv.getUser(loggedUser).getUsername().equals(username)){
+                PrivateUser loggedOutUser = pv.getUser(loggedUser);
+                loggedOutUser.setLastSeen(ulr.getLastSeen());
+                loggedOutUser.setOnline(online);
+                break;
+            }
+        }
+    }
+
+    public static void readMessage(Message message) {
+        try{
+            UUID messageId = message.getId();
+            UUID chatId = message.getChat();
+            String type = message.getChatType();
+            String msg = messageId + "##" + chatId + "##" + type;
+            ChatReadRequest crr = new ChatReadRequest(msg,User.changeToPrivate(loggedUser));
+            mapper.registerSubtypes(new NamedType(ChatReadRequest.class, "chatReadRequest"));
+            sendRequest(crr);
+        }catch(Exception e){
+            System.out.println(e);
+        }
+
     }
 }

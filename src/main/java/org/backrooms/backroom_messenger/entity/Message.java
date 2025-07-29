@@ -23,19 +23,23 @@ public class Message {
     private Date timeDate;
     @JsonProperty
     private String chatType;
+    @JsonProperty
+    private boolean read;
 
     public Message(@JsonProperty("id") UUID id,
                    @JsonProperty("sender") String  sender,
                    @JsonProperty("chat") UUID chat,
                    @JsonProperty("message") String message,
                    @JsonProperty("timeDate") Date timeDate,
-                   @JsonProperty("chatType") String chatType) {
+                   @JsonProperty("chatType") String chatType,
+                   @JsonProperty("read") boolean read) {
         this.id = id;
         this.sender = sender;
         this.chat = chat;
         this.message = formatMessage(message);
         this.timeDate = timeDate;
         this.chatType = chatType;
+        this.read = read;
     }
 
     public UUID getId() {
@@ -64,7 +68,7 @@ public class Message {
 
     @Override
     public String toString() {
-        return message;
+        return message + " read : " + read;
     }
 
     public String formatMessage(String input) {
@@ -98,5 +102,13 @@ public class Message {
 
     public String getChatType() {
         return chatType;
+    }
+
+    public boolean isRead() {
+        return read;
+    }
+
+    public void setRead(boolean read) {
+        this.read = read;
     }
 }

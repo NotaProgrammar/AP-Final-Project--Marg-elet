@@ -151,6 +151,7 @@ public class ChannelChatPageController implements Initializable {
                     setText(null);
                 } else {
                     setText(message.getMessage());
+                    setStyle("-fx-alignment: center;");
                 }
             }
         });

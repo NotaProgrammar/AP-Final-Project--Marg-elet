@@ -1,5 +1,6 @@
 package org.backrooms.backroom_messenger;
 
+import org.backrooms.backroom_messenger.client.Client;
 import org.backrooms.backroom_messenger.entity.Chat;
 import org.backrooms.backroom_messenger.entity.Message;
 
@@ -25,8 +26,10 @@ public class ClientReceiverGUI {
     public static void addReceivedMessage(Message message){
         switch(message.getChatType()){
             case "pv_chat":
-                if(PvChatPageController.getChat().getUserName(PvChatPageController.getUser()).equals(message.getSender())){
+                if(PvChatPageController.getChat().getUser(PvChatPageController.getUser()).getUsername().equals(message.getSender())){
+                    message.setRead(true);
                     PvChatPageController.saveReceivedMessage(message);
+                    Client.readMessage(message);
                 }
                 break;
             case "channel":

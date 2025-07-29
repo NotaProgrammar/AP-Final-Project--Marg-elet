@@ -43,7 +43,6 @@ public class ClientHandler implements Runnable {
         mapper.registerSubtypes(new NamedType(ChatModifyResponse.class, "chatModifyResponse"));
         mapper.registerSubtypes(new NamedType(PvChat.class, "PvChat"));
         mapper.registerSubtypes(new NamedType(ReceivedMessage.class,"receivedMessage"));
-
     }
 
     @Override
@@ -83,24 +82,18 @@ public class ClientHandler implements Runnable {
              changeRole(crr);
         }else if(sr instanceof RemoveUserRequest rur){
             removeUser(rur);
-        }else if(sr instanceof SignOutRequest sor){
-            signOut(sor);
+        }else if(sr instanceof SignOutRequest){
+            setAvailability(false);
+        }else if(sr instanceof ChatReadRequest crr){
+            checkRead(crr);
         }
     }
 
-    private void signOut(SignOutRequest sor) throws SQLException {
-        String username = sor.getUsername();
-        Date lastSeen = new Date();
-        DataBaseManager.setLastSeen(username,lastSeen);
-        String message = username + "##" + lastSeen;
-        UserLoggedOutResponse ulor = new UserLoggedOutResponse(message);
-        List<String> usernames = new ArrayList<>();
-        for(Chat chat : activeUser.getChats()){
-            if(chat instanceof PvChat pv){
-                usernames.add(pv.getUserName(activeUser));
-            }
-        }
-        Server.sendResponse(ulor,usernames);
+    private void checkRead(ChatReadRequest crr) throws SQLException {
+        UUID messageId = crr.getMessageId();
+        UUID chatId = crr.getChatId();
+        String type = crr.getChatType();
+        DataBaseManager.checkAsRead(chatId,type,messageId);
     }
 
     private void removeUser(RemoveUserRequest rur) throws SQLException {
@@ -137,6 +130,7 @@ public class ClientHandler implements Runnable {
     }
 
     private void openChannel(OpenChannelRequest ocr) throws SQLException, JsonProcessingException {
+        DataBaseManager.readAllMessages(ocr.getId(),activeUser.getUsername(),"channel");
         Channel channel = DataBaseManager.getChannel(ocr.getId());
         String role = DataBaseManager.getRole(ocr.getId(),activeUser.getUsername());
         if(role.equals("creator") || role.equals("admin")){
@@ -203,7 +197,7 @@ public class ClientHandler implements Runnable {
         Server.broadcast(message);
     }
 
-    private void loginHandle(LoginRequest loginRequest) throws IOException {
+    private void loginHandle(LoginRequest loginRequest) throws IOException, SQLException {
         String username = loginRequest.getUsername();
         String password = loginRequest.getPassword();
 
@@ -222,13 +216,16 @@ public class ClientHandler implements Runnable {
         }
 
 
+        setAvailability(true);
+
         AvailableUserResponse aur = new AvailableUserResponse(mapper.writeValueAsString(activeUser));
         String response = mapper.writeValueAsString(aur);
         out.writeUTF(response);
         out.flush();
+
     }
 
-    private  void signupHandle(SignupRequest signupRequest) throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
+    private void signupHandle(SignupRequest signupRequest) throws NoSuchAlgorithmException, InvalidKeySpecException, IOException, SQLException {
 
         String username = signupRequest.getUsername();
         String password = signupRequest.getPassword();
@@ -246,11 +243,33 @@ public class ClientHandler implements Runnable {
         }
 
         activeUser = signedUser;
+        setAvailability(true);
         AvailableUserResponse aur = new AvailableUserResponse(mapper.writeValueAsString(activeUser));
         String response = mapper.writeValueAsString(aur);
         out.writeUTF(response);
         out.flush();
+    }
 
+    private void setAvailability(boolean online) throws SQLException {
+        Date lastSeen = new Date();
+        DataBaseManager.setLastSeen(activeUser.getUsername(),lastSeen,online);
+        String message = null;
+        if(online){
+            message = activeUser.getUsername() + "##" + lastSeen.getTime() + "##online";
+        }else{
+            message = activeUser.getUsername() + "##" + lastSeen.getTime() + "##offline";
+        }
+        UserLogResponse ulr = new UserLogResponse(message);
+        List<String> usernames = new ArrayList<>();
+        Thread thread = new Thread(() -> {
+            for(Chat chat : activeUser.getChats()){
+                if(chat instanceof PvChat pv){
+                    usernames.add(pv.getUser(activeUser).getUsername());
+                }
+            }
+            Server.sendResponse(ulr,usernames);
+        });
+        thread.start();
     }
 
     private void searchUser(SearchRequest searchRequest) throws Exception {
@@ -320,6 +339,7 @@ public class ClientHandler implements Runnable {
     }
 
     private void openChat(PvChat pv) throws IOException, SQLException {
+        DataBaseManager.readAllMessages(pv.getId(),activeUser.getUsername(),"pv_chat");
         pv.getMessage().addAll(DataBaseManager.returnMessages(pv));
         String message = "add##pv_chat##" + mapper.writeValueAsString(pv) + "##sender";
         ChatModifyResponse cmr = new ChatModifyResponse(message);
@@ -330,7 +350,7 @@ public class ClientHandler implements Runnable {
         String message2 = "add##pv_chat##" + mapper.writeValueAsString(pv) + "##receiver";
         ChatModifyResponse cmr2 = new ChatModifyResponse(message2);
         List<String> usernames = new ArrayList<>();
-        usernames.add(pv.getUserName(activeUser));
+        usernames.add(pv.getUser(activeUser).getUsername());
         Server.sendResponse(cmr2,usernames);
     }
 

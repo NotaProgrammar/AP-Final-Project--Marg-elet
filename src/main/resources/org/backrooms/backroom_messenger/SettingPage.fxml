@@ -10,7 +10,7 @@
       <Label layoutX="277.0" layoutY="14.0" text="SETTING" />
       <Label layoutX="108.0" layoutY="80.0" text="Username : " />
       <Label layoutX="108.0" layoutY="134.0" text="Name : " />
-      <Button layoutX="534.0" layoutY="361.0" mnemonicParsing="false" text="log out" />
+      <Button layoutX="534.0" layoutY="361.0" mnemonicParsing="false" onAction="#logOut" text="log out" />
       <Button layoutX="14.0" layoutY="361.0" mnemonicParsing="false" text="Delete account" />
       <Label layoutX="217.0" layoutY="80.0" text="just show username" />
       <Label layoutX="181.0" layoutY="134.0" text="Label" />

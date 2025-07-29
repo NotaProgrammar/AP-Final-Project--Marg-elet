@@ -45,6 +45,8 @@ public class ClientReceiver implements Runnable {
             Client.chatModifyHandle(cmr);
         }else if(sr instanceof ReceivedMessage rm){
             ClientReceiverGUI.addReceivedMessage(rm.getMessageObject());
+        }else if(sr instanceof UserLogResponse ulor){
+            Client.setLastSeen(ulor);
         }
     }
 }
