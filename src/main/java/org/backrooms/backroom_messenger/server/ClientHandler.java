@@ -94,6 +94,14 @@ public class ClientHandler implements Runnable {
         UUID chatId = crr.getChatId();
         String type = crr.getChatType();
         DataBaseManager.checkAsRead(chatId,type,messageId);
+        if(type.equals("pv_chat")){
+            String sender = crr.getMsgSender();
+            String message = chatId.toString() + "##" + messageId.toString() + "##" + type;
+            UserReadResponse urr = new UserReadResponse(message);
+            List<String> usernames = new ArrayList<>();
+            usernames.add(sender);
+            Server.sendResponse(urr, usernames);
+        }
     }
 
     private void removeUser(RemoveUserRequest rur) throws SQLException {
@@ -237,13 +245,12 @@ public class ClientHandler implements Runnable {
         try {
             signedUser = new User(username,hashedPassword,salt);
             DataBaseManager.addUserToDataBase(signedUser);
-        } catch (SQLException e) {
-            signedUser = null;
+            activeUser = signedUser;
+            setAvailability(true);
+        } catch (Exception e) {
             notify(e);
         }
 
-        activeUser = signedUser;
-        setAvailability(true);
         AvailableUserResponse aur = new AvailableUserResponse(mapper.writeValueAsString(activeUser));
         String response = mapper.writeValueAsString(aur);
         out.writeUTF(response);

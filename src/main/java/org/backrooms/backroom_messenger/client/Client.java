@@ -350,7 +350,8 @@ public class Client  {
             UUID messageId = message.getId();
             UUID chatId = message.getChat();
             String type = message.getChatType();
-            String msg = messageId + "##" + chatId + "##" + type;
+            String sender = message.getSender();
+            String msg = messageId + "##" + chatId + "##" + type + "##" + sender;
             ChatReadRequest crr = new ChatReadRequest(msg,User.changeToPrivate(loggedUser));
             mapper.registerSubtypes(new NamedType(ChatReadRequest.class, "chatReadRequest"));
             sendRequest(crr);
@@ -359,4 +360,9 @@ public class Client  {
         }
 
     }
+
+    public static User getUser(){
+        return loggedUser;
+    }
+
 }

@@ -55,7 +55,7 @@ public class DataBaseManager {
         ps.setObject(1,message.getId());
         ps.setString(2,message.getSender());
         ps.setObject(3,message.getMessage());
-        ps.setDate(4,java.sql.Date.valueOf(message.getTimeDate()));
+        ps.setTimestamp(4,new Timestamp(message.getDate().getTime()));
         ps.setBoolean(5, message.isRead());
         ps.executeUpdate();
         ps.close();
@@ -192,7 +192,7 @@ public class DataBaseManager {
     private static void createPvChatTable(UUID chatId) throws SQLException {
         Connection conn = connectToDataBase();
         String tableName = "pv_chats.chat_" + chatId.toString().replace("-", "_");
-        String sql = "CREATE TABLE "+ tableName + " ( id uuid PRIMARY KEY , sender text, message text, datetime date, read_status boolean, FOREIGN KEY (sender) REFERENCES public.users(username))";
+        String sql = "CREATE TABLE "+ tableName + " ( id uuid PRIMARY KEY , sender text, message text, datetime TIMESTAMP, read_status boolean, FOREIGN KEY (sender) REFERENCES public.users(username))";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.executeUpdate();
         ps.close();
@@ -256,9 +256,8 @@ public class DataBaseManager {
             String sender = rs.getString("sender");
             String text = rs.getString("message");
             UUID messageId = UUID.fromString(rs.getString("id"));
-            LocalDate localDate = rs.getDate("datetime").toLocalDate();
             boolean readStatus = rs.getBoolean("read_status");
-            java.util.Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            java.util.Date date = new java.util.Date(rs.getTimestamp("datetime").getTime());
             Message message = new Message(messageId,sender,chat.getId(),text,date,chat.getType(),readStatus);
             messages.add(message);
         }
@@ -361,7 +360,7 @@ public class DataBaseManager {
     private static void createChannelMessageTable(UUID channel) throws SQLException {
         Connection conn = connectToDataBase();
         String tableName = "channels.messages_" + channel.toString().replace("-","_");
-        String query = "CREATE TABLE "+ tableName + " ( id uuid PRIMARY KEY , sender text, message text, datetime date, read_status boolean, FOREIGN KEY (sender) REFERENCES public.users(username))";
+        String query = "CREATE TABLE "+ tableName + " ( id uuid PRIMARY KEY , sender text, message text, datetime TIMESTAMP, read_status boolean, FOREIGN KEY (sender) REFERENCES public.users(username))";
         PreparedStatement ps = conn.prepareStatement(query);
         ps.executeUpdate();
         ps.close();

@@ -15,6 +15,7 @@ import org.backrooms.backroom_messenger.client.Client;
 import org.backrooms.backroom_messenger.entity.*;
 
 import java.io.IOException;
+import java.util.Comparator;
 
 
 public class PvChatPageController {
@@ -43,6 +44,7 @@ public class PvChatPageController {
     public void setChatAndUser(PvChat chat, User user) {
         PvChatPageController.chat = chat;
         PvChatPageController.user = user;
+        chat.getMessage().sort(Comparator.comparing(org.backrooms.backroom_messenger.entity.Message::getDate));
         messages.clear();
         messages.setAll(chat.getMessage());
     }
@@ -51,7 +53,6 @@ public class PvChatPageController {
     public void setupCellFactories() {
         MessageListView.setItems(messages);
 
-
         MessageListView.setCellFactory(listView -> new ListCell<>() {
             @Override
             protected void updateItem(Message message, boolean empty) {
@@ -59,12 +60,10 @@ public class PvChatPageController {
                 if (empty || message == null) {
                     setText(null);
                 } else {
-
+                    setText(message.toString(user.getUsername()));
                     if (message.getSender().equals(user.getUsername())) {
-                        setText(message.toString());
                         setStyle("-fx-alignment: center-right;");
                     } else {
-                        setText(message.getMessage());
                         setStyle("-fx-alignment: center-left;");
                     }
                 }
@@ -84,12 +83,16 @@ public class PvChatPageController {
 
 
     public static void saveReceivedMessage(Message message) {
-        chat.getMessage().add(message);
         try{
-            instance.messages.setAll(chat.getMessage());
-        }catch (Exception ignored){
-
+            chat.getMessage().add(message);
+            instance.messages.addAll(chat.getMessage());
+        }catch (Exception e){
+            System.out.println(e);
         }
+    }
+
+    public static void refresh(){
+        instance.messages.addAll(chat.getMessage());
     }
 
 

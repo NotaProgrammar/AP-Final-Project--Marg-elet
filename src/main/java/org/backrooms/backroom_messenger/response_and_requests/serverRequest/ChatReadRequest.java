@@ -1,6 +1,5 @@
 package org.backrooms.backroom_messenger.response_and_requests.serverRequest;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.backrooms.backroom_messenger.entity.PrivateUser;
 
@@ -13,6 +12,8 @@ public class ChatReadRequest extends ServerRequest {
     private UUID chatId;
     @JsonProperty
     private String chatType;
+    @JsonProperty
+    private String msgSender;
 
 
     public ChatReadRequest(@JsonProperty("message") String message,@JsonProperty("sender") PrivateUser sender) {
@@ -21,6 +22,7 @@ public class ChatReadRequest extends ServerRequest {
         this.messageId = UUID.fromString(tokens[0]);
         this.chatId = UUID.fromString(tokens[1]);
         this.chatType = tokens[2];
+        this.msgSender = tokens[3];
     }
 
     public UUID getMessageId() {
@@ -31,5 +33,9 @@ public class ChatReadRequest extends ServerRequest {
     }
     public String getChatType() {
         return chatType;
+    }
+
+    public String getMsgSender(){
+        return msgSender;
     }
 }

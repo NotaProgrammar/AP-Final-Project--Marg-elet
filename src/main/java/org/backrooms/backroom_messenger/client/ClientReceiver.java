@@ -31,7 +31,10 @@ public class ClientReceiver implements Runnable {
             while(true){
                 String response = dis.readUTF();
                 ServerResponse serverResponse = mapper.readValue(response,ServerResponse.class);
-                responseCheck(serverResponse);
+                Thread thread = new Thread(() -> {
+                    responseCheck(serverResponse);
+                });
+                thread.start();
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -44,9 +47,11 @@ public class ClientReceiver implements Runnable {
         }else if(sr instanceof ChatModifyResponse cmr){
             Client.chatModifyHandle(cmr);
         }else if(sr instanceof ReceivedMessage rm){
-            ClientReceiverGUI.addReceivedMessage(rm.getMessageObject());
+                ClientReceiverGUI.addReceivedMessage(rm.getMessageObject());
         }else if(sr instanceof UserLogResponse ulor){
             Client.setLastSeen(ulor);
+        }else if(sr instanceof UserReadResponse urr){
+            ClientReceiverGUI.readMessage(urr);
         }
     }
 }

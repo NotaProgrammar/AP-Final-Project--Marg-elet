@@ -55,20 +55,21 @@ public class Message {
     }
 
     @JsonIgnore
-    public LocalDate getTimeDate() {
-        LocalDate localDate = timeDate.toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate();
-        return localDate;
+    public Date getDate(){
+        return timeDate;
     }
 
     public String getSender() {
         return sender;
     }
 
-    @Override
-    public String toString() {
-        return message + " read : " + read;
+
+    public String toString(String username) {
+        if(username.equals(sender)) {
+            return message + " read : " + read;
+        }else{
+            return message;
+        }
     }
 
     public String formatMessage(String input) {
