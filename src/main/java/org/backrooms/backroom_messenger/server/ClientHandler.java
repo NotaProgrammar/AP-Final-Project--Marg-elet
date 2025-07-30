@@ -48,15 +48,25 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         ObjectMapper mapper = new ObjectMapper();
-        while(true){
-            try {
-                String request = in.readUTF();
-                ServerRequest sr = mapper.readValue(request, ServerRequest.class);
-                CheckRequest(sr);
-            } catch (Exception e) {
-                System.out.println(e);
+        if(!Thread.currentThread().isInterrupted()){
+            while(true){
+                try {
+                    String request = in.readUTF();
+                    ServerRequest sr = mapper.readValue(request, ServerRequest.class);
+                    Thread thread = new Thread(() -> {
+                        try {
+                            CheckRequest(sr);
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+                    thread.start();
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
             }
         }
+
     }
 
     private void CheckRequest(ServerRequest sr) throws Exception {
@@ -83,10 +93,32 @@ public class ClientHandler implements Runnable {
         }else if(sr instanceof RemoveUserRequest rur){
             removeUser(rur);
         }else if(sr instanceof SignOutRequest){
-            setAvailability(false);
+            signOut();
         }else if(sr instanceof ChatReadRequest crr){
             checkRead(crr);
+        }else if(sr instanceof FindChannelForLink fcfl){
+            findChannel(fcfl);
         }
+    }
+
+    private void signOut() throws SQLException {
+        setAvailability(false);
+        Server.terminateSession(this);
+        Thread.currentThread().interrupt();
+    }
+
+    private void findChannel(FindChannelForLink fcfl) throws SQLException, JsonProcessingException {
+        UUID uuid = fcfl.getChannelId();
+        Channel channel = null;
+        try{
+            channel = DataBaseManager.getChannelDetails(uuid);
+        }catch (Exception ignored){
+
+        }
+
+        String message = "founded##channel##" + mapper.writeValueAsString(channel);
+        ChatModifyResponse cmr = new ChatModifyResponse(message);
+        sendResponse(cmr);
     }
 
     private void checkRead(ChatReadRequest crr) throws SQLException {

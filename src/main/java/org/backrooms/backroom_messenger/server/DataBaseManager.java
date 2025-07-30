@@ -259,6 +259,13 @@ public class DataBaseManager {
             boolean readStatus = rs.getBoolean("read_status");
             java.util.Date date = new java.util.Date(rs.getTimestamp("datetime").getTime());
             Message message = new Message(messageId,sender,chat.getId(),text,date,chat.getType(),readStatus);
+            try{
+                UUID channelId = UUID.fromString(text.replace("\n",""));
+                Channel channel = getChannel(channelId);
+                message.setLinkToChannel(channel);
+            }catch (Exception ignored){
+
+            }
             messages.add(message);
         }
         rs.close();
@@ -305,7 +312,7 @@ public class DataBaseManager {
         return chats;
     }
 
-    private static Channel getChannelDetails(UUID id) throws SQLException {
+    public static Channel getChannelDetails(UUID id) throws SQLException {
         Connection conn = connectToDataBase();
         String query = "SELECT * FROM public.channels WHERE id = ?";
         PreparedStatement ps = conn.prepareStatement(query);
@@ -551,7 +558,7 @@ public class DataBaseManager {
         if(type.equals("pv_chat")){
             tableName = "pv_chats.chat_" + chat.toString().replace("-", "_");
         }else if(type.equals("channel")){
-            tableName = "channel.messages_" + chat.toString().replace("-", "_");
+            tableName = "channels.messages_" + chat.toString().replace("-", "_");
         }
 
         String query = "UPDATE " + tableName + " SET read_status = ? WHERE sender != ?";

@@ -25,6 +25,8 @@ public class Message {
     private String chatType;
     @JsonProperty
     private boolean read;
+    @JsonProperty
+    private Channel linkToChannel = null;
 
     public Message(@JsonProperty("id") UUID id,
                    @JsonProperty("sender") String  sender,
@@ -111,5 +113,13 @@ public class Message {
 
     public void setRead(boolean read) {
         this.read = read;
+    }
+
+    public void setLinkToChannel(Channel linkToChannel) {
+        this.linkToChannel = linkToChannel;
+    }
+
+    public Channel getLinkToChannel(){
+        return linkToChannel;
     }
 }

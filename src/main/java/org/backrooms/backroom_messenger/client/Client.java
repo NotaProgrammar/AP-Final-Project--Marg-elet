@@ -20,6 +20,8 @@ import static org.backrooms.backroom_messenger.StaticMethods.generateSalt;
 public class Client  {
 
 
+    static Chat foundedChat = null;
+    static boolean chatFound = false;
     static ObjectMapper mapper = new ObjectMapper();
     static User loggedUser;
     static Socket socket;
@@ -62,7 +64,28 @@ public class Client  {
 
     //for GUI
     public static Message sendMessage(String messageString, Chat chat){
-        Message message = new Message(UUID.randomUUID(), loggedUser.getUsername(), chat.getId(), messageString,new Date(),chat.getType(),false);
+        Message message = new Message(UUID.randomUUID(),
+                loggedUser.getUsername(), chat.getId(),
+                messageString,new Date(),chat.getType(),
+                false);
+
+        try{
+            foundedChat = null;
+            chatFound = false;
+            UUID uuid = UUID.fromString(messageString);
+            FindChannelForLink fcfl = new FindChannelForLink(uuid.toString(),User.changeToPrivate(loggedUser));
+            mapper.registerSubtypes(new NamedType(FindChannelForLink.class,"findChannelForLink"));
+            sendRequest(fcfl);
+            while(!chatFound){
+                Thread.sleep(10);
+            }
+            if(foundedChat != null){
+                message.setLinkToChannel((Channel) foundedChat);
+            }
+
+        }catch(Exception ignored){
+
+        }
         try {
             mapper.registerSubtypes(new NamedType(PvChat.class, "PvChat"));
             mapper.registerSubtypes(new NamedType(Channel.class,"channel"));
@@ -215,6 +238,7 @@ public class Client  {
             SignOutRequest sor = new SignOutRequest(loggedUser.getUsername(),User.changeToPrivate(loggedUser));
             mapper.registerSubtypes(new NamedType(SignOutRequest.class,"signOutRequest"));
             sendRequest(sor);
+            System.exit(0);
         }catch (Exception e){
             throw new RuntimeException(e);
         }
@@ -234,6 +258,8 @@ public class Client  {
             ClientReceiverGUI.openPvChat(newChat);
         }else if(sender==2){
             ClientReceiverGUI.openChatInSearch(newChat);
+        } else if (sender >= 3) {
+            ClientReceiverGUI.giveChatToPvChatPage((Channel) newChat,sender);
         }
     }
 
@@ -305,8 +331,15 @@ public class Client  {
 
         }else if(cmr.getModification().equals("open")){
             openChat(cmr.getChat());
+        } else if (cmr.getModification().equals("founded")) {
+            fillFoundedChat(cmr.getChat());
         }
 
+    }
+
+    private static void fillFoundedChat(Chat chat) {
+        foundedChat = chat;
+        chatFound = true;
     }
 
     private static void removeChat(Chat removingChat) {

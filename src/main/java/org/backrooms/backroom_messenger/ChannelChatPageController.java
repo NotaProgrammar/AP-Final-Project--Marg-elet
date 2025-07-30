@@ -6,9 +6,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.backrooms.backroom_messenger.client.Client;
@@ -19,17 +21,19 @@ import org.backrooms.backroom_messenger.entity.User;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class ChannelChatPageController implements Initializable {
+public class ChannelChatPageController {
 
 
-    private static ChannelChatPageController instance;
-    private User user = null;
+    private static User user = null;
     private static Channel chat = null;
     boolean alreadyJoined = false;
-    private ObservableList<Message> observableMessages = FXCollections.observableArrayList();
+    private static ObservableList<Message> observableMessages = FXCollections.observableArrayList();
+    private static Channel opened = null;
+    private static boolean isChannelOpened = false;
 
 
     @FXML
@@ -50,12 +54,9 @@ public class ChannelChatPageController implements Initializable {
     private Button settingButton;
 
 
-    public ChannelChatPageController() {
-        instance = this;
-    }
-
 
     public void goBack(ActionEvent event) throws IOException {
+        chat = null;
         FXMLLoader displayLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("MainDisplay.fxml"));
         Scene scene = new Scene(displayLoader.load(), 560, 350);
         MainDisplayController mdc  = displayLoader.getController();
@@ -139,6 +140,7 @@ public class ChannelChatPageController implements Initializable {
         //set list view
         observableMessages.clear();
         List<Message> messages = chat.getMessage();
+        messages.sort(Comparator.comparing(Message::getDate));
         observableMessages = FXCollections.observableArrayList(messages);
         messageListView.setItems(observableMessages);
 
@@ -150,8 +152,26 @@ public class ChannelChatPageController implements Initializable {
                 if (empty || message == null) {
                     setText(null);
                 } else {
-                    setText(message.getMessage());
-                    setStyle("-fx-alignment: center;");
+                    Label messageLabel = new Label(message.toString(user.getUsername()));
+
+                    Button chatButton = new Button("Open Chat");
+                    chatButton.setOnAction(e -> {
+                        openChat(e,message.getLinkToChannel());
+                    });
+
+                    // Layout for the cell content
+                    HBox cellBox = new HBox(10);
+                    messageLabel.setAlignment(Pos.CENTER);
+
+                    if (message.getLinkToChannel() != null) {
+                        messageLabel.setText(message.getLinkToChannel().getName(null));
+                        cellBox.getChildren().addAll(messageLabel, chatButton);
+                    } else {
+                        cellBox.getChildren().add(messageLabel);
+                    }
+
+                    setText(null);
+                    setGraphic(cellBox);
                 }
             }
         });
@@ -173,11 +193,39 @@ public class ChannelChatPageController implements Initializable {
 
     public static void saveReceivedMessage(Message message) {
         chat.getMessage().add(message);
-        instance.observableMessages.setAll(chat.getMessage());
+        observableMessages.setAll(chat.getMessage());
+    }
+    private void openChat(ActionEvent event, Channel chat) {
+        try {
+            isChannelOpened = false;
+            opened = null;
+            goToChannelPage(event,chat);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        instance = this;
+    private void goToChannelPage(ActionEvent event,Channel selected) throws InterruptedException {
+        Client.openChat(selected, 4);
+        while(!isChannelOpened){
+            Thread.sleep(100);
+        }
+        try{
+            FXMLLoader channelLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("ChannelChatPage.fxml"));
+            Scene scene = new Scene(channelLoader.load(), 900, 550);
+            ChannelChatPageController ccpc = channelLoader.getController();
+            ccpc.setUserAndChat(user, opened);
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
+        }catch(Exception e){
+            System.out.println(e);
+        }
     }
+
+    public static void setOpenedChat(Channel chat) {
+        opened = chat;
+        isChannelOpened = true;
+    }
+
 }

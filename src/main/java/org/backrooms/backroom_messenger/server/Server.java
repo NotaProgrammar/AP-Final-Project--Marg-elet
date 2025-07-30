@@ -59,5 +59,12 @@ public class Server {
     }
 
 
-
+    public static void terminateSession(ClientHandler clientHandler) {
+        for(ClientHandler ch : onlineClients){
+            if(ch.equals(clientHandler)) {
+                onlineClients.remove(ch);
+                break;
+            }
+        }
+    }
 }

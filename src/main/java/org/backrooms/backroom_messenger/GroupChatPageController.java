@@ -5,12 +5,15 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.backrooms.backroom_messenger.client.Client;
+import org.backrooms.backroom_messenger.entity.Channel;
 import org.backrooms.backroom_messenger.entity.Group;
 import org.backrooms.backroom_messenger.entity.Message;
 import org.backrooms.backroom_messenger.entity.User;
@@ -19,8 +22,10 @@ import java.io.IOException;
 
 public class GroupChatPageController {
 
-    private User user = null;
-    private Group chat = null;
+    private static Channel opened = null;
+    private static boolean isChannelOpened = false;
+    private static User user = null;
+    private static Group chat = null;
     private boolean alreadyJoined = false;
     private ObservableList<Message> observableMessages = FXCollections.observableArrayList();
 
@@ -48,7 +53,7 @@ public class GroupChatPageController {
 //        if(user.isSubed(chat)) // todo : برای بررسی عضویت فقط چنل میگیره و گروه نمیگیره
 //        {
 //            alreadyJoined = true;
-//            joinButton.setText("left");
+//            joinButton.setText("leave");
 //            String role = chat.getRole(User.changeToPrivate(user));
 //            switch(role){
 //                case "creator":
@@ -81,16 +86,65 @@ public class GroupChatPageController {
                 if (empty || message == null) {
                     setText(null);
                 } else {
-                    setText(message.getMessage());
-                    if (message.getSender().equals(user.getUsername())) {
-                        setStyle("-fx-alignment: center-right;");
+                    Label messageLabel = new Label(message.toString(user.getUsername()));
+
+                    Button chatButton = new Button("Open Chat");
+                    chatButton.setOnAction(e -> {
+                        openChat(e,message.getLinkToChannel());
+                    });
+
+                    // Layout for the cell content
+                    HBox cellBox = new HBox(10);
+                    cellBox.setAlignment(message.getSender().equals(user.getUsername())
+                            ? Pos.CENTER_RIGHT
+                            : Pos.CENTER_LEFT);
+
+                    if (message.getLinkToChannel() != null) {
+                        messageLabel.setText(message.getLinkToChannel().getName(null));
+                        cellBox.getChildren().addAll(messageLabel, chatButton);
                     } else {
-                        setStyle("-fx-alignment: center-left;");
+                        cellBox.getChildren().add(messageLabel);
                     }
+
+                    setText(null);
+                    setGraphic(cellBox);
                 }
 
             }
         });
+    }
+
+    private void openChat(ActionEvent event, Channel chat) {
+        try {
+            isChannelOpened = false;
+            opened = null;
+            goToChannelPage(event,chat);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void goToChannelPage(ActionEvent event,Channel selected) throws InterruptedException {
+        Client.openChat(selected, 5);
+        while(!isChannelOpened){
+            Thread.sleep(100);
+        }
+        try{
+            FXMLLoader channelLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("ChannelChatPage.fxml"));
+            Scene scene = new Scene(channelLoader.load(), 900, 550);
+            ChannelChatPageController ccpc = channelLoader.getController();
+            ccpc.setUserAndChat(user, opened);
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
+        }catch(Exception e){
+            System.out.println(e);
+        }
+    }
+
+    public static void setOpenedChat(Channel chat) {
+        opened = chat;
+        isChannelOpened = true;
     }
 
 

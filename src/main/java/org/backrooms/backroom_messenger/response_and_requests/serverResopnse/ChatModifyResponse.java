@@ -20,7 +20,7 @@ public class ChatModifyResponse extends ServerResponse {
 
 
     @JsonIgnore
-    ObjectMapper mapper = new ObjectMapper();
+    private ObjectMapper mapper = new ObjectMapper();
 
     public ChatModifyResponse(@JsonProperty("message") String message) {
         super(message);
@@ -60,7 +60,15 @@ public class ChatModifyResponse extends ServerResponse {
                         chat = mapper.readValue(tokens[2],Channel.class);
                         role = tokens[3];
                         break;
-
+                }
+            } else if (modification.equals("founded")) {
+                type = tokens[1];
+                switch(type){
+                    case "channel":
+                        if(!tokens[2].equals("null")){
+                            chat = mapper.readValue(tokens[2],Channel.class);
+                        }
+                        break;
                 }
             }
         }catch(Exception e){

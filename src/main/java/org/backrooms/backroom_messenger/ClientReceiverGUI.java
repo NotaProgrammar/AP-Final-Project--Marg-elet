@@ -1,6 +1,7 @@
 package org.backrooms.backroom_messenger;
 
 import org.backrooms.backroom_messenger.client.Client;
+import org.backrooms.backroom_messenger.entity.Channel;
 import org.backrooms.backroom_messenger.entity.Chat;
 import org.backrooms.backroom_messenger.entity.Message;
 import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.UserReadResponse;
@@ -27,7 +28,7 @@ public class ClientReceiverGUI {
     public static void addReceivedMessage(Message message){
         switch(message.getChatType()){
             case "pv_chat":
-                if(PvChatPageController.getChat().getId().equals(message.getChat())){
+                if(PvChatPageController.getChat() != null && PvChatPageController.getChat().getId().equals(message.getChat())){
                     message.setRead(true);
                     PvChatPageController.saveReceivedMessage(message);
                     Client.readMessage(message);
@@ -50,6 +51,20 @@ public class ClientReceiverGUI {
                 }
             }
         }
+    }
+
+    public static void giveChatToPvChatPage(Channel channel,int sender){
+        switch (sender){
+            case 3:
+                PvChatPageController.setOpenedChat(channel);
+                break;
+            case 4:
+                ChannelChatPageController.setOpenedChat(channel);
+                break;
+            case 5:
+                GroupChatPageController.setOpenedChat(channel);
+        }
+
     }
 
 
