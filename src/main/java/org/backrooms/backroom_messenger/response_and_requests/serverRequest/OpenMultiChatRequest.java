@@ -5,11 +5,11 @@ import org.backrooms.backroom_messenger.entity.PrivateUser;
 
 import java.util.UUID;
 
-public class OpenChannelRequest extends ServerRequest{
+public class OpenMultiChatRequest extends ServerRequest{
     @JsonProperty
     private UUID id;
 
-    public OpenChannelRequest(@JsonProperty("message") String message,@JsonProperty("sender") PrivateUser sender) {
+    public OpenMultiChatRequest(@JsonProperty("message") String message,@JsonProperty("sender") PrivateUser sender) {
         super(message, sender);
         id = UUID.fromString(message);
     }

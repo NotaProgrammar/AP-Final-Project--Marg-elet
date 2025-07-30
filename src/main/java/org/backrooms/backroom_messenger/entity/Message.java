@@ -26,7 +26,7 @@ public class Message {
     @JsonProperty
     private boolean read;
     @JsonProperty
-    private Channel linkToChannel = null;
+    private MultiUserChat linkToMultiUserChat = null;
 
     public Message(@JsonProperty("id") UUID id,
                    @JsonProperty("sender") String  sender,
@@ -115,11 +115,11 @@ public class Message {
         this.read = read;
     }
 
-    public void setLinkToChannel(Channel linkToChannel) {
-        this.linkToChannel = linkToChannel;
+    public void setLinkToMultiUserChat(MultiUserChat linkToChannel) {
+        this.linkToMultiUserChat = linkToChannel;
     }
 
-    public Channel getLinkToChannel(){
-        return linkToChannel;
+    public MultiUserChat getLinkToMultiUserChat() {
+        return linkToMultiUserChat;
     }
 }

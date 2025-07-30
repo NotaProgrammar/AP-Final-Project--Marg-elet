@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
-import org.backrooms.backroom_messenger.entity.Channel;
+import org.backrooms.backroom_messenger.entity.MultiUserChat;
 import org.backrooms.backroom_messenger.entity.Chat;
 import org.backrooms.backroom_messenger.entity.PvChat;
 
@@ -25,7 +25,8 @@ public class ChatModifyResponse extends ServerResponse {
     public ChatModifyResponse(@JsonProperty("message") String message) {
         super(message);
         mapper.registerSubtypes(new NamedType(PvChat.class, "PvChat"));
-        mapper.registerSubtypes(new NamedType(Channel.class, "channel"));
+        mapper.registerSubtypes(new NamedType(MultiUserChat.class, "MultiUserChat"));
+        //todo type
         try{
             String[] tokens = message.split("##");
             modification = tokens[0];
@@ -36,8 +37,8 @@ public class ChatModifyResponse extends ServerResponse {
                         chat = mapper.readValue(tokens[2],PvChat.class);
                         role = tokens[3];
                         break;
-                    case "channel":
-                        chat = mapper.readValue(tokens[2],Channel.class);
+                    case "muc":
+                        chat = mapper.readValue(tokens[2],MultiUserChat.class);
                         role = tokens[3];
                 }
             }else if(tokens[0].equals("remove")){
@@ -46,8 +47,8 @@ public class ChatModifyResponse extends ServerResponse {
                     case "pv_chat":
                         chat = mapper.readValue(tokens[2],PvChat.class);
                         break;
-                    case "channel":
-                        chat = mapper.readValue(tokens[2],Channel.class);
+                    case "muc":
+                        chat = mapper.readValue(tokens[2],MultiUserChat.class);
                 }
             }else if(modification.equals("open")){
                 type = tokens[1];
@@ -56,17 +57,17 @@ public class ChatModifyResponse extends ServerResponse {
                         chat = mapper.readValue(tokens[2],PvChat.class);
                         role = tokens[3];
                         break;
-                    case "channel":
-                        chat = mapper.readValue(tokens[2],Channel.class);
+                    case "muc":
+                        chat = mapper.readValue(tokens[2],MultiUserChat.class);
                         role = tokens[3];
                         break;
                 }
             } else if (modification.equals("founded")) {
                 type = tokens[1];
                 switch(type){
-                    case "channel":
+                    case "muc":
                         if(!tokens[2].equals("null")){
-                            chat = mapper.readValue(tokens[2],Channel.class);
+                            chat = mapper.readValue(tokens[2],MultiUserChat.class);
                         }
                         break;
                 }

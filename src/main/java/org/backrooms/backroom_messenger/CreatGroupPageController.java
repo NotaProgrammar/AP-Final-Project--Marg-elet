@@ -8,11 +8,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import org.backrooms.backroom_messenger.client.Client;
-import org.backrooms.backroom_messenger.entity.Channel;
-import org.backrooms.backroom_messenger.entity.Group;
+import org.backrooms.backroom_messenger.entity.MultiUserChat;
 import org.backrooms.backroom_messenger.entity.User;
 
 import java.io.IOException;
@@ -20,7 +17,7 @@ import java.io.IOException;
 public class CreatGroupPageController {
 
     private User user = null;
-    private Group group = null;
+    private MultiUserChat group = null;
     boolean publicGroup = false;
 
     @FXML

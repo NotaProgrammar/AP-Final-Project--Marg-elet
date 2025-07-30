@@ -49,9 +49,9 @@ public class User extends PrivateUser{
         return privateUser;
     }
 
-    public boolean isSubed(Channel channel){
+    public boolean isSubed(MultiUserChat muc){
         for(Chat chat : chats){
-            if(chat.getId().equals(channel.getId())){
+            if(chat.getId().equals(muc.getId())){
                 return true;
             }
         }

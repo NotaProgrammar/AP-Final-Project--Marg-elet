@@ -14,7 +14,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 import org.backrooms.backroom_messenger.client.Client;
-import org.backrooms.backroom_messenger.entity.Channel;
+import org.backrooms.backroom_messenger.entity.MultiUserChat;
 import org.backrooms.backroom_messenger.entity.PrivateUser;
 import org.backrooms.backroom_messenger.entity.User;
 
@@ -24,7 +24,7 @@ import java.util.Objects;
 public class ChannelSettingPageController {
 
     private User user = null;
-    private Channel channel = null;
+    private MultiUserChat channel = null;
     ObservableList<PrivateUser> observableMembers;
 
     @FXML
@@ -90,7 +90,7 @@ public class ChannelSettingPageController {
     }
 
 
-    public void setUserAndChannel(User user, Channel channel) {
+    public void setUserAndChannel(User user, MultiUserChat channel) {
         this.user = user;
         this.channel = channel;
 

@@ -13,19 +13,18 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.backrooms.backroom_messenger.client.Client;
-import org.backrooms.backroom_messenger.entity.Channel;
-import org.backrooms.backroom_messenger.entity.Group;
 import org.backrooms.backroom_messenger.entity.Message;
+import org.backrooms.backroom_messenger.entity.MultiUserChat;
 import org.backrooms.backroom_messenger.entity.User;
 
 import java.io.IOException;
 
 public class GroupChatPageController {
 
-    private static Channel opened = null;
+    private static MultiUserChat opened = null;
     private static boolean isChannelOpened = false;
     private static User user = null;
-    private static Group chat = null;
+    private static MultiUserChat chat = null;
     private boolean alreadyJoined = false;
     private ObservableList<Message> observableMessages = FXCollections.observableArrayList();
 
@@ -41,7 +40,7 @@ public class GroupChatPageController {
     private Label groupName;
 
 
-    public void setUserAndChat(User user, Group chat) {
+    public void setUserAndChat(User user, MultiUserChat chat) {
         this.user = user;
         this.chat = chat;
 
@@ -90,7 +89,7 @@ public class GroupChatPageController {
 
                     Button chatButton = new Button("Open Chat");
                     chatButton.setOnAction(e -> {
-                        openChat(e,message.getLinkToChannel());
+                        openChat(e,message.getLinkToMultiUserChat());
                     });
 
                     // Layout for the cell content
@@ -99,8 +98,8 @@ public class GroupChatPageController {
                             ? Pos.CENTER_RIGHT
                             : Pos.CENTER_LEFT);
 
-                    if (message.getLinkToChannel() != null) {
-                        messageLabel.setText(message.getLinkToChannel().getName(null));
+                    if (message.getLinkToMultiUserChat() != null) {
+                        messageLabel.setText(message.getLinkToMultiUserChat().getName(null));
                         cellBox.getChildren().addAll(messageLabel, chatButton);
                     } else {
                         cellBox.getChildren().add(messageLabel);
@@ -114,7 +113,7 @@ public class GroupChatPageController {
         });
     }
 
-    private void openChat(ActionEvent event, Channel chat) {
+    private void openChat(ActionEvent event, MultiUserChat chat) {
         try {
             isChannelOpened = false;
             opened = null;
@@ -124,7 +123,7 @@ public class GroupChatPageController {
         }
     }
 
-    private void goToChannelPage(ActionEvent event,Channel selected) throws InterruptedException {
+    private void goToChannelPage(ActionEvent event,MultiUserChat selected) throws InterruptedException {
         Client.openChat(selected, 5);
         while(!isChannelOpened){
             Thread.sleep(100);
@@ -142,7 +141,7 @@ public class GroupChatPageController {
         }
     }
 
-    public static void setOpenedChat(Channel chat) {
+    public static void setOpenedChat(MultiUserChat chat) {
         opened = chat;
         isChannelOpened = true;
     }

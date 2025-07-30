@@ -12,8 +12,7 @@ public class ChangePropertyRequest extends ServerRequest{
     private UUID id;
     @JsonProperty
     private String property;
-    @JsonProperty
-    private String chatType;
+
 
 
     public ChangePropertyRequest(@JsonProperty("message") String message, @JsonProperty("sender") PrivateUser sender) {
@@ -21,8 +20,7 @@ public class ChangePropertyRequest extends ServerRequest{
         String[] tokens = message.split("##");
         this.id = UUID.fromString(tokens[0]);
         this.property = tokens[1];
-        this.chatType = tokens[2];
-        this.newProperty = tokens[3];
+        this.newProperty = tokens[2];
     }
 
     public String getNewProperty() {
@@ -36,7 +34,4 @@ public class ChangePropertyRequest extends ServerRequest{
         return property;
     }
 
-    public String getChatType() {
-        return chatType;
-    }
 }

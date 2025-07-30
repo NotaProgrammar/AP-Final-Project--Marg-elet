@@ -33,6 +33,24 @@ public class Client  {
         socket = new Socket("localhost",8888);
         dis = new DataInputStream(socket.getInputStream());
         dos = new DataOutputStream(socket.getOutputStream());
+        mapperSetup();
+    }
+
+    public static void mapperSetup(){
+        mapper.registerSubtypes(new NamedType(OpenMultiChatRequest.class,"openMultiChatRequest"));
+        mapper.registerSubtypes(new NamedType(FindMultiChatForLink.class,"findMultiChatForLink"));
+        mapper.registerSubtypes(new NamedType(PvChat.class, "PvChat"));
+        mapper.registerSubtypes(new NamedType(MultiUserChat.class,"MultiUserChat"));
+        mapper.registerSubtypes(new NamedType(LoginRequest.class, "loginRequest"));
+        mapper.registerSubtypes(new NamedType(SignupRequest.class, "signupRequest"));
+        mapper.registerSubtypes(new NamedType(SearchRequest.class, "searchRequest"));
+        mapper.registerSubtypes(new NamedType(SubRequest.class,"subRequest"));
+        mapper.registerSubtypes(new NamedType(ChangePropertyRequest.class,"changePropertyRequest"));
+        mapper.registerSubtypes(new NamedType(ChangeRoleRequest.class,"changeRoleRequest"));
+        mapper.registerSubtypes(new NamedType(RemoveUserRequest.class,"removeUserRequest"));
+        mapper.registerSubtypes(new NamedType(SignOutRequest.class,"signOutRequest"));
+        mapper.registerSubtypes(new NamedType(NewChatRequest.class, "newChatRequest"));
+        mapper.registerSubtypes(new NamedType(ChatReadRequest.class, "chatReadRequest"));
     }
 
 
@@ -44,18 +62,15 @@ public class Client  {
                 startChat(pv.getUser2());
             } else if (loggedUser.getUsername().equals(pv.getUser2().getUsername())) {
                 startChat(pv.getUser1());
-            } else {
-                System.out.println("what the fuck??");
             }
-        }else if(chat instanceof Channel channel){
-            openChannel(channel);
+        }else if(chat instanceof MultiUserChat muc){
+            openMultiUserChat(muc);
         }
     }
 
-    private static void openChannel(Channel channel) {
+    private static void openMultiUserChat(MultiUserChat muc) {
         try {
-            OpenChannelRequest ocr = new OpenChannelRequest(channel.getId().toString(),User.changeToPrivate(loggedUser));
-            mapper.registerSubtypes(new NamedType(OpenChannelRequest.class,"openChannelRequest"));
+            OpenMultiChatRequest ocr = new OpenMultiChatRequest(muc.getId().toString(),User.changeToPrivate(loggedUser));
             sendRequest(ocr);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -73,22 +88,20 @@ public class Client  {
             foundedChat = null;
             chatFound = false;
             UUID uuid = UUID.fromString(messageString);
-            FindChannelForLink fcfl = new FindChannelForLink(uuid.toString(),User.changeToPrivate(loggedUser));
-            mapper.registerSubtypes(new NamedType(FindChannelForLink.class,"findChannelForLink"));
-            sendRequest(fcfl);
+            FindMultiChatForLink fmcfl = new FindMultiChatForLink(uuid.toString(),User.changeToPrivate(loggedUser));
+            sendRequest(fmcfl);
             while(!chatFound){
                 Thread.sleep(10);
             }
             if(foundedChat != null){
-                message.setLinkToChannel((Channel) foundedChat);
+                message.setLinkToMultiUserChat((MultiUserChat) foundedChat);
             }
 
         }catch(Exception ignored){
 
         }
         try {
-            mapper.registerSubtypes(new NamedType(PvChat.class, "PvChat"));
-            mapper.registerSubtypes(new NamedType(Channel.class,"channel"));
+
             String messageJson = mapper.writeValueAsString(message);
             SendMessageRequest smr = new SendMessageRequest(messageJson,User.changeToPrivate(loggedUser));
             sendRequest(smr);
@@ -107,7 +120,7 @@ public class Client  {
         }
         String message = username + "--" + password;
         LoginRequest lr = new LoginRequest(message);
-        mapper.registerSubtypes(new NamedType(LoginRequest.class, "loginRequest"));
+
         try {
             sendRequest(lr);
         }catch (Exception e){
@@ -126,7 +139,6 @@ public class Client  {
         String message = username + "--" + password + "--" + salt;
 
         SignupRequest sr = new SignupRequest(message);
-        mapper.registerSubtypes(new NamedType(SignupRequest.class, "signupRequest"));
         sendRequest(sr);
         return loggedUser;
     }
@@ -134,32 +146,29 @@ public class Client  {
     //for GUI
     public static void search(String searchedString) throws Exception {
         SearchRequest sr = new SearchRequest(searchedString,User.changeToPrivate(loggedUser));
-        mapper.registerSubtypes(new NamedType(PvChat.class,"PvChat"));
-        mapper.registerSubtypes(new NamedType(SearchRequest.class, "searchRequest"));
         sendRequest(sr);
     }
 
     //for GUI
-    public static Channel createChannel(String name,String description,boolean publicOrPrivate,boolean isChannel){
-        Channel newChannel = new Channel(UUID.randomUUID(),name,description,publicOrPrivate,loggedUser.getUsername(),isChannel);
+    public static MultiUserChat createMultiUserChat(String name,String description,boolean publicOrPrivate,boolean isChannel){
+        MultiUserChat newMuc = new MultiUserChat(UUID.randomUUID(),name,description,publicOrPrivate,loggedUser.getUsername(),isChannel);
         try {
-            mapper.registerSubtypes(new NamedType(Channel.class,"channel"));
-            String message = mapper.writeValueAsString(newChannel);
-            NewChannelRequest ncr = new NewChannelRequest(message,User.changeToPrivate(loggedUser));
+
+            String message = mapper.writeValueAsString(newMuc);
+            NewMultiChatRequest ncr = new NewMultiChatRequest(message,User.changeToPrivate(loggedUser));
             sendRequest(ncr);
         } catch (Exception e) {
             System.out.println(e);
         }
-        return newChannel;
+        return newMuc;
     }
 
     //for GUI
-    public static void Subscribe(Channel channel){
+    public static void Subscribe(MultiUserChat channel){
         try {
-            mapper.registerSubtypes(new NamedType(Channel.class,"channel"));
             String message = mapper.writeValueAsString(channel);
             SubRequest sr = new SubRequest(message,User.changeToPrivate(loggedUser));
-            mapper.registerSubtypes(new NamedType(SubRequest.class,"subRequest"));
+
             sendRequest(sr);
             for(Chat chat : loggedUser.getChats()){
                 if(chat.getId().equals(channel.getId())){
@@ -177,9 +186,8 @@ public class Client  {
     //for GUI
     public static void changeName(Chat chat,String newName){
         try {
-            String message = chat.getId().toString() + "##name##channel##" + newName ;
+            String message = chat.getId().toString() + "##name##" + newName ;
             ChangePropertyRequest cpr = new ChangePropertyRequest(message,User.changeToPrivate(loggedUser));
-            mapper.registerSubtypes(new NamedType(ChangePropertyRequest.class,"changePropertyRequest"));
             sendRequest(cpr);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -190,9 +198,8 @@ public class Client  {
     //for GUI
     public static void changeDescription(Chat chat,String newDescription){
         try{
-            String message = chat.getId().toString() + "##description##channel##" + newDescription;
+            String message = chat.getId().toString() + "##description##" + newDescription;
             ChangePropertyRequest cpr = new ChangePropertyRequest(message,User.changeToPrivate(loggedUser));
-            mapper.registerSubtypes(new NamedType(ChangePropertyRequest.class,"changePropertyRequest"));
             sendRequest(cpr);
         }catch (Exception e){
             throw new RuntimeException(e);
@@ -203,7 +210,7 @@ public class Client  {
     public static void changeUserRole(Chat chat,PrivateUser user){
         String role = null;
         //todo change
-        if(chat instanceof Channel channel){
+        if(chat instanceof MultiUserChat channel){
             role = channel.getRole(user);
             channel.changeRole(user);
         }
@@ -212,7 +219,6 @@ public class Client  {
             String type = chat.getType();
             String message = chat.getId().toString() + "##" + user.getUsername() + "##" + role + "##" +type  ;
             ChangeRoleRequest crr = new ChangeRoleRequest(message,User.changeToPrivate(loggedUser));
-            mapper.registerSubtypes(new NamedType(ChangeRoleRequest.class,"changeRoleRequest"));
             sendRequest(crr);
         }catch(Exception e){
             throw new RuntimeException(e);
@@ -225,7 +231,7 @@ public class Client  {
             String type = chat.getType();
             String message = user.getUsername() + "##" + type + "##" + chat.getId();
             RemoveUserRequest rur = new RemoveUserRequest(message,User.changeToPrivate(loggedUser));
-            mapper.registerSubtypes(new NamedType(RemoveUserRequest.class,"removeUserRequest"));
+
             sendRequest(rur);
         }catch (Exception e){
             throw new RuntimeException(e);
@@ -236,7 +242,7 @@ public class Client  {
     public static void signOut(){
         try{
             SignOutRequest sor = new SignOutRequest(loggedUser.getUsername(),User.changeToPrivate(loggedUser));
-            mapper.registerSubtypes(new NamedType(SignOutRequest.class,"signOutRequest"));
+
             sendRequest(sor);
             System.exit(0);
         }catch (Exception e){
@@ -259,7 +265,7 @@ public class Client  {
         }else if(sender==2){
             ClientReceiverGUI.openChatInSearch(newChat);
         } else if (sender >= 3) {
-            ClientReceiverGUI.giveChatToPvChatPage((Channel) newChat,sender);
+            ClientReceiverGUI.giveChatToPvChatPage((MultiUserChat) newChat,sender);
         }
     }
 
@@ -271,8 +277,6 @@ public class Client  {
         dos.flush();
         if (loggedUser == null){
             String response = dis.readUTF();
-            mapper.registerSubtypes(new NamedType(PvChat.class,"PvChat"));
-            mapper.registerSubtypes(new NamedType(Channel.class,"channel"));
             AvailableUserResponse aur = mapper.readValue(response,AvailableUserResponse.class);
             signupLoginCheck(aur);
         }
@@ -284,7 +288,6 @@ public class Client  {
         }else{
             try {
                 NewChatRequest ncr = new NewChatRequest(mapper.writeValueAsString(selectedUser),User.changeToPrivate(loggedUser));
-                mapper.registerSubtypes(new NamedType(NewChatRequest.class, "newChatRequest"));
                 sendRequest(ncr);
             } catch (Exception e) {
                 System.out.println(e);
@@ -317,14 +320,14 @@ public class Client  {
                     }
 
                     break;
-                case "channel":
+                case "muc":
                     addChat(cmr.getChat());
             }
         }else if(cmr.getModification().equals("remove")){
             switch(cmr.getType()){
                 case "pv_chat":
                     break;
-                case "channel":
+                case "muc":
                     removeChat(cmr.getChat());
                     break;
             }
@@ -350,7 +353,6 @@ public class Client  {
             }
         }
     }
-
 
     private static void addChat(Chat newChat) {
         boolean flag = false;
@@ -386,7 +388,6 @@ public class Client  {
             String sender = message.getSender();
             String msg = messageId + "##" + chatId + "##" + type + "##" + sender;
             ChatReadRequest crr = new ChatReadRequest(msg,User.changeToPrivate(loggedUser));
-            mapper.registerSubtypes(new NamedType(ChatReadRequest.class, "chatReadRequest"));
             sendRequest(crr);
         }catch(Exception e){
             System.out.println(e);

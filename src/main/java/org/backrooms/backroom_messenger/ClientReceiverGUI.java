@@ -1,9 +1,9 @@
 package org.backrooms.backroom_messenger;
 
 import org.backrooms.backroom_messenger.client.Client;
-import org.backrooms.backroom_messenger.entity.Channel;
 import org.backrooms.backroom_messenger.entity.Chat;
 import org.backrooms.backroom_messenger.entity.Message;
+import org.backrooms.backroom_messenger.entity.MultiUserChat;
 import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.UserReadResponse;
 
 import java.util.List;
@@ -53,16 +53,16 @@ public class ClientReceiverGUI {
         }
     }
 
-    public static void giveChatToPvChatPage(Channel channel,int sender){
+    public static void giveChatToPvChatPage(MultiUserChat muc, int sender){
         switch (sender){
             case 3:
-                PvChatPageController.setOpenedChat(channel);
+                PvChatPageController.setOpenedChat(muc);
                 break;
             case 4:
-                ChannelChatPageController.setOpenedChat(channel);
+                ChannelChatPageController.setOpenedChat(muc);
                 break;
             case 5:
-                GroupChatPageController.setOpenedChat(channel);
+                GroupChatPageController.setOpenedChat(muc);
         }
 
     }

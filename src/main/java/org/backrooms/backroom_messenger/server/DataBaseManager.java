@@ -7,7 +7,6 @@ import java.io.FileNotFoundException;
 import java.sql.*;
 import java.sql.Date;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.*;
 
 
@@ -43,12 +42,9 @@ public class DataBaseManager {
             case "pv_chat":
                 tableName = "pv_chats.chat_" + message.getChat().toString().replace("-","_");
                 break;
-            case "channel":
-                tableName = "channels.messages_" + message.getChat().toString().replace("-","_");
+            case "muc":
+                tableName = "multi_user_chats.messages_" + message.getChat().toString().replace("-","_");
                 break;
-            case "group":
-                //todo
-
         }
         String sql = "INSERT INTO " + tableName + " (id,sender,message,datetime,read_status) VALUES (?,?,?,?,?)";
         PreparedStatement ps = connection.prepareStatement(sql);
@@ -62,19 +58,9 @@ public class DataBaseManager {
         connection.close();
     }
 
-    private static String getChatType(UUID chat) throws SQLException{
-        Connection connection = connectToDataBase();
-        String sql = "SELECT * FROM public.chats WHERE id = ?";
-        PreparedStatement ps = connection.prepareStatement(sql);
-        ps.setObject(1, chat);
-        ResultSet rs = ps.executeQuery();
-        String type = null;
-        if(rs.next()){
-            type = rs.getString("type");
-        }
-        ps.close();
-        connection.close();
-        return type;
+    private static String isChatChannel(UUID chat) throws SQLException{
+        //todo
+        return null;
     }
 
     public static void addUserToDataBase(User user) throws SQLException {
@@ -150,8 +136,6 @@ public class DataBaseManager {
         return user;
     }
 
-
-    //todo
     public static List<PrivateUser> searchUser(String searched) throws SQLException {
         List<PrivateUser> users = new ArrayList<>();
         Connection con = connectToDataBase();
@@ -245,8 +229,8 @@ public class DataBaseManager {
         String tableName = null;
         if(chat instanceof PvChat){
             tableName = "pv_chats.chat_" + chat.getId().toString().replace("-", "_");
-        }else if(chat instanceof Channel){
-            tableName = "channels.messages_" + chat.getId().toString().replace("-", "_");
+        }else if(chat instanceof MultiUserChat){
+            tableName = "multi_user_chats.messages_" + chat.getId().toString().replace("-", "_");
         }
 
         String sql = "SELECT * FROM " + tableName;
@@ -260,9 +244,9 @@ public class DataBaseManager {
             java.util.Date date = new java.util.Date(rs.getTimestamp("datetime").getTime());
             Message message = new Message(messageId,sender,chat.getId(),text,date,chat.getType(),readStatus);
             try{
-                UUID channelId = UUID.fromString(text.replace("\n",""));
-                Channel channel = getChannel(channelId);
-                message.setLinkToChannel(channel);
+                UUID mucId = UUID.fromString(text.replace("\n",""));
+                MultiUserChat muc = getMultiChatDetails(mucId);
+                message.setLinkToMultiUserChat(muc);
             }catch (Exception ignored){
 
             }
@@ -298,11 +282,9 @@ public class DataBaseManager {
                     PvChat pv = new PvChat(id,getPrivateUser(user1),getPrivateUser(user2));
                     chat = pv;
                     break;
-                case "channel":
-                    chat = getChannelDetails(id);
+                case "muc":
+                    chat = getMultiChatDetails(id);
                     break;
-                case "group" :
-                    //todo
             }
             chats.add(chat);
         }
@@ -312,38 +294,38 @@ public class DataBaseManager {
         return chats;
     }
 
-    public static Channel getChannelDetails(UUID id) throws SQLException {
+    public static MultiUserChat getMultiChatDetails(UUID id) throws SQLException {
         Connection conn = connectToDataBase();
-        String query = "SELECT * FROM public.channels WHERE id = ?";
+        String query = "SELECT * FROM public.multi_user_chats WHERE id = ?";
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setObject(1, id);
         ResultSet rs = ps.executeQuery();
-        Channel channel = null;
+        MultiUserChat muc = null;
         if(rs.next()) {
             String name = rs.getString("name");
             String description = rs.getString("description");
             boolean publicity = rs.getBoolean("publicity");
             String creator = rs.getString("creator");
-            channel = new Channel(id,name,description,publicity,creator,true);
+            muc = new MultiUserChat(id,name,description,publicity,creator,true);
         }
         rs.close();
         ps.close();
         conn.close();
-        return channel;
+        return muc;
     }
 
-    public static void addNewChannel(Channel channel) throws SQLException {
-        addToChatTable(channel.getId(),"channel");
-        addChannelToChannelTable(channel);
-        createChannelMessageTable(channel.getId());
-        createChannelUserTable(channel.getId());
-        addChatToUsers(channel.getId(), channel.getCreator() ,channel.getName(null),"channel");
-        addUserToChannel(channel,"creator",channel.getCreator());
+    public static void addNewMultiChat(MultiUserChat muc) throws SQLException {
+        addToChatTable(muc.getId(),"muc");
+        addMultiChatToMultiChatTable(muc);
+        createMultiChatUserTable(muc.getId());
+        createMultiChatMessageTable(muc.getId());
+        addChatToUsers(muc.getId(), muc.getCreator() ,muc.getName(null),"muc");
+        addUserToMultiChat(muc,"creator",muc.getCreator());
     }
 
-    private static void addUserToChannel(Channel channel,String role,String username) throws SQLException {
+    private static void addUserToMultiChat(MultiUserChat muc, String role, String username) throws SQLException {
         Connection conn = connectToDataBase();
-        String tableName = "channels.users_" + channel.getId().toString().replace("-","_");
+        String tableName = "multi_user_chats.users_" + muc.getId().toString().replace("-","_");
         String query = "INSERT INTO " + tableName + " values (?,?,?)";
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setString(1,username);
@@ -354,9 +336,9 @@ public class DataBaseManager {
         conn.close();
     }
 
-    private static void createChannelUserTable(UUID channel) throws SQLException {
+    private static void createMultiChatUserTable(UUID muc) throws SQLException {
         Connection conn = connectToDataBase();
-        String tableName = "channels.users_" + channel.toString().replace("-","_");
+        String tableName = "multi_user_chats.users_" + muc.toString().replace("-","_");
         String query = "CREATE TABLE "+ tableName + " (username text PRIMARY KEY , role text, subdate date,FOREIGN KEY (username) REFERENCES public.users(username))";
         PreparedStatement ps = conn.prepareStatement(query);
         ps.executeUpdate();
@@ -364,9 +346,9 @@ public class DataBaseManager {
         conn.close();
     }
 
-    private static void createChannelMessageTable(UUID channel) throws SQLException {
+    private static void createMultiChatMessageTable(UUID muc) throws SQLException {
         Connection conn = connectToDataBase();
-        String tableName = "channels.messages_" + channel.toString().replace("-","_");
+        String tableName = "multi_user_chats.messages_" + muc.toString().replace("-","_");
         String query = "CREATE TABLE "+ tableName + " ( id uuid PRIMARY KEY , sender text, message text, datetime TIMESTAMP, read_status boolean, FOREIGN KEY (sender) REFERENCES public.users(username))";
         PreparedStatement ps = conn.prepareStatement(query);
         ps.executeUpdate();
@@ -374,26 +356,28 @@ public class DataBaseManager {
         conn.close();
     }
 
-    public static void addChannelToChannelTable(Channel channel) throws SQLException {
+    public static void addMultiChatToMultiChatTable(MultiUserChat muc) throws SQLException {
         Connection conn = connectToDataBase();
-        String sql = "INSERT INTO public.channels (id, name, description, publicity,creator) VALUES (?,?,?,?,?)";
+        String sql = "INSERT INTO public.multi_user_chats (id, name, description, publicity,creator,channel) VALUES (?,?,?,?,?,?)";
         PreparedStatement ps = conn.prepareStatement(sql);
-        ps.setObject(1,channel.getId());
-        ps.setString(2,channel.getName(null));
-        ps.setString(3,channel.getDescription());
-        ps.setBoolean(4,channel.getPublicity());
-        ps.setString(5,channel.getCreator());
+        ps.setObject(1,muc.getId());
+        ps.setString(2,muc.getName(null));
+        ps.setString(3,muc.getDescription());
+        ps.setBoolean(4,muc.getPublicity());
+        ps.setString(5,muc.getCreator());
+        ps.setBoolean(6,muc.isChannel());
         ps.executeUpdate();
         ps.close();
         conn.close();
     }
 
-    public static void joinChannel(Channel channel, User user) throws SQLException {
-        addChatToUsers(channel.getId(),user.getUsername(),channel.getName(null),"channel");
-        addUserToChannel(channel,"normal",user.getUsername());
+    public static void joinMultiChat(MultiUserChat muc, User user) throws SQLException {
+        addChatToUsers(muc.getId(),user.getUsername(),muc.getName(null),"muc");
+        //todo for group
+        addUserToMultiChat(muc,"normal",user.getUsername());
     }
 
-    public static void leaveChat(UUID chat, String user,String type) throws SQLException {
+    public static void leaveChat(UUID chat, String user) throws SQLException {
         deleteUsersFromChat(chat,user);
         deleteChatFromUsers(chat,user);
     }
@@ -411,8 +395,7 @@ public class DataBaseManager {
 
     private static void deleteUsersFromChat(UUID id, String username) throws SQLException {
         Connection conn = connectToDataBase();
-        //todo for group
-        String tableName = "channels.users_" + id.toString().replace("-","_");
+        String tableName = "multi_user_chats.users_" + id.toString().replace("-","_");
         String querry = "DELETE FROM " + tableName + " WHERE username = ?";
         PreparedStatement ps = conn.prepareStatement(querry);
         ps.setString(1,username);
@@ -421,13 +404,13 @@ public class DataBaseManager {
         conn.close();
     }
 
-    public static List<Channel> searchChannel(String searched) throws SQLException {
+    public static List<MultiUserChat> searchMultiUserChat(String searched) throws SQLException {
         Connection conn = connectToDataBase();
-        String query = "SELECT * FROM public.channels WHERE name ~ ?";
+        String query = "SELECT * FROM public.multi_user_chats WHERE name ~ ?";
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setString(1,searched);
         ResultSet rs = ps.executeQuery();
-        List<Channel> channels = new ArrayList<>();
+        List<MultiUserChat> mucs = new ArrayList<>();
         while (rs.next()) {
             boolean publicity = rs.getBoolean("publicity");
             if(publicity){
@@ -435,21 +418,22 @@ public class DataBaseManager {
                 UUID id = UUID.fromString(rs.getString("id"));
                 String name = rs.getString("name");
                 String creator = rs.getString("creator");
-                channels.add(new Channel(id,name,description,publicity,creator,true));
+                boolean channel = rs.getBoolean("channel");
+                mucs.add(new MultiUserChat(id,name,description,publicity,creator,channel));
             }
         }
-        return channels;
+        return mucs;
     }
 
-    public static Channel getChannel(UUID id) throws SQLException {
-        Channel channel = DataBaseManager.getChannelDetails(id);
-        channel.getMessage().addAll(returnMessages(channel));
-        return channel;
+    public static MultiUserChat getMultiUserChat(UUID id) throws SQLException {
+        MultiUserChat muc = DataBaseManager.getMultiChatDetails(id);
+        muc.getMessage().addAll(returnMessages(muc));
+        return muc;
     }
 
     public static String getRole(UUID id, String username) throws SQLException {
         Connection conn = connectToDataBase();
-        String tableName = "channels.users_" + id.toString().replace("-","_");
+        String tableName = "multi_user_chats.users_" + id.toString().replace("-","_");
         String query = "SELECT role FROM " + tableName + " WHERE username = ?";
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setString(1,username);
@@ -465,11 +449,11 @@ public class DataBaseManager {
         return role;
     }
 
-    public static void returnUsers(Channel channel) throws SQLException {
+    public static void returnUsers(MultiUserChat muc) throws SQLException {
         List<PrivateUser> users = new ArrayList<>();
         List<String> roles = new ArrayList<>();
         Connection conn = connectToDataBase();
-        String tableName = "channels.users_" + channel.getId().toString().replace("-","_");
+        String tableName = "multi_user_chats.users_" + muc.getId().toString().replace("-","_");
         String querry = "SELECT * FROM " + tableName;
         PreparedStatement ps = conn.prepareStatement(querry);
         ResultSet rs = ps.executeQuery();
@@ -483,20 +467,18 @@ public class DataBaseManager {
         rs.close();
         ps.close();
         conn.close();
-        channel.getUsers().addAll(users);
-        channel.getRoles().addAll(roles);
+        muc.getUsers().addAll(users);
+        muc.getRoles().addAll(roles);
     }
 
-    public static void changeName(String chatType, UUID uuid, String newProperty) throws SQLException {
-        Connection conn = connectToDataBase();
-        String tableName = null;
-        if(chatType.equals("channel")){
-            tableName = "public.channels";
-        }else if(chatType.equals("group")){
-            tableName = "public.groups";
-        }
+    public static void changeName(UUID uuid, String newProperty) throws SQLException {
+        changeNameInMultiChatTable(uuid,newProperty);
+        changeNameForUsers(uuid,newProperty);
+    }
 
-        String query = "UPDATE " + tableName + " SET name = ? WHERE id = ?";
+    private static void changeNameInMultiChatTable(UUID uuid, String newProperty) throws SQLException {
+        Connection conn = connectToDataBase();
+        String query = "UPDATE public.multi_user_chats SET name = ? WHERE id = ?";
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setString(1,newProperty);
         ps.setObject(2,uuid);
@@ -505,16 +487,38 @@ public class DataBaseManager {
         conn.close();
     }
 
-    public static void changeDescription(String chatType, UUID uuid, String newProperty) throws SQLException {
+    private static void changeNameForUsers(UUID uuid,String newProperty) throws SQLException {
+        List<String> usernames = new ArrayList<>();
         Connection conn = connectToDataBase();
-        String tableName = null;
-        if(chatType.equals("channel")){
-            tableName = "public.channels";
-        }else if(chatType.equals("group")){
-            tableName = "public.groups";
+        String query = "SELECT * FROM multi_user_chats.users_" + uuid.toString().replace("-","_");
+        PreparedStatement ps = conn.prepareStatement(query);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            usernames.add(rs.getString("username"));
         }
+        rs.close();
+        ps.close();
+        conn.close();
+        changeNameForUsersWithList(usernames,uuid,newProperty);
+    }
 
-        String query = "UPDATE " + tableName + " SET description = ? WHERE id = ?";
+    private static void changeNameForUsersWithList(List<String> usernames, UUID uuid, String newProperty) throws SQLException {
+        Connection conn = connectToDataBase();
+        for(String username : usernames){
+            String tableName = "users.user_" + username;
+            String query = "UPDATE " + tableName + " SET name = ? WHERE id = ?";
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setString(1,newProperty);
+            ps.setObject(2,uuid);
+            ps.executeUpdate();
+            ps.close();
+        }
+        conn.close();
+    }
+
+    public static void changeDescription(UUID uuid, String newProperty) throws SQLException {
+        Connection conn = connectToDataBase();
+        String query = "UPDATE public.multi_user_chats SET description = ? WHERE id = ?";
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setString(1,newProperty);
         ps.setObject(2,uuid);
@@ -525,12 +529,7 @@ public class DataBaseManager {
 
     public static void changeRole(String chatType, UUID uuid, String user, String role) throws SQLException {
         Connection conn = connectToDataBase();
-        String tableName = null;
-        if(chatType.equals("channel")){
-            tableName = "channels.users_" + uuid.toString().replace("-","_");
-        }else if(chatType.equals("group")){
-            //todo
-        }
+        String tableName = "multi_user_chats.users_" + uuid.toString().replace("-","_");
         String query = "UPDATE " + tableName + " SET role = ? WHERE username = ?";
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setString(1,role);
@@ -557,8 +556,8 @@ public class DataBaseManager {
         String tableName = null;
         if(type.equals("pv_chat")){
             tableName = "pv_chats.chat_" + chat.toString().replace("-", "_");
-        }else if(type.equals("channel")){
-            tableName = "channels.messages_" + chat.toString().replace("-", "_");
+        }else if(type.equals("muc")){
+            tableName = "multi_user_chats.messages_" + chat.toString().replace("-", "_");
         }
 
         String query = "UPDATE " + tableName + " SET read_status = ? WHERE sender != ?";
@@ -578,8 +577,8 @@ public class DataBaseManager {
             case "pv_chat":
                 tableName = "pv_chats.chat_" + chatId.toString().replace("-","_");
                 break;
-            case "channel":
-                tableName = "channels.messages_" + chatId.toString().replace("-","_");
+            case "muc":
+                tableName = "multi_user_chats.messages_" + chatId.toString().replace("-","_");
                 break;
         }
         String query = "UPDATE " + tableName + " SET read_status = ? WHERE id = ?";

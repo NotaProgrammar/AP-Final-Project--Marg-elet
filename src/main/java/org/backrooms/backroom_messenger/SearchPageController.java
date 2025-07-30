@@ -52,13 +52,13 @@ public class SearchPageController implements Initializable {
                             if (chat instanceof PvChat) {
                                 goToPvChatPage(event, chat);
                             }
-                            if(chat instanceof Channel)
+                            if(chat instanceof MultiUserChat muc)
                             {
-                                goToChannelPage(event, chat);
-                            }
-                            if(chat instanceof Group)
-                            {
-                                goToGroupPage(event, chat);
+                                if(muc.isChannel()){
+                                    goToChannelPage(event, chat);
+                                }else{
+                                    goToGroupPage(event, chat);
+                                }
                             }
                         }catch (Exception e){
                             System.out.println(e);
@@ -109,7 +109,7 @@ public class SearchPageController implements Initializable {
         FXMLLoader channelLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("ChannelChatPage.fxml"));
         Scene scene = new Scene(channelLoader.load(), 900, 550);
         ChannelChatPageController ccpc = channelLoader.getController();
-        ccpc.setUserAndChat(user, (Channel) chosenChat);
+        ccpc.setUserAndChat(user, (MultiUserChat) chosenChat);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(scene);
         stage.show();
@@ -124,7 +124,7 @@ public class SearchPageController implements Initializable {
         FXMLLoader groupLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("GroupChatPahe.fxml"));
         Scene scene = new Scene(groupLoader.load(), 900, 550);
         GroupChatPageController gcpc = groupLoader.getController();
-        gcpc.setUserAndChat(user, (Group) chosenChat);
+        gcpc.setUserAndChat(user, (MultiUserChat) chosenChat);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(scene);
         stage.show();
