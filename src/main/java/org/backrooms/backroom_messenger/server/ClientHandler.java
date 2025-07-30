@@ -39,7 +39,7 @@ public class ClientHandler implements Runnable {
     }
 
     private void mapperRegister() {
-        mapper.registerSubtypes(new NamedType(Channel.class,"channel"));
+        mapper.registerSubtypes(new NamedType(MultiUserChat.class,"MultiUserChat"));
         mapper.registerSubtypes(new NamedType(ChatModifyResponse.class, "chatModifyResponse"));
         mapper.registerSubtypes(new NamedType(PvChat.class, "PvChat"));
         mapper.registerSubtypes(new NamedType(ReceivedMessage.class,"receivedMessage"));
@@ -80,12 +80,12 @@ public class ClientHandler implements Runnable {
             checkChat(ncr);
         }else if(sr instanceof SendMessageRequest smr){
             sendMessage(smr);
-        }else if(sr instanceof NewChannelRequest ncr){
-            createChannel(ncr);
+        }else if(sr instanceof NewMultiChatRequest nmcr){
+            createMultiChat(nmcr);
         }else if(sr instanceof SubRequest sur){
             subCheck(sur);
-        }else if(sr instanceof OpenChannelRequest ocr){
-            openChannel(ocr);
+        }else if(sr instanceof OpenMultiChatRequest omcr){
+            openMultiUserChat(omcr);
         }else if(sr instanceof ChangePropertyRequest cpr){
             changeProperty(cpr);
         }else if(sr instanceof ChangeRoleRequest crr){
@@ -96,8 +96,8 @@ public class ClientHandler implements Runnable {
             signOut();
         }else if(sr instanceof ChatReadRequest crr){
             checkRead(crr);
-        }else if(sr instanceof FindChannelForLink fcfl){
-            findChannel(fcfl);
+        }else if(sr instanceof FindMultiChatForLink fmcfl){
+            findMultiChat(fmcfl);
         }
     }
 
@@ -107,16 +107,17 @@ public class ClientHandler implements Runnable {
         Thread.currentThread().interrupt();
     }
 
-    private void findChannel(FindChannelForLink fcfl) throws SQLException, JsonProcessingException {
-        UUID uuid = fcfl.getChannelId();
-        Channel channel = null;
+    private void findMultiChat(FindMultiChatForLink fmcfl) throws SQLException, JsonProcessingException {
+        UUID uuid = fmcfl.getMucId();
+        MultiUserChat muc = null;
         try{
-            channel = DataBaseManager.getChannelDetails(uuid);
+            muc = DataBaseManager.getMultiChatDetails(uuid);
         }catch (Exception ignored){
 
         }
 
-        String message = "founded##channel##" + mapper.writeValueAsString(channel);
+        //todo
+        String message = "founded##muc##" + mapper.writeValueAsString(muc);
         ChatModifyResponse cmr = new ChatModifyResponse(message);
         sendResponse(cmr);
     }
@@ -140,7 +141,7 @@ public class ClientHandler implements Runnable {
         String type = rur.getChatType();
         String userName = rur.getUserName();
         UUID chatId = rur.getChatId();
-        DataBaseManager.leaveChat(chatId,userName,type);
+        DataBaseManager.leaveChat(chatId,userName);
         //todo : notify the removed user
     }
 
@@ -161,49 +162,48 @@ public class ClientHandler implements Runnable {
         String property = cpr.getProperty();
         UUID uuid = cpr.getId();
         String newProperty = cpr.getNewProperty();
-        String chatType = cpr.getChatType();
         if(property.equals("name")){
-            DataBaseManager.changeName(chatType,uuid,newProperty);
+            DataBaseManager.changeName(uuid,newProperty);
         }else if(property.equals("description")){
-            DataBaseManager.changeDescription(chatType,uuid,newProperty);
+            DataBaseManager.changeDescription(uuid,newProperty);
         }
     }
 
-    private void openChannel(OpenChannelRequest ocr) throws SQLException, JsonProcessingException {
-        DataBaseManager.readAllMessages(ocr.getId(),activeUser.getUsername(),"channel");
-        Channel channel = DataBaseManager.getChannel(ocr.getId());
-        String role = DataBaseManager.getRole(ocr.getId(),activeUser.getUsername());
+    private void openMultiUserChat(OpenMultiChatRequest omcr) throws SQLException, JsonProcessingException {
+        DataBaseManager.readAllMessages(omcr.getId(),activeUser.getUsername(),"muc");
+        MultiUserChat muc = DataBaseManager.getMultiUserChat(omcr.getId());
+        String role = DataBaseManager.getRole(omcr.getId(),activeUser.getUsername());
         if(role.equals("creator") || role.equals("admin")){
-            DataBaseManager.returnUsers(channel);
+            DataBaseManager.returnUsers(muc);
         }else{
-            channel.getUsers().add(User.changeToPrivate(activeUser));
-            channel.getRoles().add(role);
+            muc.getUsers().add(User.changeToPrivate(activeUser));
+            muc.getRoles().add(role);
         }
-        String message = "open##channel##" + mapper.writeValueAsString(channel) +"##"+ role ;
+        String message = "open##muc##" + mapper.writeValueAsString(muc) +"##"+ role ;
         ChatModifyResponse cmr = new ChatModifyResponse(message);
         sendResponse(cmr);
     }
 
     private void subCheck(SubRequest sur) throws Exception {
-        Channel channel = sur.getChannel();
+        MultiUserChat muc = sur.getMultiUserChat();
         boolean flag = false;
         for(Chat chat : activeUser.getChats()){
-            if(channel.getId().equals(chat.getId())){
+            if(muc.getId().equals(chat.getId())){
                 activeUser.getChats().remove(chat);
                 flag = true;
                 break;
             }
         }
         if(!flag){
-            joinChannel(channel);
+            joinMultiUserChat(muc);
         }else{
-            leaveChannel(channel);
+            leaveMultiChat(muc);
         }
     }
 
-    private void leaveChannel(Channel channel) throws Exception {
-        DataBaseManager.leaveChat(channel.getId(),activeUser.getUsername(),"channel");
-        String message = "remove##channel##" + mapper.writeValueAsString(channel);
+    private void leaveMultiChat(MultiUserChat muc) throws Exception {
+        DataBaseManager.leaveChat(muc.getId(),activeUser.getUsername());
+        String message = "remove##muc##" + mapper.writeValueAsString(muc);
         ChatModifyResponse cmr = new ChatModifyResponse(message);
 
         String json = mapper.writeValueAsString(cmr);
@@ -211,24 +211,24 @@ public class ClientHandler implements Runnable {
         out.flush();
     }
 
-    private void joinChannel(Channel channel) throws Exception {
-        DataBaseManager.joinChannel(channel,activeUser);
-        activeUser.getChats().add(channel);
-        channel.getUsers().add(User.changeToPrivate(activeUser));
-        channel.getRoles().add("normal");
-        String message = "add##channel##" + mapper.writeValueAsString(channel)+"##normal";
+    private void joinMultiUserChat(MultiUserChat muc) throws Exception {
+        DataBaseManager.joinMultiChat(muc,activeUser);
+        activeUser.getChats().add(muc);
+        muc.getUsers().add(User.changeToPrivate(activeUser));
+        muc.getRoles().add("normal");
+        String message = "add##muc##" + mapper.writeValueAsString(muc)+"##normal";
         ChatModifyResponse cmr = new ChatModifyResponse(message);
         String json = mapper.writeValueAsString(cmr);
         out.writeUTF(json);
         out.flush();
     }
 
-    private void createChannel(NewChannelRequest ncr) throws SQLException {
-        Channel channel = ncr.getChannel();
-        DataBaseManager.addNewChannel(channel);
-        activeUser.getChats().add(channel);
-        channel.getUsers().add(User.changeToPrivate(activeUser));
-        channel.getRoles().add("creator");
+    private void createMultiChat(NewMultiChatRequest ncr) throws SQLException {
+        MultiUserChat muc = ncr.getMultiUserChat();
+        DataBaseManager.addNewMultiChat(muc);
+        activeUser.getChats().add(muc);
+        muc.getUsers().add(User.changeToPrivate(activeUser));
+        muc.getRoles().add("creator");
     }
 
     private void sendMessage(SendMessageRequest smr) throws SQLException {
@@ -316,7 +316,7 @@ public class ClientHandler implements Runnable {
         //todo to be updated for group
         List<Chat> chats = new ArrayList<>();
         List<PrivateUser> searchedUsers = DataBaseManager.searchUser(searched);
-        List<Channel> searchedChannels = DataBaseManager.searchChannel(searched);
+        List<MultiUserChat> searchedMultiChats = DataBaseManager.searchMultiUserChat(searched);
         for(PrivateUser pu : searchedUsers){
             if(pu.getUsername().equals(activeUser.getUsername())){
                 continue;
@@ -324,7 +324,7 @@ public class ClientHandler implements Runnable {
             PvChat pv = new PvChat(null,pu,searchRequest.getSender());
             chats.add(pv);
         }
-        chats.addAll(searchedChannels);
+        chats.addAll(searchedMultiChats);
 
         String responseMessage = mapper
                 .writerFor(new TypeReference<List<Chat>>() {})

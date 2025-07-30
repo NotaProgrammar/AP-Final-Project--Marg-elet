@@ -5,28 +5,30 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
-import org.backrooms.backroom_messenger.entity.Channel;
+import org.backrooms.backroom_messenger.entity.MultiUserChat;
+import org.backrooms.backroom_messenger.entity.MultiUserChat;
 import org.backrooms.backroom_messenger.entity.PrivateUser;
 
 
 public class SubRequest extends ServerRequest{
     @JsonProperty
-    private Channel channel;
+    private MultiUserChat muc;
 
     @JsonIgnore
-    ObjectMapper mapper = new ObjectMapper();
+    private ObjectMapper mapper = new ObjectMapper();
 
     public SubRequest(@JsonProperty("message") String message,@JsonProperty("sender") PrivateUser sender) {
         super(message, sender);
         try {
-            mapper.registerSubtypes(new NamedType(Channel.class, "channel"));
-            channel = mapper.readValue(message, Channel.class);
+            mapper.registerSubtypes(new NamedType(MultiUserChat.class, "MultiUserChat"));
+            muc = mapper.readValue(message, MultiUserChat.class);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public Channel getChannel() {
-        return channel;
+    @JsonIgnore
+    public MultiUserChat getMultiUserChat() {
+        return muc;
     }
 }

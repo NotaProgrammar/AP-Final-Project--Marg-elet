@@ -17,7 +17,7 @@ import java.util.UUID;
 )
 @JsonSubTypes({
         @JsonSubTypes.Type(value = PvChat.class, name="PvChat"),
-        @JsonSubTypes.Type(value = Channel.class, name = "channel")
+        @JsonSubTypes.Type(value = MultiUserChat.class, name = "MultiUserChat")
 })
 
 public abstract class Chat {

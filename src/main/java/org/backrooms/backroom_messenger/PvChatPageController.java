@@ -24,7 +24,7 @@ public class PvChatPageController {
     private static User user = null;
     private static PvChat chat = null;
     private static ObservableList<Message> messages = FXCollections.observableArrayList();
-    private static Channel opened = null;
+    private static MultiUserChat opened = null;
     private static boolean isChannelOpened = false;
 
     @FXML
@@ -56,7 +56,7 @@ public class PvChatPageController {
 
                     Button chatButton = new Button("Open Chat");
                     chatButton.setOnAction(e -> {
-                        openChat(e,message.getLinkToChannel());
+                        openChat(e,message.getLinkToMultiUserChat());
                     });
 
                     // Layout for the cell content
@@ -65,8 +65,8 @@ public class PvChatPageController {
                             ? Pos.CENTER_RIGHT
                             : Pos.CENTER_LEFT);
 
-                    if (message.getLinkToChannel() != null) {
-                        messageLabel.setText(message.getLinkToChannel().getName(null));
+                    if (message.getLinkToMultiUserChat() != null) {
+                        messageLabel.setText(message.getLinkToMultiUserChat().getName(null));
                         cellBox.getChildren().addAll(messageLabel, chatButton);
                     } else {
                         cellBox.getChildren().add(messageLabel);
@@ -81,7 +81,7 @@ public class PvChatPageController {
 
     }
 
-    private void openChat(ActionEvent event, Channel chat) {
+    private void openChat(ActionEvent event, MultiUserChat chat) {
         try {
             isChannelOpened = false;
             opened = null;
@@ -91,7 +91,7 @@ public class PvChatPageController {
         }
     }
 
-    private void goToChannelPage(ActionEvent event,Channel selected) throws InterruptedException {
+    private void goToChannelPage(ActionEvent event,MultiUserChat selected) throws InterruptedException {
         Client.openChat(selected, 3);
         while(!isChannelOpened){
             Thread.sleep(100);
@@ -109,7 +109,7 @@ public class PvChatPageController {
         }
     }
 
-    public static void setOpenedChat(Channel chat) {
+    public static void setOpenedChat(MultiUserChat chat) {
         opened = chat;
         isChannelOpened = true;
     }

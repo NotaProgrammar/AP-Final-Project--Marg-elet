@@ -3,7 +3,7 @@ package org.backrooms.backroom_messenger.client;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import org.backrooms.backroom_messenger.ClientReceiverGUI;
-import org.backrooms.backroom_messenger.entity.Channel;
+import org.backrooms.backroom_messenger.entity.MultiUserChat;
 import org.backrooms.backroom_messenger.entity.PvChat;
 import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.*;
 import java.io.DataInputStream;
@@ -22,7 +22,7 @@ public class ClientReceiver implements Runnable {
 
     private void registerMapper() {
         mapper.registerSubtypes(new NamedType(PvChat.class, "PvChat"));
-        mapper.registerSubtypes(new NamedType(Channel.class,"channel"));
+        mapper.registerSubtypes(new NamedType(MultiUserChat.class,"channel"));
     }
 
     @Override

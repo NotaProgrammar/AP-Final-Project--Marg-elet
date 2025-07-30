@@ -7,21 +7,19 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.backrooms.backroom_messenger.client.Client;
-import org.backrooms.backroom_messenger.entity.Channel;
-import org.backrooms.backroom_messenger.entity.Chat;
+import org.backrooms.backroom_messenger.entity.MultiUserChat;
 import org.backrooms.backroom_messenger.entity.User;
 
 import java.io.IOException;
 
-public class CreatChannelPageController {
+public class CreateChannelPageController {
 
     private User user = null;
-    private Channel channel = null;
+    private MultiUserChat channel = null;
     boolean publicChannel;
 
     @FXML
@@ -40,7 +38,7 @@ public class CreatChannelPageController {
             message.setTextFill(Color.RED);
             message.setText("Please Fill All Fields");
         } else {
-            channel = Client.createChannel(channelName, channelDescription, publicChannel,true);
+            channel = Client.createMultiUserChat(channelName, channelDescription, publicChannel,true);
             channel.getUsers().add(User.changeToPrivate(user));
             channel.getRoles().add("creator");
             user.getChats().add(channel);

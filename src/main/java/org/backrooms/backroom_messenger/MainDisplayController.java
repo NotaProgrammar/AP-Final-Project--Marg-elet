@@ -76,14 +76,15 @@ public class MainDisplayController implements Initializable {
                             if(selectedChat instanceof PvChat){
                                 goToPvChatPage(event, selectedChat);
                             }
-                            if(selectedChat instanceof Channel)
+                            if(selectedChat instanceof MultiUserChat muc)
                             {
-                                goToChannelPage(event, selectedChat);
+                                if(muc.isChannel()){
+                                    goToChannelPage(event, selectedChat);
+                                }else{
+                                    goToGroupPage(event, selectedChat);
+                                }
                             }
-                            if(selectedChat instanceof Group)
-                            {
-                                goToGroupPage(event, selectedChat);
-                            }
+
                         } catch (IOException | InterruptedException e) {
                             throw new RuntimeException(e);
                         }
@@ -114,7 +115,7 @@ public class MainDisplayController implements Initializable {
             FXMLLoader channelLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("ChannelChatPage.fxml"));
             Scene scene = new Scene(channelLoader.load(), 900, 550);
             ChannelChatPageController ccpc = channelLoader.getController();
-            ccpc.setUserAndChat(user, (Channel) chosenChat);
+            ccpc.setUserAndChat(user, (MultiUserChat) chosenChat);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(scene);
             stage.show();
@@ -133,7 +134,7 @@ public class MainDisplayController implements Initializable {
         FXMLLoader groupLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("GroupChatPahe.fxml"));
         Scene scene = new Scene(groupLoader.load(), 900, 550);
         GroupChatPageController gcpc = groupLoader.getController();
-        gcpc.setUserAndChat(user, (Group) chosenChat);
+        gcpc.setUserAndChat(user, (MultiUserChat) chosenChat);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(scene);
         stage.show();
@@ -197,7 +198,7 @@ public class MainDisplayController implements Initializable {
     public void goToCreatChannel(ActionEvent event) throws IOException, InterruptedException {
         FXMLLoader creatChannelLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("CreatChannelPage.fxml"));
         Scene scene = new Scene(creatChannelLoader.load(), 900, 550);
-        CreatChannelPageController ccpc = creatChannelLoader.getController();
+        CreateChannelPageController ccpc = creatChannelLoader.getController();
         ccpc.setUser(user);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(scene);

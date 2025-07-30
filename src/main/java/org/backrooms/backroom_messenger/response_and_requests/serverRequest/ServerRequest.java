@@ -17,15 +17,15 @@ import org.backrooms.backroom_messenger.entity.PrivateUser;
         @JsonSubTypes.Type(value = SearchRequest.class, name = "searchRequest"),
         @JsonSubTypes.Type(value = NewChatRequest.class, name = "newChatRequest"),
         @JsonSubTypes.Type(value = SendMessageRequest.class, name = "sendMessageRequest"),
-        @JsonSubTypes.Type(value = NewChannelRequest.class, name = "newChannelRequest"),
-        @JsonSubTypes.Type(value = OpenChannelRequest.class, name = "openChannelRequest"),
+        @JsonSubTypes.Type(value = NewMultiChatRequest.class, name = "newMultiChatRequest"),
+        @JsonSubTypes.Type(value = OpenMultiChatRequest.class, name = "openMultiChatRequest"),
         @JsonSubTypes.Type(value = SubRequest.class, name = "subRequest"),
         @JsonSubTypes.Type(value = ChangePropertyRequest.class, name = "changePropertyRequest"),
         @JsonSubTypes.Type(value = ChangeRoleRequest.class, name = "changeRoleRequest"),
         @JsonSubTypes.Type(value = RemoveUserRequest.class, name = "removeUserRequest"),
         @JsonSubTypes.Type(value = SignOutRequest.class, name = "signOutRequest"),
         @JsonSubTypes.Type(value = ChatReadRequest.class,name = "chatReadRequest"),
-        @JsonSubTypes.Type(value = FindChannelForLink.class,name = "findChannelForLink")
+        @JsonSubTypes.Type(value = FindMultiChatForLink.class,name = "findMultiChatForLink")
 })
 
 public abstract class ServerRequest {

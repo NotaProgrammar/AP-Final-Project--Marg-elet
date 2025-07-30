@@ -5,7 +5,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -14,9 +13,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.backrooms.backroom_messenger.client.Client;
-import org.backrooms.backroom_messenger.entity.Channel;
 import org.backrooms.backroom_messenger.entity.Chat;
 import org.backrooms.backroom_messenger.entity.Message;
+import org.backrooms.backroom_messenger.entity.MultiUserChat;
 import org.backrooms.backroom_messenger.entity.User;
 
 import java.io.IOException;
@@ -29,10 +28,10 @@ public class ChannelChatPageController {
 
 
     private static User user = null;
-    private static Channel chat = null;
+    private static MultiUserChat chat = null;
     boolean alreadyJoined = false;
     private static ObservableList<Message> observableMessages = FXCollections.observableArrayList();
-    private static Channel opened = null;
+    private static MultiUserChat opened = null;
     private static boolean isChannelOpened = false;
 
 
@@ -104,18 +103,18 @@ public class ChannelChatPageController {
     }
 
 
-    public void setUserAndChat(User user, Channel channel) {
+    public void setUserAndChat(User user, MultiUserChat muc) {
         this.user = user;
-        this.chat = channel;
+        this.chat = muc;
 
         joinButton.setDisable(false);
         joinButton.setVisible(true);
         hideMessageField(false);
 
-        if(user.isSubed(channel)){
+        if(user.isSubed(muc)){
             alreadyJoined = true;
             joinButton.setText("Leave Channel");
-            String role = channel.getRole(User.changeToPrivate(user));
+            String role = muc.getRole(User.changeToPrivate(user));
             switch(role){
                 case "creator":
                     joinButton.setDisable(true);
@@ -156,15 +155,15 @@ public class ChannelChatPageController {
 
                     Button chatButton = new Button("Open Chat");
                     chatButton.setOnAction(e -> {
-                        openChat(e,message.getLinkToChannel());
+                        openChat(e,message.getLinkToMultiUserChat());
                     });
 
                     // Layout for the cell content
                     HBox cellBox = new HBox(10);
                     messageLabel.setAlignment(Pos.CENTER);
 
-                    if (message.getLinkToChannel() != null) {
-                        messageLabel.setText(message.getLinkToChannel().getName(null));
+                    if (message.getLinkToMultiUserChat() != null) {
+                        messageLabel.setText(message.getLinkToMultiUserChat().getName(null));
                         cellBox.getChildren().addAll(messageLabel, chatButton);
                     } else {
                         cellBox.getChildren().add(messageLabel);
@@ -195,17 +194,17 @@ public class ChannelChatPageController {
         chat.getMessage().add(message);
         observableMessages.setAll(chat.getMessage());
     }
-    private void openChat(ActionEvent event, Channel chat) {
+    private void openChat(ActionEvent event, MultiUserChat muc) {
         try {
             isChannelOpened = false;
             opened = null;
-            goToChannelPage(event,chat);
+            goToChannelPage(event,muc);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void goToChannelPage(ActionEvent event,Channel selected) throws InterruptedException {
+    private void goToChannelPage(ActionEvent event,MultiUserChat selected) throws InterruptedException {
         Client.openChat(selected, 4);
         while(!isChannelOpened){
             Thread.sleep(100);
@@ -223,7 +222,7 @@ public class ChannelChatPageController {
         }
     }
 
-    public static void setOpenedChat(Channel chat) {
+    public static void setOpenedChat(MultiUserChat   chat) {
         opened = chat;
         isChannelOpened = true;
     }
