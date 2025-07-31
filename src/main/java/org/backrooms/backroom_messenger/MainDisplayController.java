@@ -26,6 +26,7 @@ public class MainDisplayController implements Initializable {
     private static Chat chosenChat = null;
     private static boolean chatFound = false;
 
+
     @FXML
     private ListView<Chat> chatListView;
     @FXML
