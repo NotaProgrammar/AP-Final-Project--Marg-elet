@@ -244,7 +244,7 @@ public class Client  {
     public static void removeUser(PrivateUser user,MultiUserChat chat){
         try{
 
-            String message = user.getUsername() + chat.getId();
+            String message = user.getUsername() + "##" + chat.getId();
             RemoveUserRequest rur = new RemoveUserRequest(message,privateLoggedUser);
             sendRequest(rur);
         }catch (Exception e){

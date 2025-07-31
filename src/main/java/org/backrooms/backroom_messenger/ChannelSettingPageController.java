@@ -54,6 +54,7 @@ public class ChannelSettingPageController {
     @FXML
     private Button channelIdButton;
 
+
     @FXML
     public void goBack(ActionEvent event) throws IOException {
         FXMLLoader channelPageLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("ChannelChatPage.fxml"));
@@ -158,12 +159,18 @@ public class ChannelSettingPageController {
                     HBox.setHgrow(usernameLabel, Priority.ALWAYS);
                     HBox hBox = new HBox(10, nameLabel, usernameLabel);
 
-                    if (!Objects.equals(channel.getRole(member), "creator") && !member.equals(user)) {
+                    if (!Objects.equals(channel.getRole(member), "creator") && !member.equals(user) && channel.getRole(user).equals("creator")) {
                         Button kickButton = new Button("Kick");
                         kickButton.setOnAction(e -> {
                             Client.removeUser(member, channel);
                             channel.getUsers().remove(member);
-                            //todo : remove from role list
+                            for(int i=0; i<channel.getUsers().size() ; i++){
+                                if(channel.getUsers().get(i).equals(member)){
+                                    channel.getUsers().remove(i);
+                                    channel.getRoles().remove(i);
+                                    break;
+                                }
+                            }
                             observableMembers.remove(member);
                         });
 
@@ -177,6 +184,7 @@ public class ChannelSettingPageController {
                         });
 
                         hBox.getChildren().addAll(kickButton, roleButton);
+
                     }
                     setGraphic(hBox);
                 }
@@ -217,5 +225,6 @@ public class ChannelSettingPageController {
         content.putString(id);
         clipboard.setContent(content);
     }
+
 
 }

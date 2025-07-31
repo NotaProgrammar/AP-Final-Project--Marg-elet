@@ -52,8 +52,7 @@ public class GroupSettingPageController {
     private Label groupIdLabel;
     @FXML
     private Button groupIdButton;
-    @FXML
-    private Button deleteButton;
+
 
     @FXML
     public void goBack(ActionEvent event) throws IOException {
@@ -119,8 +118,6 @@ public class GroupSettingPageController {
             String role = group.getRole(User.changeToPrivate(user));
             switch(role){
                 case "creator" :
-                    deleteButton.setVisible(true);
-                    deleteButton.setDisable(false);
                     break;
                 case "admin" :
                     changeNameLabel.setDisable(true);
@@ -135,8 +132,6 @@ public class GroupSettingPageController {
                     newNameTextField.setVisible(false);
                     newDescriptionTextField.setDisable(true);
                     newDescriptionTextField.setVisible(false);
-                    deleteButton.setVisible(false);
-                    deleteButton.setDisable(true);
                     break;
                 case "normal" :
                     hideAll();
@@ -163,12 +158,17 @@ public class GroupSettingPageController {
                     HBox.setHgrow(usernameLabel, Priority.ALWAYS);
                     HBox hBox = new HBox(10, nameLabel, usernameLabel);
 
-                    if (!Objects.equals(group.getRole(member), "creator") && !member.equals(user)) {
+                    if (!Objects.equals(group.getRole(member), "creator") && !member.equals(user) && group.getRole(user).equals("creator")) {
                         Button kickButton = new Button("Kick");
                         kickButton.setOnAction(e -> {
                             Client.removeUser(member, group);
-                            group.getUsers().remove(member);
-                            //todo : remove from role list
+                            for(int i=0; i<group.getUsers().size() ; i++){
+                                if(group.getUsers().get(i).equals(member)){
+                                    group.getUsers().remove(i);
+                                    group.getRoles().remove(i);
+                                    break;
+                                }
+                            }
                             observableMembers.remove(member);
                         });
 
@@ -181,7 +181,7 @@ public class GroupSettingPageController {
                             roleButton.setText(Objects.equals(group.getRole(member), "Ban the user") ? "v" : "unban the user");
                         });
 
-                        hBox.getChildren().addAll(kickButton, roleButton);
+                            hBox.getChildren().addAll(kickButton, roleButton);
                     }
                     setGraphic(hBox);
                 }
@@ -211,8 +211,6 @@ public class GroupSettingPageController {
         groupIdLabel.setVisible(false);
         groupIdButton.setDisable(true);
         groupIdButton.setVisible(false);
-        deleteButton.setVisible(false);
-        deleteButton.setDisable(true);
     }
 
 
@@ -225,8 +223,4 @@ public class GroupSettingPageController {
         clipboard.setContent(content);
     }
 
-    @FXML
-    public void deleteGroup(ActionEvent event){
-
-    }
 }
