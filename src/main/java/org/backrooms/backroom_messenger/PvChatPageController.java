@@ -16,7 +16,8 @@ import org.backrooms.backroom_messenger.entity.*;
 
 import java.io.IOException;
 import java.util.Comparator;
-
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 public class PvChatPageController {
@@ -26,6 +27,7 @@ public class PvChatPageController {
     private static ObservableList<Message> messages = FXCollections.observableArrayList();
     private static MultiUserChat opened = null;
     private static boolean isChannelOpened = false;
+    private static Lock listViewLock = new ReentrantLock();
 
     @FXML
     private TextField Message;
@@ -85,9 +87,32 @@ public class PvChatPageController {
         try {
             isChannelOpened = false;
             opened = null;
-            goToChannelPage(event,chat);
+            if(chat.isChannel()){
+                goToChannelPage(event,chat);
+            }else{
+                goToGroupPage(event,chat);
+            }
+
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void goToGroupPage(ActionEvent event, MultiUserChat chat) throws InterruptedException {
+        Client.openChat(chat, 3);
+        while(!isChannelOpened){
+            Thread.sleep(100);
+        }
+        try{
+            FXMLLoader groupLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("GroupChatPage.fxml"));
+            Scene scene = new Scene(groupLoader.load(), 900, 550);
+            GroupChatPageController gcpc = groupLoader.getController();
+            gcpc.setUserAndChat(user, opened);
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
+        }catch(Exception e){
+            System.out.println(e);
         }
     }
 
@@ -118,14 +143,17 @@ public class PvChatPageController {
     public void sendMessage(ActionEvent event) {
         String message = Message.getText().trim();
         chat.getMessage().add(Client.sendMessage(message, chat));
-        messages.setAll(chat.getMessage());
+        listViewLock.lock();
+        messages.addAll(chat.getMessage());
         Message.clear();
+        listViewLock.unlock();
     }
 
 
     public static void saveReceivedMessage(Message message) {
         try{
             chat.getMessage().add(message);
+            messages.clear();
             messages.addAll(chat.getMessage());
         }catch (Exception e){
             System.out.println(e);
@@ -133,6 +161,7 @@ public class PvChatPageController {
     }
 
     public static void refresh(){
+        messages.clear();
         messages.addAll(chat.getMessage());
     }
 

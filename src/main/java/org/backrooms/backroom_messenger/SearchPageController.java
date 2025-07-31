@@ -103,7 +103,7 @@ public class SearchPageController implements Initializable {
 
     public void goToChannelPage(ActionEvent event, Chat chat) throws IOException, InterruptedException {
         Client.openChat(chat, 2);
-        while(chosenChat == null){
+        while(!chatFound){
             Thread.sleep(100);
         }
         FXMLLoader channelLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("ChannelChatPage.fxml"));
@@ -118,10 +118,10 @@ public class SearchPageController implements Initializable {
 
     public void goToGroupPage(ActionEvent event, Chat chat) throws InterruptedException, IOException {
         Client.openChat(chat, 2);
-        while(chosenChat == null){
+        while(!chatFound){
             Thread.sleep(100);
         }
-        FXMLLoader groupLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("GroupChatPahe.fxml"));
+        FXMLLoader groupLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("GroupChatPage.fxml"));
         Scene scene = new Scene(groupLoader.load(), 900, 550);
         GroupChatPageController gcpc = groupLoader.getController();
         gcpc.setUserAndChat(user, (MultiUserChat) chosenChat);

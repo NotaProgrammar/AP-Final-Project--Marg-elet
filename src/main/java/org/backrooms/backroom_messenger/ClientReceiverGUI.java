@@ -38,6 +38,12 @@ public class ClientReceiverGUI {
                 if(ChannelChatPageController.getChat().getId().equals(message.getChat())){
                     ChannelChatPageController.saveReceivedMessage(message);
                 }
+                break;
+            case "group":
+                if(GroupChatPageController.getChat().getId().equals(message.getChat())){
+                    GroupChatPageController.saveReceivedMessage(message);
+                }
+                break;
         }
 
     }
@@ -53,7 +59,7 @@ public class ClientReceiverGUI {
         }
     }
 
-    public static void giveChatToPvChatPage(MultiUserChat muc, int sender){
+    public static void giveChatToChatPage(MultiUserChat muc, int sender){
         switch (sender){
             case 3:
                 PvChatPageController.setOpenedChat(muc);

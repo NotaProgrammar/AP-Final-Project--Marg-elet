@@ -12,8 +12,6 @@ public class ChangeRoleRequest extends ServerRequest{
     private String role;
     @JsonProperty
     private UUID id;
-    @JsonProperty
-    private String chatType;
 
     public ChangeRoleRequest(@JsonProperty("message") String message,@JsonProperty("sender") PrivateUser sender) {
         super(message, sender);
@@ -21,7 +19,6 @@ public class ChangeRoleRequest extends ServerRequest{
         id = UUID.fromString(tokens[0]);
         userName = tokens[1];
         role = tokens[2];
-        chatType = tokens[3];
     }
 
     public String getUserName() {
@@ -32,8 +29,5 @@ public class ChangeRoleRequest extends ServerRequest{
     }
     public UUID getId() {
         return id;
-    }
-    public String getChatType() {
-        return chatType;
     }
 }

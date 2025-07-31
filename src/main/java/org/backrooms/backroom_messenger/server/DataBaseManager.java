@@ -42,7 +42,8 @@ public class DataBaseManager {
             case "pv_chat":
                 tableName = "pv_chats.chat_" + message.getChat().toString().replace("-","_");
                 break;
-            case "muc":
+            case "channel":
+            case "group":
                 tableName = "multi_user_chats.messages_" + message.getChat().toString().replace("-","_");
                 break;
         }
@@ -306,7 +307,8 @@ public class DataBaseManager {
             String description = rs.getString("description");
             boolean publicity = rs.getBoolean("publicity");
             String creator = rs.getString("creator");
-            muc = new MultiUserChat(id,name,description,publicity,creator,true);
+            boolean channel = rs.getBoolean("channel");
+            muc = new MultiUserChat(id,name,description,publicity,creator,channel);
         }
         rs.close();
         ps.close();
@@ -373,8 +375,11 @@ public class DataBaseManager {
 
     public static void joinMultiChat(MultiUserChat muc, User user) throws SQLException {
         addChatToUsers(muc.getId(),user.getUsername(),muc.getName(null),"muc");
-        //todo for group
-        addUserToMultiChat(muc,"normal",user.getUsername());
+        if(muc.isChannel()){
+            addUserToMultiChat(muc,"normal",user.getUsername());
+        }else{
+            addUserToMultiChat(muc,"admin",user.getUsername());
+        }
     }
 
     public static void leaveChat(UUID chat, String user) throws SQLException {
@@ -527,7 +532,7 @@ public class DataBaseManager {
         conn.close();
     }
 
-    public static void changeRole(String chatType, UUID uuid, String user, String role) throws SQLException {
+    public static void changeRole(UUID uuid, String user, String role) throws SQLException {
         Connection conn = connectToDataBase();
         String tableName = "multi_user_chats.users_" + uuid.toString().replace("-","_");
         String query = "UPDATE " + tableName + " SET role = ? WHERE username = ?";

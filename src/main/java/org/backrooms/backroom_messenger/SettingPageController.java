@@ -58,7 +58,6 @@ public class SettingPageController {
     public void toMainPage(ActionEvent event) throws IOException {
         FXMLLoader mainPageLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("MainPage.fxml"));
         Scene scene = new Scene(mainPageLoader.load(), 560, 350);
-        MainPageController mpc = mainPageLoader.getController();
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(scene);
         stage.show();

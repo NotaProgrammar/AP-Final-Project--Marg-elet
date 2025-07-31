@@ -52,7 +52,7 @@ public class LoginPageController {
     public void toMainDisplay(ActionEvent event, User user) throws IOException {
         try {
             FXMLLoader displayLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("MainDisplay.fxml"));
-            Scene scene = new Scene(displayLoader.load(), 900, 500);
+            Scene scene = new Scene(displayLoader.load(), 500, 500);
             MainDisplayController mdc = displayLoader.getController();
             mdc.setUser(user);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

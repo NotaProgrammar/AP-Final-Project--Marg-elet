@@ -23,10 +23,12 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class ChannelChatPageController {
 
-
+    private static Lock lock = new ReentrantLock();
     private static User user = null;
     private static MultiUserChat chat = null;
     boolean alreadyJoined = false;
@@ -82,7 +84,10 @@ public class ChannelChatPageController {
         String content = messageField.getText().trim();
         if (!content.isEmpty()) {
             chat.getMessage().add(Client.sendMessage(content, chat));
+            lock.lock();
+            observableMessages.clear();
             observableMessages.setAll(chat.getMessage());
+            lock.unlock();
             messageField.clear();
         }
     }
@@ -99,7 +104,6 @@ public class ChannelChatPageController {
                 joinNotification.setTextFill(Color.GREEN);
                 joinButton.setText("Leave Channel");
             }
-
     }
 
 
@@ -192,15 +196,42 @@ public class ChannelChatPageController {
 
     public static void saveReceivedMessage(Message message) {
         chat.getMessage().add(message);
+        lock.lock();
+        observableMessages.clear();
         observableMessages.setAll(chat.getMessage());
+        lock.unlock();
     }
+
     private void openChat(ActionEvent event, MultiUserChat muc) {
         try {
             isChannelOpened = false;
             opened = null;
-            goToChannelPage(event,muc);
+            if(muc.isChannel()){
+                goToChannelPage(event,muc);
+            }else{
+                goToGroupPage(event,muc);
+            }
+
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void goToGroupPage(ActionEvent event, MultiUserChat muc) throws InterruptedException {
+        Client.openChat(muc, 4);
+        while(!isChannelOpened){
+            Thread.sleep(100);
+        }
+        try{
+            FXMLLoader groupLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("GroupChatPage.fxml"));
+            Scene scene = new Scene(groupLoader.load(), 900, 550);
+            GroupChatPageController gcpc = groupLoader.getController();
+            gcpc.setUserAndChat(user, opened);
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
+        }catch(Exception e){
+            System.out.println(e);
         }
     }
 

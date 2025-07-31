@@ -101,7 +101,6 @@ public class Client  {
 
         }
         try {
-
             String messageJson = mapper.writeValueAsString(message);
             SendMessageRequest smr = new SendMessageRequest(messageJson,User.changeToPrivate(loggedUser));
             sendRequest(smr);
@@ -176,7 +175,6 @@ public class Client  {
                     break;
                 }
             }
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -212,12 +210,9 @@ public class Client  {
         //todo change
         if(chat instanceof MultiUserChat channel){
             role = channel.getRole(user);
-            channel.changeRole(user);
         }
-        //todo group
         try{
-            String type = chat.getType();
-            String message = chat.getId().toString() + "##" + user.getUsername() + "##" + role + "##" +type  ;
+            String message = chat.getId().toString() + "##" + user.getUsername() + "##" + role ;
             ChangeRoleRequest crr = new ChangeRoleRequest(message,User.changeToPrivate(loggedUser));
             sendRequest(crr);
         }catch(Exception e){
@@ -228,10 +223,9 @@ public class Client  {
     //for GUI
     public static void removeUser(PrivateUser user,MultiUserChat chat){
         try{
-            String type = chat.getType();
-            String message = user.getUsername() + "##" + type + "##" + chat.getId();
-            RemoveUserRequest rur = new RemoveUserRequest(message,User.changeToPrivate(loggedUser));
 
+            String message = user.getUsername() + chat.getId();
+            RemoveUserRequest rur = new RemoveUserRequest(message,User.changeToPrivate(loggedUser));
             sendRequest(rur);
         }catch (Exception e){
             throw new RuntimeException(e);
@@ -265,7 +259,7 @@ public class Client  {
         }else if(sender==2){
             ClientReceiverGUI.openChatInSearch(newChat);
         } else if (sender >= 3) {
-            ClientReceiverGUI.giveChatToPvChatPage((MultiUserChat) newChat,sender);
+            ClientReceiverGUI.giveChatToChatPage((MultiUserChat) newChat,sender);
         }
     }
 

@@ -47,7 +47,11 @@ public class MultiUserChat extends Chat{
 
     @Override @JsonIgnore
     public String getType() {
-        return "muc";
+        if(isChannel){
+            return "channel";
+        }else{
+            return "group";
+        }
     }
 
     public String getDescription() {

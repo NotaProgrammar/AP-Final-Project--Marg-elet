@@ -68,7 +68,6 @@ public class MainDisplayController implements Initializable {
             private final HBox content = new HBox(10, nameLabel, openButton);
 
             {
-                // فاصله داخلی یا ظاهر دکمه و لیبل رو میشه اینجا تنظیم کرد
                 content.setPadding(new Insets(5));
                 openButton.setOnAction(event -> {
                     Chat selectedChat = getItem();
@@ -132,7 +131,7 @@ public class MainDisplayController implements Initializable {
         while(chosenChat == null){
             Thread.sleep(100);
         }
-        FXMLLoader groupLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("GroupChatPahe.fxml"));
+        FXMLLoader groupLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("GroupChatPage.fxml"));
         Scene scene = new Scene(groupLoader.load(), 900, 550);
         GroupChatPageController gcpc = groupLoader.getController();
         gcpc.setUserAndChat(user, (MultiUserChat) chosenChat);
@@ -196,11 +195,21 @@ public class MainDisplayController implements Initializable {
     }
 
 
-    public void goToCreatChannel(ActionEvent event) throws IOException, InterruptedException {
+    public void goToCreatChannel(ActionEvent event) throws IOException {
         FXMLLoader creatChannelLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("CreatChannelPage.fxml"));
         Scene scene = new Scene(creatChannelLoader.load(), 900, 550);
         CreateChannelPageController ccpc = creatChannelLoader.getController();
         ccpc.setUser(user);
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public void goToCreateGroup(ActionEvent event) throws IOException{
+        FXMLLoader createGroupLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("CreatGroupPage.fxml"));
+        Scene scene = new Scene(createGroupLoader.load(), 900, 550);
+        CreateGroupPageController cgpc = createGroupLoader.getController();
+        cgpc.setUser(user);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(scene);
         stage.show();

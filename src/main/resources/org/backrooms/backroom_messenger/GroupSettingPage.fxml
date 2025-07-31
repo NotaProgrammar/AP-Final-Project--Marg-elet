@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="629.0" prefWidth="770.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.backrooms.backroom_messenger.GroupSettingPageController">
+    <children>
+        <Label layoutX="66.0" layoutY="51.0" text="name : " />
+        <Label fx:id="nameLabel" layoutX="154.0" layoutY="51.0" text="Label" />
+        <Label fx:id="changeNameLabel" layoutX="245.0" layoutY="51.0" text="set new name : " />
+        <Label layoutX="66.0" layoutY="80.0" text="Description : " />
+        <Label fx:id="descriptionLabel" layoutX="154.0" layoutY="80.0" text="Label" />
+        <Label fx:id="changeDescriptionLabel" layoutX="66.0" layoutY="126.0" text="set new description : " />
+        <TextField fx:id="newNameTextField" layoutX="334.0" layoutY="47.0" prefHeight="25.0" prefWidth="193.0" />
+        <TextField fx:id="newDescriptionTextField" layoutX="182.0" layoutY="122.0" prefHeight="25.0" prefWidth="421.0" />
+        <Button fx:id="changeNameButton" layoutX="534.0" layoutY="47.0" mnemonicParsing="false" onAction="#changeName" text="change name" />
+        <Button fx:id="changeDescriptionButton" layoutX="608.0" layoutY="122.0" mnemonicParsing="false" onAction="#changeDescription" text="change description" />
+        <ListView fx:id="membersListView" layoutX="49.0" layoutY="299.0" prefHeight="316.0" prefWidth="672.0" />
+        <Label layoutX="356.0" layoutY="276.0" text="members : " />
+        <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#goBack" text="go back" />
+        <Label layoutX="481.0" layoutY="276.0" text="Number of members :" />
+        <Label fx:id="membersLabel" layoutX="622.0" layoutY="276.0" text="Label" />
+        <Label fx:id="groupIdLabel" layoutX="154.0" layoutY="18.0" text="channel id :" />
+        <Label fx:id="idLabel" layoutX="300.0" layoutY="18.0" text="Label" />
+        <Button fx:id="groupIdButton" layoutX="528.0" layoutY="14.0" mnemonicParsing="false" onAction="#copyId" text="copy id" />
+    </children>
+</AnchorPane>

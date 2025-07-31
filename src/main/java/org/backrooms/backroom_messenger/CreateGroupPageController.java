@@ -8,13 +8,15 @@ import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.backrooms.backroom_messenger.entity.MultiUserChat;
 import org.backrooms.backroom_messenger.entity.User;
+import org.backrooms.backroom_messenger.client.Client;
 
 import java.io.IOException;
 
-public class CreatGroupPageController {
+public class CreateGroupPageController {
 
     private User user = null;
     private MultiUserChat group = null;
@@ -33,24 +35,25 @@ public class CreatGroupPageController {
     public void create(ActionEvent event) throws IOException {
         String groupName = name.getText();
         String groupDescription = description.getText();
-//        if(description.getText().isEmpty() || name.getText().isEmpty()){
-//            message.setTextFill(Color.RED);
-//            message.setText("Please Fill All Fields");
-//        } else {
-//            group = Client.creatGroup(groupName, groupDescription, publicGroup);
-//            group.getUsers().add(User.changeToPrivate(user));
-//            group.getRoles().add("creator");
-//            user.getChats().add(group);
-//            goToGroupPage(event);
-//        }
+        if(description.getText().isEmpty() || name.getText().isEmpty()){
+            message.setTextFill(Color.RED);
+            message.setText("Please Fill All Fields");
+        } else {
+            group = Client.createMultiUserChat(groupName, groupDescription, publicGroup,false);
+            group.getUsers().add(User.changeToPrivate(user));
+            group.getRoles().add("creator");
+            user.getChats().add(group);
+            goToGroupPage(event);
+        }
+    }
 
+    public void setUser(User user) {
+        this.user = user;
     }
 
 
     public void setPublicityOfGroup(ActionEvent event){
-        if(publicity.isSelected()){
-            publicGroup = true;
-        }
+        publicGroup = publicity.isSelected();
     }
 
 

@@ -115,8 +115,6 @@ public class ClientHandler implements Runnable {
         }catch (Exception ignored){
 
         }
-
-        //todo
         String message = "founded##muc##" + mapper.writeValueAsString(muc);
         ChatModifyResponse cmr = new ChatModifyResponse(message);
         sendResponse(cmr);
@@ -138,7 +136,6 @@ public class ClientHandler implements Runnable {
     }
 
     private void removeUser(RemoveUserRequest rur) throws SQLException {
-        String type = rur.getChatType();
         String userName = rur.getUserName();
         UUID chatId = rur.getChatId();
         DataBaseManager.leaveChat(chatId,userName);
@@ -153,9 +150,8 @@ public class ClientHandler implements Runnable {
             role = "admin";
         }
         String user = crr.getUserName();
-        String chatType = crr.getChatType();
         UUID uuid = crr.getId();
-        DataBaseManager.changeRole(chatType,uuid,user,role);
+        DataBaseManager.changeRole(uuid,user,role);
     }
 
     private void changeProperty(ChangePropertyRequest cpr) throws SQLException {
@@ -214,9 +210,17 @@ public class ClientHandler implements Runnable {
     private void joinMultiUserChat(MultiUserChat muc) throws Exception {
         DataBaseManager.joinMultiChat(muc,activeUser);
         activeUser.getChats().add(muc);
-        muc.getUsers().add(User.changeToPrivate(activeUser));
-        muc.getRoles().add("normal");
-        String message = "add##muc##" + mapper.writeValueAsString(muc)+"##normal";
+        String message = null;
+        if(muc.isChannel()){
+            muc.getUsers().add(User.changeToPrivate(activeUser));
+            muc.getRoles().add("normal");
+            message = "add##muc##" + mapper.writeValueAsString(muc)+"##normal";
+        }else{
+            muc.getUsers().add(User.changeToPrivate(activeUser));
+            muc.getRoles().add("admin");
+            message = "add##muc##" + mapper.writeValueAsString(muc)+"##admin";
+        }
+
         ChatModifyResponse cmr = new ChatModifyResponse(message);
         String json = mapper.writeValueAsString(cmr);
         out.writeUTF(json);

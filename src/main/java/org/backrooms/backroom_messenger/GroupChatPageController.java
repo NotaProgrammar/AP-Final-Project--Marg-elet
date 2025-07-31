@@ -18,15 +18,21 @@ import org.backrooms.backroom_messenger.entity.MultiUserChat;
 import org.backrooms.backroom_messenger.entity.User;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class GroupChatPageController {
 
+    private static Lock lock = new ReentrantLock();
     private static MultiUserChat opened = null;
     private static boolean isChannelOpened = false;
     private static User user = null;
     private static MultiUserChat chat = null;
     private boolean alreadyJoined = false;
-    private ObservableList<Message> observableMessages = FXCollections.observableArrayList();
+    private static ObservableList<Message> observableMessages = FXCollections.observableArrayList();
 
     @FXML
     private TextField messageField;
@@ -38,39 +44,51 @@ public class GroupChatPageController {
     private Button joinButton;
     @FXML
     private Label groupName;
+    @FXML
+    private Button sendButton;
+    @FXML
+    private Button settingButton;
 
 
-    public void setUserAndChat(User user, MultiUserChat chat) {
-        this.user = user;
-        this.chat = chat;
+
+    public void setUserAndChat(User loggedUser, MultiUserChat openedChat) {
+        user = loggedUser;
+        chat = openedChat;
 
         groupName.setTextFill(Color.BLUE);
         groupName.setText(chat.getName(user));
 
         joinButton.setDisable(false);
         joinButton.setVisible(true);
-//        if(user.isSubed(chat)) // todo : برای بررسی عضویت فقط چنل میگیره و گروه نمیگیره
-//        {
-//            alreadyJoined = true;
-//            joinButton.setText("leave");
-//            String role = chat.getRole(User.changeToPrivate(user));
-//            switch(role){
-//                case "creator":
-//                    joinButton.setDisable(true);
-//                    joinButton.setVisible(false);
-//                    break;
-//                case "admin":
-//                    break;
-//                case "normal":
-//                    break;
-//            }
-//        }else{
-//            alreadyJoined = false;
-//            joinButton.setText("Join");
-//        }
+        hideMessageField(false);
 
+        if(user.isSubed(chat))
+        {
+            alreadyJoined = true;
+            joinButton.setText("leave");
+            String role = chat.getRole(User.changeToPrivate(user));
+            switch(role){
+                case "creator":
+                    joinButton.setDisable(true);
+                    joinButton.setVisible(false);
+                    break;
+                case "admin":
+                    break;
+                case "normal":
+                    hideMessageField(true);
+                    break;
+            }
+        }else{
+            alreadyJoined = false;
+            joinButton.setText("Join");
+            hideMessageField(true);
+        }
+
+        List<Message> messageList = new ArrayList<>();
+        messageList.addAll(chat.getMessage());
+        messageList.sort(Comparator.comparing(Message::getDate));
         observableMessages.clear();
-        observableMessages.setAll(chat.getMessage());
+        observableMessages.setAll(messageList);
         setupCellFactories();
     }
 
@@ -85,7 +103,7 @@ public class GroupChatPageController {
                 if (empty || message == null) {
                     setText(null);
                 } else {
-                    Label messageLabel = new Label(message.toString(user.getUsername()));
+                    Label messageLabel = new Label(message.getSender() + " : " + message.toString(user.getUsername()));
 
                     Button chatButton = new Button("Open Chat");
                     chatButton.setOnAction(e -> {
@@ -99,7 +117,7 @@ public class GroupChatPageController {
                             : Pos.CENTER_LEFT);
 
                     if (message.getLinkToMultiUserChat() != null) {
-                        messageLabel.setText(message.getLinkToMultiUserChat().getName(null));
+                        messageLabel.setText(message.getSender() + " : " + message.getLinkToMultiUserChat().getName(null));
                         cellBox.getChildren().addAll(messageLabel, chatButton);
                     } else {
                         cellBox.getChildren().add(messageLabel);
@@ -117,10 +135,42 @@ public class GroupChatPageController {
         try {
             isChannelOpened = false;
             opened = null;
-            goToChannelPage(event,chat);
+            if(chat.isChannel()){
+                goToChannelPage(event,chat);
+            }else{
+                goToGroupPage(event,chat);
+            }
+
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void goToGroupPage(ActionEvent event, MultiUserChat chat) throws InterruptedException {
+        Client.openChat(chat, 5);
+        while(!isChannelOpened){
+            Thread.sleep(100);
+        }
+        try{
+            FXMLLoader groupLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("GroupChatPage.fxml"));
+            Scene scene = new Scene(groupLoader.load(), 900, 550);
+            GroupChatPageController gcpc = groupLoader.getController();
+            gcpc.setUserAndChat(user, opened);
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
+        }catch(Exception e){
+            System.out.println(e);
+        }
+    }
+
+    private void hideMessageField(boolean bool){
+        messageField.setDisable(bool);
+        messageField.setVisible(!bool);
+
+
+        sendButton.setDisable(bool);
+        sendButton.setVisible(!bool);
     }
 
     private void goToChannelPage(ActionEvent event,MultiUserChat selected) throws InterruptedException {
@@ -146,8 +196,25 @@ public class GroupChatPageController {
         isChannelOpened = true;
     }
 
+    public static void saveReceivedMessage(Message message) {
+        try{
+            chat.getMessage().add(message);
+            lock.lock();
+            observableMessages.clear();
+            observableMessages.addAll(chat.getMessage());
+            lock.unlock();
+        }catch (Exception e){
+            System.out.println(e);
+        }
+    }
+
+    public static MultiUserChat getChat() {
+        return chat;
+    }
+
 
     public void goBack(ActionEvent event) throws IOException {
+        chat = null;
         FXMLLoader displayLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("MainDisplay.fxml"));
         Scene scene = new Scene(displayLoader.load(), 560, 350);
         MainDisplayController mdc  = displayLoader.getController();
@@ -163,7 +230,10 @@ public class GroupChatPageController {
         String content = messageField.getText().trim();
         if (!content.isEmpty()) {
             chat.getMessage().add(Client.sendMessage(content, chat));
+            lock.lock();
+            observableMessages.clear();
             observableMessages.setAll(chat.getMessage());
+            lock.unlock();
             messageField.clear();
         }
     }
@@ -171,15 +241,26 @@ public class GroupChatPageController {
 
     @FXML
     public void joinGroup(ActionEvent event) throws IOException {
-//        Client.Subscribe(chat);  // todo : این باید درست بشه، ورودی از جنس چنل باید باشه ولی من گروه دارم
-//        if (alreadyJoined) {
-//            alreadyJoined = false;
-//            goBack(event);
-//        }else{
-//            alreadyJoined = true;
-//            joinNotif.setText("you joined");
-//            joinNotif.setTextFill(Color.GREEN);
-//            joinButton.setText("left");
-//        }
+        Client.Subscribe(chat);
+        if (alreadyJoined) {
+            alreadyJoined = false;
+            goBack(event);
+        }else{
+            alreadyJoined = true;
+            joinNotif.setText("you joined");
+            joinNotif.setTextFill(Color.GREEN);
+            joinButton.setText("left");
+        }
+    }
+
+    @FXML
+    public void goToSettingPage(ActionEvent event) throws IOException {
+        FXMLLoader groupSettingLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("GroupSettingPage.fxml"));
+        Scene scene = new Scene(groupSettingLoader.load(), 560, 350);
+        GroupSettingPageController cspc  = groupSettingLoader.getController();
+        cspc.setUserAndGroup(user, chat);
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(scene);
+        stage.show();
     }
 }

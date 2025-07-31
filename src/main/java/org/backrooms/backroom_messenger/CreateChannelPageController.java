@@ -49,9 +49,7 @@ public class CreateChannelPageController {
 
 
     public void setPublicityOfChannel(ActionEvent event){
-        if(publicity.isSelected()){
-            publicChannel = true;
-        }
+        publicChannel = publicity.isSelected();
     }
 
 
