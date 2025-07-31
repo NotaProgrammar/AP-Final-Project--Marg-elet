@@ -98,7 +98,16 @@ public class ClientHandler implements Runnable {
             checkRead(crr);
         }else if(sr instanceof FindMultiChatForLink fmcfl){
             findMultiChat(fmcfl);
+        }else if(sr instanceof ChangeUserPropertyRequest cupr){
+            changeUserProperty(cupr);
         }
+    }
+
+    private void changeUserProperty(ChangeUserPropertyRequest cupr) throws SQLException {
+        String name = cupr.getName();
+        String password = cupr.getPassword();
+        DataBaseManager.changeUserProperty(activeUser.getUsername(),name,password);
+
     }
 
     private void signOut() throws SQLException {
@@ -107,7 +116,7 @@ public class ClientHandler implements Runnable {
         Thread.currentThread().interrupt();
     }
 
-    private void findMultiChat(FindMultiChatForLink fmcfl) throws SQLException, JsonProcessingException {
+    private void findMultiChat(FindMultiChatForLink fmcfl) throws JsonProcessingException {
         UUID uuid = fmcfl.getMucId();
         MultiUserChat muc = null;
         try{
@@ -252,15 +261,17 @@ public class ClientHandler implements Runnable {
             String hashedPassword = hashPassword(password, loggedUser.getSalt());
             if(hashedPassword.equals(loggedUser.getPassword())){
                 activeUser = loggedUser;
+                setAvailability(true);
             }else{
                 throw new Exception("Wrong password");
             }
         }catch (Exception e){
+            loggedUser = null;
             notify(e);
         }
 
 
-        setAvailability(true);
+
 
         AvailableUserResponse aur = new AvailableUserResponse(mapper.writeValueAsString(activeUser));
         String response = mapper.writeValueAsString(aur);

@@ -263,4 +263,6 @@ public class GroupChatPageController {
         stage.setScene(scene);
         stage.show();
     }
+
+
 }

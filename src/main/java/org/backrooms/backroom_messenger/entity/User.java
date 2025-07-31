@@ -1,8 +1,12 @@
 package org.backrooms.backroom_messenger.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
+import org.backrooms.backroom_messenger.StaticMethods;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -58,6 +62,22 @@ public class User extends PrivateUser{
         return false;
     }
 
+
+    @JsonIgnore
+    public boolean checkPassword(String password){
+        try {
+            String hashedPassword = StaticMethods.hashPassword(password,salt);
+            return hashedPassword.equals(this.password);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        } catch (InvalidKeySpecException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void setPassword(String password){
+
+    }
 
 
 }

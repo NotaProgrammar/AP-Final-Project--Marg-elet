@@ -26,5 +26,6 @@
         <Label fx:id="groupIdLabel" layoutX="154.0" layoutY="18.0" text="channel id :" />
         <Label fx:id="idLabel" layoutX="300.0" layoutY="18.0" text="Label" />
         <Button fx:id="groupIdButton" layoutX="528.0" layoutY="14.0" mnemonicParsing="false" onAction="#copyId" text="copy id" />
+      <Button fx:id="deleteButton" layoutX="23.0" layoutY="214.0" mnemonicParsing="false" onAction="#deleteGroup" text="Delete Group" />
     </children>
 </AnchorPane>

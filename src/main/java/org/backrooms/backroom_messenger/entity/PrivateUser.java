@@ -54,4 +54,8 @@ public class PrivateUser {
     public void setLastSeen(Date lastSeen) {
         this.lastSeen = lastSeen;
     }
+
+    public void setName(String name){
+        this.name = name;
+    }
 }

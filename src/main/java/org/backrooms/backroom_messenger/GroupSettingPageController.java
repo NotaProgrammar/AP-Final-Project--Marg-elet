@@ -52,6 +52,8 @@ public class GroupSettingPageController {
     private Label groupIdLabel;
     @FXML
     private Button groupIdButton;
+    @FXML
+    private Button deleteButton;
 
     @FXML
     public void goBack(ActionEvent event) throws IOException {
@@ -117,6 +119,8 @@ public class GroupSettingPageController {
             String role = group.getRole(User.changeToPrivate(user));
             switch(role){
                 case "creator" :
+                    deleteButton.setVisible(true);
+                    deleteButton.setDisable(false);
                     break;
                 case "admin" :
                     changeNameLabel.setDisable(true);
@@ -131,6 +135,8 @@ public class GroupSettingPageController {
                     newNameTextField.setVisible(false);
                     newDescriptionTextField.setDisable(true);
                     newDescriptionTextField.setVisible(false);
+                    deleteButton.setVisible(false);
+                    deleteButton.setDisable(true);
                     break;
                 case "normal" :
                     hideAll();
@@ -205,6 +211,8 @@ public class GroupSettingPageController {
         groupIdLabel.setVisible(false);
         groupIdButton.setDisable(true);
         groupIdButton.setVisible(false);
+        deleteButton.setVisible(false);
+        deleteButton.setDisable(true);
     }
 
 
@@ -215,5 +223,10 @@ public class GroupSettingPageController {
         ClipboardContent content = new ClipboardContent();
         content.putString(id);
         clipboard.setContent(content);
+    }
+
+    @FXML
+    public void deleteGroup(ActionEvent event){
+
     }
 }

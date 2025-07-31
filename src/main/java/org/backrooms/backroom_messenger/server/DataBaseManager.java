@@ -594,4 +594,16 @@ public class DataBaseManager {
         ps.close();
         conn.close();
     }
+
+    public static void changeUserProperty(String username, String name, String password) throws SQLException {
+        Connection conn = connectToDataBase();
+        String query = "UPDATE public.users SET name = ? , password = ? WHERE username = ?";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setString(1,name);
+        ps.setString(2,password);
+        ps.setString(3,username);
+        ps.executeUpdate();
+        ps.close();
+        conn.close();
+    }
 }

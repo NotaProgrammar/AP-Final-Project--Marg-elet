@@ -5,10 +5,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.backrooms.backroom_messenger.client.Client;
@@ -30,11 +27,16 @@ public class SettingPageController {
     @FXML
     private Label nameNotifLabel;
     @FXML
-    private Label lastPasswordLabel;
+    private PasswordField lastPasswordField;
     @FXML
-    private TextField lastPasswordField;
+    private Button changePasswordButton;
+    @FXML
+    private PasswordField newPasswordField;
+    @FXML
+    private Label warning;
     @FXML
     private Button checkPasswordButton;
+
 
 
     @FXML
@@ -42,10 +44,11 @@ public class SettingPageController {
         this.user = user;
         userNameLabel.setText(user.getUsername());
         nameLabel.setText(user.getName());
-        lastPasswordLabel.setDisable(true);
-        lastPasswordField.setDisable(true);
-        checkPasswordButton.setDisable(true);
-
+        try {
+            showPasswordTextField(false);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @FXML
@@ -72,27 +75,48 @@ public class SettingPageController {
 
 
     @FXML
-    public void changeName(ActionEvent event) throws IOException {
+    public void changeName(ActionEvent event) throws Exception {
         String newName = nameField.getText();
         if(newName.isEmpty()) {
             newName = user.getName();
         }
+        user.setName(newName);
+        Client.changeUserProperty("name",newName);
         nameLabel.setText(newName);
         nameNotifLabel.setTextFill(Color.GREEN);
         nameNotifLabel.setText("you name successfully changed!");
     }
 
 
+
+    private void showPasswordTextField(boolean bool) throws IOException {
+        newPasswordField.setVisible(bool);
+        newPasswordField.setDisable(!bool);
+        changePasswordButton.setVisible(bool);
+        changePasswordButton.setDisable(!bool);
+        checkPasswordButton.setDisable(bool);
+        checkPasswordButton.setVisible(!bool);
+        lastPasswordField.setDisable(bool);
+        lastPasswordField.setVisible(!bool);
+    }
+
     @FXML
-    public void showPasswordTextField(ActionEvent event) throws IOException {
-        lastPasswordLabel.setVisible(true);
-        lastPasswordField.setVisible(true);
-        checkPasswordButton.setVisible(true);
+    public void changePassword(ActionEvent event) throws Exception {
+        Client.changeUserProperty("password",newPasswordField.getText());
+        showPasswordTextField(false);
     }
 
 
     @FXML
     public void checkPassword(ActionEvent event) throws IOException {
-        //todo : calls a function to check password
+        if(user.checkPassword(lastPasswordField.getText())) {
+            showPasswordTextField(true);
+            warning.setTextFill(Color.BLACK);
+            warning.setText("Enter new Password: ");
+        }else{
+            warning.setTextFill(Color.RED);
+            warning.setText("Wrong password!");
+        }
+
     }
 }

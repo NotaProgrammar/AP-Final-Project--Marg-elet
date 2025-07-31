@@ -2,6 +2,7 @@ package org.backrooms.backroom_messenger.client;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import org.backrooms.backroom_messenger.ClientReceiverGUI;
+import org.backrooms.backroom_messenger.StaticMethods;
 import org.backrooms.backroom_messenger.entity.*;
 import org.backrooms.backroom_messenger.response_and_requests.serverRequest.*;
 import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.*;
@@ -28,6 +29,7 @@ public class Client  {
     static DataInputStream dis;
     static DataOutputStream dos;
     static int sender;
+    static PrivateUser privateLoggedUser;
 
     public static void initializeClient() throws IOException {
         socket = new Socket("localhost",8888);
@@ -51,6 +53,7 @@ public class Client  {
         mapper.registerSubtypes(new NamedType(SignOutRequest.class,"signOutRequest"));
         mapper.registerSubtypes(new NamedType(NewChatRequest.class, "newChatRequest"));
         mapper.registerSubtypes(new NamedType(ChatReadRequest.class, "chatReadRequest"));
+        mapper.registerSubtypes(new NamedType(ChangeUserPropertyRequest.class,"changeUserPropertyRequest"));
     }
 
 
@@ -70,7 +73,7 @@ public class Client  {
 
     private static void openMultiUserChat(MultiUserChat muc) {
         try {
-            OpenMultiChatRequest ocr = new OpenMultiChatRequest(muc.getId().toString(),User.changeToPrivate(loggedUser));
+            OpenMultiChatRequest ocr = new OpenMultiChatRequest(muc.getId().toString(),privateLoggedUser);
             sendRequest(ocr);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -88,7 +91,7 @@ public class Client  {
             foundedChat = null;
             chatFound = false;
             UUID uuid = UUID.fromString(messageString);
-            FindMultiChatForLink fmcfl = new FindMultiChatForLink(uuid.toString(),User.changeToPrivate(loggedUser));
+            FindMultiChatForLink fmcfl = new FindMultiChatForLink(uuid.toString(),privateLoggedUser);
             sendRequest(fmcfl);
             while(!chatFound){
                 Thread.sleep(10);
@@ -102,7 +105,7 @@ public class Client  {
         }
         try {
             String messageJson = mapper.writeValueAsString(message);
-            SendMessageRequest smr = new SendMessageRequest(messageJson,User.changeToPrivate(loggedUser));
+            SendMessageRequest smr = new SendMessageRequest(messageJson,privateLoggedUser);
             sendRequest(smr);
         } catch (Exception e) {
             message = null;
@@ -144,7 +147,7 @@ public class Client  {
 
     //for GUI
     public static void search(String searchedString) throws Exception {
-        SearchRequest sr = new SearchRequest(searchedString,User.changeToPrivate(loggedUser));
+        SearchRequest sr = new SearchRequest(searchedString,privateLoggedUser);
         sendRequest(sr);
     }
 
@@ -154,7 +157,7 @@ public class Client  {
         try {
 
             String message = mapper.writeValueAsString(newMuc);
-            NewMultiChatRequest ncr = new NewMultiChatRequest(message,User.changeToPrivate(loggedUser));
+            NewMultiChatRequest ncr = new NewMultiChatRequest(message,privateLoggedUser);
             sendRequest(ncr);
         } catch (Exception e) {
             System.out.println(e);
@@ -166,7 +169,7 @@ public class Client  {
     public static void Subscribe(MultiUserChat channel){
         try {
             String message = mapper.writeValueAsString(channel);
-            SubRequest sr = new SubRequest(message,User.changeToPrivate(loggedUser));
+            SubRequest sr = new SubRequest(message,privateLoggedUser);
 
             sendRequest(sr);
             for(Chat chat : loggedUser.getChats()){
@@ -185,7 +188,7 @@ public class Client  {
     public static void changeName(Chat chat,String newName){
         try {
             String message = chat.getId().toString() + "##name##" + newName ;
-            ChangePropertyRequest cpr = new ChangePropertyRequest(message,User.changeToPrivate(loggedUser));
+            ChangePropertyRequest cpr = new ChangePropertyRequest(message,privateLoggedUser);
             sendRequest(cpr);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -197,7 +200,7 @@ public class Client  {
     public static void changeDescription(Chat chat,String newDescription){
         try{
             String message = chat.getId().toString() + "##description##" + newDescription;
-            ChangePropertyRequest cpr = new ChangePropertyRequest(message,User.changeToPrivate(loggedUser));
+            ChangePropertyRequest cpr = new ChangePropertyRequest(message,privateLoggedUser);
             sendRequest(cpr);
         }catch (Exception e){
             throw new RuntimeException(e);
@@ -213,7 +216,7 @@ public class Client  {
         }
         try{
             String message = chat.getId().toString() + "##" + user.getUsername() + "##" + role ;
-            ChangeRoleRequest crr = new ChangeRoleRequest(message,User.changeToPrivate(loggedUser));
+            ChangeRoleRequest crr = new ChangeRoleRequest(message,privateLoggedUser);
             sendRequest(crr);
         }catch(Exception e){
             throw new RuntimeException(e);
@@ -221,11 +224,28 @@ public class Client  {
     }
 
     //for GUI
+    public static void changeUserProperty(String property,String newProperty) throws Exception {
+        String message = null;
+        switch(property){
+            case "name" :
+                message = newProperty + "##" + loggedUser.getPassword();
+                break;
+            case "password" :
+                String hashedPassword = StaticMethods.hashPassword(newProperty,loggedUser.getSalt());
+                loggedUser.setPassword(hashedPassword);
+                message = loggedUser.getName() + "##" + hashedPassword;
+                break;
+        }
+        ChangeUserPropertyRequest cupr = new ChangeUserPropertyRequest(message,privateLoggedUser);
+        sendRequest(cupr);
+    }
+
+    //for GUI
     public static void removeUser(PrivateUser user,MultiUserChat chat){
         try{
 
             String message = user.getUsername() + chat.getId();
-            RemoveUserRequest rur = new RemoveUserRequest(message,User.changeToPrivate(loggedUser));
+            RemoveUserRequest rur = new RemoveUserRequest(message,privateLoggedUser);
             sendRequest(rur);
         }catch (Exception e){
             throw new RuntimeException(e);
@@ -235,10 +255,8 @@ public class Client  {
     //for GUI
     public static void signOut(){
         try{
-            SignOutRequest sor = new SignOutRequest(loggedUser.getUsername(),User.changeToPrivate(loggedUser));
-
+            SignOutRequest sor = new SignOutRequest(loggedUser.getUsername(),privateLoggedUser);
             sendRequest(sor);
-            System.exit(0);
         }catch (Exception e){
             throw new RuntimeException(e);
         }
@@ -281,7 +299,7 @@ public class Client  {
             System.out.println("that's you motherfucker");
         }else{
             try {
-                NewChatRequest ncr = new NewChatRequest(mapper.writeValueAsString(selectedUser),User.changeToPrivate(loggedUser));
+                NewChatRequest ncr = new NewChatRequest(mapper.writeValueAsString(selectedUser),privateLoggedUser);
                 sendRequest(ncr);
             } catch (Exception e) {
                 System.out.println(e);
@@ -292,6 +310,7 @@ public class Client  {
     private static void signupLoginCheck(AvailableUserResponse aur) {
         if(aur.isUserFound()){
             loggedUser = aur.getUser();
+            privateLoggedUser = User.changeToPrivate(loggedUser);
             clientReceiverStarter();
         }
     }
@@ -381,7 +400,7 @@ public class Client  {
             String type = message.getChatType();
             String sender = message.getSender();
             String msg = messageId + "##" + chatId + "##" + type + "##" + sender;
-            ChatReadRequest crr = new ChatReadRequest(msg,User.changeToPrivate(loggedUser));
+            ChatReadRequest crr = new ChatReadRequest(msg,privateLoggedUser);
             sendRequest(crr);
         }catch(Exception e){
             System.out.println(e);

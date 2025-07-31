@@ -17,6 +17,7 @@ public class BackRoomMessengerApplication extends Application {
             stage.setOnCloseRequest(event -> {
                 if(Client.getUser() != null) {
                     Client.signOut();
+                    System.exit(0);
                 }
             });
             stage.setScene(scene);
