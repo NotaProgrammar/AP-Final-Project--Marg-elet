@@ -36,6 +36,10 @@ public class SettingPageController {
     private Label warning;
     @FXML
     private Button checkPasswordButton;
+    @FXML
+    private TextField bioField;
+    @FXML
+    private Label bioLabel;
 
 
 
@@ -43,6 +47,7 @@ public class SettingPageController {
     public void setUser(User user) {
         this.user = user;
         userNameLabel.setText(user.getUsername());
+        bioLabel.setText(user.getBio());
         nameLabel.setText(user.getName());
         try {
             showPasswordTextField(false);
@@ -65,14 +70,6 @@ public class SettingPageController {
         stage.setScene(scene);
         stage.show();
     }
-
-
-    @FXML
-    public void deleteAccount(ActionEvent event) throws IOException {
-        //todo : probably calls dome function from client
-        toMainPage(event);
-    }
-
 
     @FXML
     public void changeName(ActionEvent event) throws Exception {
@@ -117,6 +114,11 @@ public class SettingPageController {
             warning.setTextFill(Color.RED);
             warning.setText("Wrong password!");
         }
+    }
 
+    @FXML
+    public void changeBio(ActionEvent event) throws Exception {
+        Client.changeUserProperty("bio",bioField.getText());
+        bioLabel.setText(bioField.getText());
     }
 }

@@ -10,14 +10,13 @@
    <children>
       <Label layoutX="277.0" layoutY="14.0" text="SETTING" />
       <Label layoutX="108.0" layoutY="80.0" text="Username : " />
-      <Label layoutX="108.0" layoutY="134.0" text="Name : " />
-      <Button layoutX="682.0" layoutY="557.0" mnemonicParsing="false" onAction="#logOut" text="log out" />
-      <Button layoutX="14.0" layoutY="557.0" mnemonicParsing="false" onAction="#deleteAccount" text="Delete account" />
+      <Label layoutX="106.0" layoutY="102.0" text="Name : " />
+      <Button layoutX="551.0" layoutY="85.0" mnemonicParsing="false" onAction="#logOut" text="log out" />
       <Label fx:id="userNameLabel" layoutX="217.0" layoutY="80.0" text="just show username" />
-      <Label fx:id="nameLabel" layoutX="181.0" layoutY="134.0" text="Label" />
+      <Label fx:id="nameLabel" layoutX="217.0" layoutY="102.0" text="Label" />
       <Label layoutX="108.0" layoutY="192.0" text="New name : " />
       <TextField fx:id="nameField" layoutX="195.0" layoutY="188.0" />
-      <Button layoutX="373.0" layoutY="188.0" mnemonicParsing="false" onAction="#changeName" text="change" />
+      <Button layoutX="370.0" layoutY="188.0" mnemonicParsing="false" onAction="#changeName" text="change" />
       <Label fx:id="nameNotifLabel" layoutX="450.0" layoutY="192.0" text="                       " />
       <Button fx:id="changePasswordButton" layoutX="428.0" layoutY="285.0" mnemonicParsing="false" onAction="#changePassword" text="Chnge password" />
       <Label fx:id="lastPasswordLabel" layoutX="106.0" layoutY="243.0" text="Enter your last password" />
@@ -25,5 +24,9 @@
       <Label fx:id="warning" layoutX="127.0" layoutY="290.0" />
       <PasswordField fx:id="lastPasswordField" layoutX="248.0" layoutY="240.0" />
       <PasswordField fx:id="newPasswordField" layoutX="248.0" layoutY="285.0" />
+      <Label layoutX="106.0" layoutY="127.0" text="bio :" />
+      <Label fx:id="bioLabel" layoutX="217.0" layoutY="127.0" text="Label" />
+      <TextField fx:id="bioField" layoutX="102.0" layoutY="152.0" prefHeight="26.0" prefWidth="230.0" />
+      <Button layoutX="370.0" layoutY="152.0" mnemonicParsing="false" onAction="#changeBio" text="change bio" />
    </children>
 </AnchorPane>

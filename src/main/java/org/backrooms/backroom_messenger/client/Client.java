@@ -228,12 +228,16 @@ public class Client  {
         String message = null;
         switch(property){
             case "name" :
-                message = newProperty + "##" + loggedUser.getPassword();
+                message = newProperty + "##" + loggedUser.getPassword() + "##" + loggedUser.getBio();
                 break;
             case "password" :
                 String hashedPassword = StaticMethods.hashPassword(newProperty,loggedUser.getSalt());
                 loggedUser.setPassword(hashedPassword);
-                message = loggedUser.getName() + "##" + hashedPassword;
+                message = loggedUser.getName() + "##" + hashedPassword + "##" + loggedUser.getBio();
+                break;
+            case "bio":
+                message = loggedUser.getName() + "##" + loggedUser.getPassword() + "##" + newProperty;
+                loggedUser.setBio(newProperty);
                 break;
         }
         ChangeUserPropertyRequest cupr = new ChangeUserPropertyRequest(message,privateLoggedUser);

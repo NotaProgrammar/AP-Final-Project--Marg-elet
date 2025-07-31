@@ -14,7 +14,8 @@ public class PrivateUser {
     private boolean online = true;
     @JsonProperty
     private Date lastSeen;
-    //todo status
+    @JsonProperty
+    private String bio = "";
     //todo profile
 
     public PrivateUser(@JsonProperty("username") String username,@JsonProperty("name") String name) {
@@ -57,5 +58,13 @@ public class PrivateUser {
 
     public void setName(String name){
         this.name = name;
+    }
+
+    public void setBio(String bio){
+        this.bio = bio;
+    }
+
+    public String getBio(){
+        return bio;
     }
 }

@@ -100,7 +100,9 @@ public class DataBaseManager {
         if (rs.next()) {
             String password = rs.getString("password");
             byte[] salt = rs.getBytes("salt");
+            String bio = rs.getString("bio");
             user = new User(username, password, salt);
+            user.setBio(bio);
         }
 
         rs.close();
@@ -124,6 +126,8 @@ public class DataBaseManager {
                 Timestamp time = rs.getTimestamp("last_seen");
                 Date lastSeen = new Date(time.getTime());
                 Boolean online = rs.getBoolean("online");
+                String bio = rs.getString("bio");
+                user.setBio(bio);
                 user.setLastSeen(lastSeen);
                 user.setOnline(online);
             }catch(Exception e){
@@ -148,7 +152,9 @@ public class DataBaseManager {
         while(rs.next()) {
             String username = rs.getString("username");
             String name = rs.getString("name");
+            String bio = rs.getString("bio");
             user = new PrivateUser(username, name);
+            user.setBio(bio);
             users.add(user);
         }
         rs.close();
@@ -595,13 +601,14 @@ public class DataBaseManager {
         conn.close();
     }
 
-    public static void changeUserProperty(String username, String name, String password) throws SQLException {
+    public static void changeUserProperty(String username, String name, String password,String bio) throws SQLException {
         Connection conn = connectToDataBase();
-        String query = "UPDATE public.users SET name = ? , password = ? WHERE username = ?";
+        String query = "UPDATE public.users SET name = ? , password = ? , bio = ? WHERE username = ?";
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setString(1,name);
         ps.setString(2,password);
-        ps.setString(3,username);
+        ps.setString(3,bio);
+        ps.setString(4,username);
         ps.executeUpdate();
         ps.close();
         conn.close();

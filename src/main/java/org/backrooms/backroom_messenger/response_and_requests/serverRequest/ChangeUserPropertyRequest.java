@@ -8,12 +8,15 @@ public class ChangeUserPropertyRequest extends ServerRequest{
     private String name;
     @JsonProperty
     private String password;
+    @JsonProperty
+    private String bio;
 
     public ChangeUserPropertyRequest(@JsonProperty("message") String message,@JsonProperty("sender") PrivateUser sender) {
         super(message, sender);
         String[] tokens = message.split("##");
         this.name = tokens[0];
         this.password = tokens[1];
+        this.bio = tokens[2];
     }
 
     public String getName() {
@@ -21,5 +24,8 @@ public class ChangeUserPropertyRequest extends ServerRequest{
     }
     public String getPassword() {
         return password;
+    }
+    public String getBio(){
+        return bio;
     }
 }

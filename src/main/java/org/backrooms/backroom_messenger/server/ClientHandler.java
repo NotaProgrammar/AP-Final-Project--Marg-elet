@@ -106,7 +106,8 @@ public class ClientHandler implements Runnable {
     private void changeUserProperty(ChangeUserPropertyRequest cupr) throws SQLException {
         String name = cupr.getName();
         String password = cupr.getPassword();
-        DataBaseManager.changeUserProperty(activeUser.getUsername(),name,password);
+        String bio = cupr.getBio();
+        DataBaseManager.changeUserProperty(activeUser.getUsername(),name,password,bio);
 
     }
 
