@@ -101,8 +101,13 @@ public class DataBaseManager {
             String password = rs.getString("password");
             byte[] salt = rs.getBytes("salt");
             String bio = rs.getString("bio");
+            byte[] imageBytes = rs.getBytes("image");
             user = new User(username, password, salt);
             user.setBio(bio);
+            if(imageBytes != null){
+                String imageBase64 = Base64.getEncoder().encodeToString(imageBytes);
+                user.setImageBase64(imageBase64);
+            }
         }
 
         rs.close();
@@ -111,7 +116,7 @@ public class DataBaseManager {
         return user;
     }
 
-    public static PrivateUser getPrivateUser(String username) throws SQLException {
+    public static PrivateUser getPrivateUser(String username,boolean getImage) throws SQLException {
         Connection con = connectToDataBase();
         String sql = "SELECT * FROM public.users WHERE username = ?";
         PreparedStatement ps = con.prepareStatement(sql);
@@ -127,9 +132,17 @@ public class DataBaseManager {
                 Date lastSeen = new Date(time.getTime());
                 Boolean online = rs.getBoolean("online");
                 String bio = rs.getString("bio");
+                if(getImage){
+                    byte[] bytes = rs.getBytes("image");
+                    if(bytes != null){
+                        String imageBase64 = Base64.getEncoder().encodeToString(bytes);
+                        user.setImageBase64(imageBase64);
+                    }
+                }
                 user.setBio(bio);
                 user.setLastSeen(lastSeen);
                 user.setOnline(online);
+
             }catch(Exception e){
 
             }
@@ -286,7 +299,7 @@ public class DataBaseManager {
                         user2 = user1;
                         user1 = temp;
                     }
-                    PvChat pv = new PvChat(id,getPrivateUser(user1),getPrivateUser(user2));
+                    PvChat pv = new PvChat(id,getPrivateUser(user1,true),getPrivateUser(user2,true));
                     chat = pv;
                     break;
                 case "muc":
@@ -609,6 +622,17 @@ public class DataBaseManager {
         ps.setString(2,password);
         ps.setString(3,bio);
         ps.setString(4,username);
+        ps.executeUpdate();
+        ps.close();
+        conn.close();
+    }
+
+    public static void setImage(String username, byte[] imageToBytes) throws SQLException {
+        Connection conn = connectToDataBase();
+        String query = "UPDATE public.users SET image = ? WHERE username = ?";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setBytes(1,imageToBytes);
+        ps.setString(2,username);
         ps.executeUpdate();
         ps.close();
         conn.close();

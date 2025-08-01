@@ -1,16 +1,16 @@
 package org.backrooms.backroom_messenger.client;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
+import javafx.scene.image.Image;
 import org.backrooms.backroom_messenger.ClientReceiverGUI;
 import org.backrooms.backroom_messenger.StaticMethods;
 import org.backrooms.backroom_messenger.entity.*;
 import org.backrooms.backroom_messenger.response_and_requests.serverRequest.*;
 import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.*;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -26,15 +26,15 @@ public class Client  {
     static ObjectMapper mapper = new ObjectMapper();
     static User loggedUser;
     static Socket socket;
-    static DataInputStream dis;
-    static DataOutputStream dos;
+    static BufferedReader reader;
+    static BufferedWriter writer;
     static int sender;
     static PrivateUser privateLoggedUser;
 
     public static void initializeClient() throws IOException {
         socket = new Socket("localhost",8888);
-        dis = new DataInputStream(socket.getInputStream());
-        dos = new DataOutputStream(socket.getOutputStream());
+        reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
         mapperSetup();
     }
 
@@ -54,6 +54,8 @@ public class Client  {
         mapper.registerSubtypes(new NamedType(NewChatRequest.class, "newChatRequest"));
         mapper.registerSubtypes(new NamedType(ChatReadRequest.class, "chatReadRequest"));
         mapper.registerSubtypes(new NamedType(ChangeUserPropertyRequest.class,"changeUserPropertyRequest"));
+        mapper.registerSubtypes(new NamedType(SetImageRequest.class,"setImageRequest"));
+
     }
 
 
@@ -117,7 +119,7 @@ public class Client  {
 
     //for GUI
     public static User login(String username, String password) throws IOException {
-        if(dis == null || dos ==null || socket == null){
+        if(writer == null || reader ==null || socket == null){
             initializeClient();
         }
         String message = username + "--" + password;
@@ -133,7 +135,7 @@ public class Client  {
 
     //for GUI
     public static User signup(String username, String password) throws Exception {
-        if(dis == null || dos ==null || socket == null){
+        if(writer == null || reader ==null || socket == null){
             initializeClient();
         }
         byte[] salt = generateSalt();
@@ -245,6 +247,18 @@ public class Client  {
     }
 
     //for GUI
+    public static void setImage(byte[] image){
+        try {
+            String base64 = Base64.getEncoder().encodeToString(image);
+            loggedUser.setImageBase64(base64);
+            SetImageRequest sir = new SetImageRequest(base64,privateLoggedUser);
+            sendRequest(sir);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    //for GUI
     public static void removeUser(PrivateUser user,MultiUserChat chat){
         try{
 
@@ -289,11 +303,36 @@ public class Client  {
 
     private static void sendRequest(ServerRequest sr) throws Exception {
         String request = mapper.writeValueAsString(sr);
-        dos.writeUTF(request);
-        dos.flush();
+        String endMarker = "###END###";
+
+        int chunkSize = 2048;
+
+        for (int i = 0; i < request.length(); i += chunkSize) {
+            int end = Math.min(request.length(), i + chunkSize);
+            writer.write(request, i, end - i);
+            writer.flush();
+            Thread.sleep(10);
+        }
+
+        writer.write(endMarker);
+        writer.flush();
+
         if (loggedUser == null){
-            String response = dis.readUTF();
-            AvailableUserResponse aur = mapper.readValue(response,AvailableUserResponse.class);
+            StringBuilder sb = new StringBuilder();
+
+            char[] buffer = new char[1024];
+            int charsRead;
+
+            while ((charsRead = reader.read(buffer)) != -1) {
+                String chunk = new String(buffer, 0, charsRead);
+                sb.append(chunk);
+                if (sb.toString().contains(endMarker)) {
+                    break;
+                }
+            }
+
+            String json = sb.toString().replace(endMarker, "");
+            AvailableUserResponse aur = mapper.readValue(json,AvailableUserResponse.class);
             signupLoginCheck(aur);
         }
     }
@@ -320,7 +359,7 @@ public class Client  {
     }
 
     private static void clientReceiverStarter () {
-        ClientReceiver cr = new ClientReceiver(dis);
+        ClientReceiver cr = new ClientReceiver(reader);
         Thread tr = new Thread(cr);
         tr.start();
     }

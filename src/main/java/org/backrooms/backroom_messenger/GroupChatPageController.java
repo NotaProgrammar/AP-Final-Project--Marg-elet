@@ -46,8 +46,6 @@ public class GroupChatPageController {
     private Label groupName;
     @FXML
     private Button sendButton;
-    @FXML
-    private Button settingButton;
 
 
 

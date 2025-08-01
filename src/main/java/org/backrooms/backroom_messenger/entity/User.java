@@ -49,8 +49,7 @@ public class User extends PrivateUser{
     }
 
     public static PrivateUser changeToPrivate(User user){
-        PrivateUser privateUser = new PrivateUser(user.getUsername(),user.getName());
-        return privateUser;
+        return new PrivateUser(user.getUsername(),user.getName());
     }
 
     public boolean isSubed(MultiUserChat muc){

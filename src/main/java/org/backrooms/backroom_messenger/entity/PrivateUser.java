@@ -1,6 +1,7 @@
 package org.backrooms.backroom_messenger.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javafx.scene.image.Image;
 
 import java.util.Date;
 
@@ -16,7 +17,8 @@ public class PrivateUser {
     private Date lastSeen;
     @JsonProperty
     private String bio = "";
-    //todo profile
+    @JsonProperty
+    private String imageBase64;
 
     public PrivateUser(@JsonProperty("username") String username,@JsonProperty("name") String name) {
         this.username = username;
@@ -66,5 +68,13 @@ public class PrivateUser {
 
     public String getBio(){
         return bio;
+    }
+
+    public String getImageBase64() {
+        return imageBase64;
+    }
+
+    public void setImageBase64(String imageBase64) {
+        this.imageBase64 = imageBase64;
     }
 }

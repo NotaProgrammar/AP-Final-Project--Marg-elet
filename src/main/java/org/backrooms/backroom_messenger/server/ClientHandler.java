@@ -9,32 +9,30 @@ import org.backrooms.backroom_messenger.response_and_requests.serverRequest.*;
 import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.*;
 
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static org.backrooms.backroom_messenger.StaticMethods.hashPassword;
 import static org.backrooms.backroom_messenger.server.DataBaseManager.*;
 
 public class ClientHandler implements Runnable {
+    private Lock oututLock = new ReentrantLock();
     private User activeUser;
     Socket socket;
-    DataInputStream in;
-    DataOutputStream out;
+    BufferedReader reader;
+    BufferedWriter writer;
     private final ObjectMapper mapper = new ObjectMapper();
 
     public ClientHandler(Socket socket) throws IOException {
         this.socket = socket;
-        in = new DataInputStream(socket.getInputStream());
-        out = new DataOutputStream(socket.getOutputStream());
+        reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
         mapperRegister();
     }
 
@@ -51,8 +49,23 @@ public class ClientHandler implements Runnable {
         if(!Thread.currentThread().isInterrupted()){
             while(true){
                 try {
-                    String request = in.readUTF();
-                    ServerRequest sr = mapper.readValue(request, ServerRequest.class);
+                    StringBuilder sb = new StringBuilder();
+                    String endMarker = "###END###";
+
+                    char[] buffer = new char[1024];
+                    int charsRead;
+
+                    while ((charsRead = reader.read(buffer)) != -1) {
+                        String chunk = new String(buffer, 0, charsRead);
+                        sb.append(chunk);
+                        if (sb.toString().contains(endMarker)) {
+                            break;
+                        }
+                    }
+
+                    String json = sb.toString().replace(endMarker, "");
+                    ServerRequest sr = mapper.readValue(json,ServerRequest.class);
+
                     Thread thread = new Thread(() -> {
                         try {
                             CheckRequest(sr);
@@ -100,7 +113,15 @@ public class ClientHandler implements Runnable {
             findMultiChat(fmcfl);
         }else if(sr instanceof ChangeUserPropertyRequest cupr){
             changeUserProperty(cupr);
+        }else if(sr instanceof SetImageRequest sir){
+            setImage(sir);
         }
+    }
+
+    private void setImage(SetImageRequest sir) throws SQLException {
+        String base64 = sir.getImageBase64();
+        byte[] imageToBytes = Base64.getDecoder().decode(base64);
+        DataBaseManager.setImage(activeUser.getUsername(),imageToBytes);
     }
 
     private void changeUserProperty(ChangeUserPropertyRequest cupr) throws SQLException {
@@ -211,10 +232,7 @@ public class ClientHandler implements Runnable {
         DataBaseManager.leaveChat(muc.getId(),activeUser.getUsername());
         String message = "remove##muc##" + mapper.writeValueAsString(muc);
         ChatModifyResponse cmr = new ChatModifyResponse(message);
-
-        String json = mapper.writeValueAsString(cmr);
-        out.writeUTF(json);
-        out.flush();
+        sendResponse(cmr);
     }
 
     private void joinMultiUserChat(MultiUserChat muc) throws Exception {
@@ -232,9 +250,7 @@ public class ClientHandler implements Runnable {
         }
 
         ChatModifyResponse cmr = new ChatModifyResponse(message);
-        String json = mapper.writeValueAsString(cmr);
-        out.writeUTF(json);
-        out.flush();
+        sendResponse(cmr);
     }
 
     private void createMultiChat(NewMultiChatRequest ncr) throws SQLException {
@@ -275,9 +291,7 @@ public class ClientHandler implements Runnable {
 
 
         AvailableUserResponse aur = new AvailableUserResponse(mapper.writeValueAsString(activeUser));
-        String response = mapper.writeValueAsString(aur);
-        out.writeUTF(response);
-        out.flush();
+        sendResponse(aur);
 
     }
 
@@ -300,9 +314,7 @@ public class ClientHandler implements Runnable {
         }
 
         AvailableUserResponse aur = new AvailableUserResponse(mapper.writeValueAsString(activeUser));
-        String response = mapper.writeValueAsString(aur);
-        out.writeUTF(response);
-        out.flush();
+        sendResponse(aur);
     }
 
     private void setAvailability(boolean online) throws SQLException {
@@ -348,9 +360,7 @@ public class ClientHandler implements Runnable {
 
 
         SearchedUsersListResponse sulr = new SearchedUsersListResponse(responseMessage);
-        String response = mapper.writeValueAsString(sulr);
-        out.writeUTF(response);
-        out.flush();
+        sendResponse(sulr);
     }
 
     private void notify(Exception e) {
@@ -361,10 +371,7 @@ public class ClientHandler implements Runnable {
         try {
             String messageJson = mapper.writeValueAsString(message);
             ReceivedMessage rm = new ReceivedMessage(messageJson);
-
-            String sending = mapper.writeValueAsString(rm);
-            out.writeUTF(sending);
-            out.flush();
+            sendResponse(rm);
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -385,8 +392,8 @@ public class ClientHandler implements Runnable {
             chatId = createChat(user1, user2);
         }
 
-        PrivateUser us1 = getPrivateUser(user1);
-        PrivateUser us2 = getPrivateUser(user2);
+        PrivateUser us1 = getPrivateUser(user1,false);
+        PrivateUser us2 = getPrivateUser(user2,false);
 
         PvChat pv = new PvChat(chatId,us1,us2);
 
@@ -398,9 +405,7 @@ public class ClientHandler implements Runnable {
         pv.getMessage().addAll(DataBaseManager.returnMessages(pv));
         String message = "add##pv_chat##" + mapper.writeValueAsString(pv) + "##sender";
         ChatModifyResponse cmr = new ChatModifyResponse(message);
-        String response = mapper.writeValueAsString(cmr);
-        out.writeUTF(response);
-        out.flush();
+        sendResponse(cmr);
 
         String message2 = "add##pv_chat##" + mapper.writeValueAsString(pv) + "##receiver";
         ChatModifyResponse cmr2 = new ChatModifyResponse(message2);
@@ -420,11 +425,23 @@ public class ClientHandler implements Runnable {
     }
 
     public void sendResponse(ServerResponse response) {
-        String responseString = null;
         try {
-            responseString = mapper.writeValueAsString(response);
-            out.writeUTF(responseString);
-            out.flush();
+            oututLock.lock();
+            String request = mapper.writeValueAsString(response);
+            String endMarker = "###END###";
+
+            int chunkSize = 2048;
+
+            for (int i = 0; i < request.length(); i += chunkSize) {
+                int end = Math.min(request.length(), i + chunkSize);
+                writer.write(request, i, end - i);
+                writer.flush();
+                Thread.sleep(10);
+            }
+
+            writer.write(endMarker);
+            writer.flush();
+            oututLock.unlock();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

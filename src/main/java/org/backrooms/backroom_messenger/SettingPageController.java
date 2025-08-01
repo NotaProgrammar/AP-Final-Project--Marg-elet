@@ -6,18 +6,27 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.backrooms.backroom_messenger.client.Client;
 import org.backrooms.backroom_messenger.entity.User;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Base64;
 
 public class SettingPageController {
     private User user = null;
 
-    @FXML
-    private DatePicker datePicker;
     @FXML
     private Label userNameLabel;
     @FXML
@@ -40,6 +49,8 @@ public class SettingPageController {
     private TextField bioField;
     @FXML
     private Label bioLabel;
+    @FXML
+    private ImageView imageView;
 
 
 
@@ -49,10 +60,34 @@ public class SettingPageController {
         userNameLabel.setText(user.getUsername());
         bioLabel.setText(user.getBio());
         nameLabel.setText(user.getName());
+        String imageBase64 = user.getImageBase64();
+        if(imageBase64 != null) {
+            byte[] bytes = Base64.getDecoder().decode(imageBase64);
+            imageView.setImage(new Image(new ByteArrayInputStream(bytes)));
+        }
         try {
             showPasswordTextField(false);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @FXML
+    public void setImage(ActionEvent event) {
+        try{
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Select Image File");
+            fileChooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("Image File", "*.png", "*.jpg", "*.gif", "*.bmp")
+            );
+            File file = fileChooser.showOpenDialog(null);
+            byte[] image = Files.readAllBytes(file.toPath());
+            Client.setImage(image);
+            if (file != null) {
+                imageView.setImage(new Image(file.toURI().toString()));
+            }
+        }catch(Exception ignored){
+
         }
     }
 

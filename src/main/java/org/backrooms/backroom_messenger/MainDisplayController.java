@@ -73,8 +73,8 @@ public class MainDisplayController implements Initializable {
                     Chat selectedChat = getItem();
                     if (selectedChat != null) {
                         try {
-                            if(selectedChat instanceof PvChat){
-                                goToPvChatPage(event, selectedChat);
+                            if(selectedChat instanceof PvChat pv){
+                                goToPvChatPage(event, pv);
                             }
                             if(selectedChat instanceof MultiUserChat muc)
                             {
@@ -141,15 +141,20 @@ public class MainDisplayController implements Initializable {
     }
 
 
-    public void goToPvChatPage(ActionEvent event, Chat chat) throws IOException, InterruptedException {
+    public void goToPvChatPage(ActionEvent event, PvChat chat) throws IOException, InterruptedException {
         Client.openChat(chat, 1);
+        PrivateUser user1 = chat.getUser1();
+        PrivateUser user2 = chat.getUser2();
         while(chosenChat == null){
             Thread.sleep(100);
         }
+        PvChat pv = (PvChat) chosenChat;
+        pv.setUser(user1);
+        pv.setUser(user2);
         FXMLLoader pvChatLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("PvChatPage.fxml"));
         Scene scene = new Scene(pvChatLoader.load(), 900, 550);
         PvChatPageController cpc = pvChatLoader.getController();
-        cpc.setChatAndUser((PvChat) chosenChat, user);
+        cpc.setChatAndUser(pv, user);
         cpc.setupCellFactories();
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(scene);

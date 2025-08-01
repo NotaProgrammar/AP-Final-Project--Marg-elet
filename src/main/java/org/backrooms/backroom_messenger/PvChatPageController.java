@@ -23,7 +23,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class PvChatPageController {
 
     private static User user = null;
-    private static PvChat chat = null;
+    private static PvChat pv = null;
     private static ObservableList<Message> messages = FXCollections.observableArrayList();
     private static MultiUserChat opened = null;
     private static boolean isChannelOpened = false;
@@ -36,11 +36,11 @@ public class PvChatPageController {
 
 
     public void setChatAndUser(PvChat chat, User user) {
-        PvChatPageController.chat = chat;
+        pv = chat;
         PvChatPageController.user = user;
-        chat.getMessage().sort(Comparator.comparing(org.backrooms.backroom_messenger.entity.Message::getDate));
+        pv.getMessage().sort(Comparator.comparing(org.backrooms.backroom_messenger.entity.Message::getDate));
         messages.clear();
-        messages.setAll(chat.getMessage());
+        messages.setAll(pv.getMessage());
     }
 
 
@@ -146,9 +146,10 @@ public class PvChatPageController {
 
     public void sendMessage(ActionEvent event) {
         String message = Message.getText().trim();
-        chat.getMessage().add(Client.sendMessage(message, chat));
+        pv.getMessage().add(Client.sendMessage(message, pv));
         listViewLock.lock();
-        messages.addAll(chat.getMessage());
+        messages.clear();
+        messages.addAll(pv.getMessage());
         Message.clear();
         listViewLock.unlock();
     }
@@ -156,9 +157,11 @@ public class PvChatPageController {
 
     public static void saveReceivedMessage(Message message) {
         try{
-            chat.getMessage().add(message);
+            listViewLock.lock();
+            pv.getMessage().add(message);
             messages.clear();
-            messages.addAll(chat.getMessage());
+            messages.addAll(pv.getMessage());
+            listViewLock.unlock();
         }catch (Exception e){
             System.out.println(e);
         }
@@ -166,13 +169,15 @@ public class PvChatPageController {
 
 
     public static void refresh(){
+        listViewLock.lock();
         messages.clear();
-        messages.addAll(chat.getMessage());
+        messages.addAll(pv.getMessage());
+        listViewLock.unlock();
     }
 
 
     public void goBack(ActionEvent event) throws IOException {
-        chat = null;
+        pv = null;
         FXMLLoader displayLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("MainDisplay.fxml"));
         Scene scene = new Scene(displayLoader.load(), 560, 350);
         MainDisplayController mdc  = displayLoader.getController();
@@ -187,7 +192,7 @@ public class PvChatPageController {
         FXMLLoader profileLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("ProfilePage.fxml"));
         Scene scene = new Scene(profileLoader.load(), 560, 350);
         ProfilePageController ppc= profileLoader.getController();
-        ppc.setUserAndChat((User) chat.getUser(user), chat);
+        ppc.setUserAndChat(user,pv.getUser(user), pv);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(scene);
         stage.show();
@@ -200,7 +205,7 @@ public class PvChatPageController {
 
 
     public static PvChat getChat() {
-        return chat;
+        return pv;
     }
 
 }

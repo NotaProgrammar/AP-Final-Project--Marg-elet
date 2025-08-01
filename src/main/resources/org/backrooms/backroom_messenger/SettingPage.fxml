@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
 <AnchorPane prefHeight="596.0" prefWidth="751.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.backrooms.backroom_messenger.SettingPageController">
@@ -28,5 +29,7 @@
       <Label fx:id="bioLabel" layoutX="217.0" layoutY="127.0" text="Label" />
       <TextField fx:id="bioField" layoutX="102.0" layoutY="152.0" prefHeight="26.0" prefWidth="230.0" />
       <Button layoutX="370.0" layoutY="152.0" mnemonicParsing="false" onAction="#changeBio" text="change bio" />
+      <ImageView fx:id="imageView" fitHeight="150.0" fitWidth="200.0" layoutX="29.0" layoutY="330.0" pickOnBounds="true" preserveRatio="true" />
+      <Button layoutX="264.0" layoutY="393.0" mnemonicParsing="false" onAction="#setImage" text="Set Profile" />
    </children>
 </AnchorPane>

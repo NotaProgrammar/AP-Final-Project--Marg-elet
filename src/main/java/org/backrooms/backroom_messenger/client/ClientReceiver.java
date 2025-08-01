@@ -5,18 +5,22 @@ import com.fasterxml.jackson.databind.jsontype.NamedType;
 import org.backrooms.backroom_messenger.ClientReceiverGUI;
 import org.backrooms.backroom_messenger.entity.MultiUserChat;
 import org.backrooms.backroom_messenger.entity.PvChat;
+import org.backrooms.backroom_messenger.response_and_requests.serverRequest.ServerRequest;
 import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.*;
+import org.backrooms.backroom_messenger.server.Server;
+
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.IOException;
 
 import static org.backrooms.backroom_messenger.client.Client.*;
 
 public class ClientReceiver implements Runnable {
-    private DataInputStream dis;
+    private BufferedReader reader;
     private ObjectMapper mapper = new ObjectMapper();
 
-    public ClientReceiver(DataInputStream dis) {
-        this.dis = dis;
+    public ClientReceiver(BufferedReader reader) {
+        this.reader = reader;
         registerMapper();
     }
 
@@ -29,8 +33,22 @@ public class ClientReceiver implements Runnable {
     public void run() {
         try {
             while(true){
-                String response = dis.readUTF();
-                ServerResponse serverResponse = mapper.readValue(response,ServerResponse.class);
+                StringBuilder sb = new StringBuilder();
+                String endMarker = "###END###";
+
+                char[] buffer = new char[1024];
+                int charsRead;
+
+                while ((charsRead = reader.read(buffer)) != -1) {
+                    String chunk = new String(buffer, 0, charsRead);
+                    sb.append(chunk);
+                    if (sb.toString().contains(endMarker)) {
+                        break;
+                    }
+                }
+
+                String json = sb.toString().replace(endMarker, "");
+                ServerResponse serverResponse = mapper.readValue(json, ServerResponse.class);
                 Thread thread = new Thread(() -> {
                     responseCheck(serverResponse);
                 });
