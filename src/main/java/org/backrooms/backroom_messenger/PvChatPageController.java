@@ -83,6 +83,7 @@ public class PvChatPageController {
 
     }
 
+
     private void openChat(ActionEvent event, MultiUserChat chat) {
         try {
             isChannelOpened = false;
@@ -97,6 +98,7 @@ public class PvChatPageController {
             throw new RuntimeException(e);
         }
     }
+
 
     private void goToGroupPage(ActionEvent event, MultiUserChat chat) throws InterruptedException {
         Client.openChat(chat, 3);
@@ -116,6 +118,7 @@ public class PvChatPageController {
         }
     }
 
+
     private void goToChannelPage(ActionEvent event,MultiUserChat selected) throws InterruptedException {
         Client.openChat(selected, 3);
         while(!isChannelOpened){
@@ -133,6 +136,7 @@ public class PvChatPageController {
             System.out.println(e);
         }
     }
+
 
     public static void setOpenedChat(MultiUserChat chat) {
         opened = chat;
@@ -160,6 +164,7 @@ public class PvChatPageController {
         }
     }
 
+
     public static void refresh(){
         messages.clear();
         messages.addAll(chat.getMessage());
@@ -177,9 +182,22 @@ public class PvChatPageController {
         stage.show();
     }
 
+
+    public void toProfile(ActionEvent event) throws IOException {
+        FXMLLoader profileLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("ProfilePage.fxml"));
+        Scene scene = new Scene(profileLoader.load(), 560, 350);
+        ProfilePageController ppc= profileLoader.getController();
+        ppc.setUserAndChat((User) chat.getUser(user), chat);
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(scene);
+        stage.show();
+    }
+
+
     public static User getUser() {
         return user;
     }
+
 
     public static PvChat getChat() {
         return chat;
