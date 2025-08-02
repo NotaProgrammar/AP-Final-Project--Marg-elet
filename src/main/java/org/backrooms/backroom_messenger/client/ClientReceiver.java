@@ -5,19 +5,19 @@ import com.fasterxml.jackson.databind.jsontype.NamedType;
 import org.backrooms.backroom_messenger.ClientReceiverGUI;
 import org.backrooms.backroom_messenger.entity.MultiUserChat;
 import org.backrooms.backroom_messenger.entity.PvChat;
-import org.backrooms.backroom_messenger.response_and_requests.serverRequest.ServerRequest;
 import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.*;
-import org.backrooms.backroom_messenger.server.Server;
 
 import java.io.BufferedReader;
-import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Base64;
 
 import static org.backrooms.backroom_messenger.client.Client.*;
 
 public class ClientReceiver implements Runnable {
     private BufferedReader reader;
-    private ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
 
     public ClientReceiver(BufferedReader reader) {
         this.reader = reader;
@@ -70,6 +70,37 @@ public class ClientReceiver implements Runnable {
             Client.setLastSeen(ulor);
         }else if(sr instanceof UserReadResponse urr){
             ClientReceiverGUI.readMessage(urr);
+        }else if(sr instanceof FileFoundResponse ffr){
+            saveFile(ffr);
+        }
+    }
+
+    private static void saveFile(FileFoundResponse ffr) {
+        String directory = ffr.getDirectory();
+        String base64 = ffr.getFileBase64();
+        String fileName = ffr.getFileName().replace("\n","");
+        if(!base64.equals("")){
+            byte[] bytes = Base64.getDecoder().decode(base64);
+            File dir = new File(directory);
+            File savingFile = new File(dir, fileName);
+
+            try {
+                if(!savingFile.exists()){
+                    savingFile.getParentFile().mkdirs();
+                    savingFile.createNewFile();
+                }
+                FileOutputStream fos = new FileOutputStream(savingFile);
+                int offset = 0;
+                int chunkSize = 4096;
+                while (offset < bytes.length) {
+                    int bytesToWrite = Math.min(chunkSize, bytes.length - offset);
+                    fos.write(bytes, offset, bytesToWrite);
+                    fos.flush();
+                    offset += bytesToWrite;
+                }
+            }catch (IOException e) {
+                System.out.println("Error saving file");
+            }
         }
     }
 }

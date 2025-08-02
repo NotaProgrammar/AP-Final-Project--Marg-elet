@@ -17,5 +17,6 @@
       <TextField fx:id="messageField" layoutX="91.0" layoutY="517.0" prefHeight="25.0" prefWidth="536.0" />
       <Button fx:id="sendButton" layoutX="635.0" layoutY="517.0" mnemonicParsing="false" onAction="#sendMessage" text="send" />
       <Label fx:id="channelName" layoutX="323.0" layoutY="18.0" text="      " />
+      <Button fx:id="openFileButton" layoutX="630.0" layoutY="487.0" mnemonicParsing="false" onAction="#openFile" text="Open File" />
    </children>
 </AnchorPane>

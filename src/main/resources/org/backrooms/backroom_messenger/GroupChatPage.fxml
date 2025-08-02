@@ -17,5 +17,6 @@
       <Label fx:id="joinNotif" layoutX="528.0" layoutY="290.0" text="                " />
       <Label fx:id="groupName" layoutX="81.0" layoutY="14.0" text="                             " />
       <Button fx:id="settingButton" layoutX="521.0" layoutY="19.0" mnemonicParsing="false" onAction="#goToSettingPage" text="Setting" />
+      <Button fx:id="openFileButton" layoutX="541.0" layoutY="361.0" mnemonicParsing="false" onAction="#openFile" text="Open File" />
    </children>
 </AnchorPane>

@@ -47,13 +47,21 @@ public class DataBaseManager {
                 tableName = "multi_user_chats.messages_" + message.getChat().toString().replace("-","_");
                 break;
         }
-        String sql = "INSERT INTO " + tableName + " (id,sender,message,datetime,read_status) VALUES (?,?,?,?,?)";
+        String sql = "INSERT INTO " + tableName + " (id,sender,message,datetime,read_status,file,file_data) VALUES (?,?,?,?,?,?,?)";
         PreparedStatement ps = connection.prepareStatement(sql);
         ps.setObject(1,message.getId());
         ps.setString(2,message.getSender());
         ps.setObject(3,message.getMessage());
         ps.setTimestamp(4,new Timestamp(message.getDate().getTime()));
         ps.setBoolean(5, message.isRead());
+        ps.setBoolean(6,message.isFileExists());
+        if(message.isFileExists()){
+            String base64 = message.getFileBase64();
+            byte[] bytes = Base64.getDecoder().decode(base64);
+            ps.setBytes(7,bytes);
+        }else{
+            ps.setBytes(7,null);
+        }
         ps.executeUpdate();
         ps.close();
         connection.close();
@@ -196,14 +204,14 @@ public class DataBaseManager {
     private static void createPvChatTable(UUID chatId) throws SQLException {
         Connection conn = connectToDataBase();
         String tableName = "pv_chats.chat_" + chatId.toString().replace("-", "_");
-        String sql = "CREATE TABLE "+ tableName + " ( id uuid PRIMARY KEY , sender text, message text, datetime TIMESTAMP, read_status boolean, FOREIGN KEY (sender) REFERENCES public.users(username))";
+        String sql = "CREATE TABLE "+ tableName + " ( id uuid PRIMARY KEY , sender text, message text, datetime TIMESTAMP, read_status boolean, file boolean, file_data bytea, FOREIGN KEY (sender) REFERENCES public.users(username))";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.executeUpdate();
         ps.close();
         conn.close();
     }
 
-    public static void addPvChat(UUID chatId, String user1, String user2) throws SQLException {
+    private static void addPvChat(UUID chatId, String user1, String user2) throws SQLException {
         Connection conn = connectToDataBase();
         String sql = "INSERT INTO public.pv_chats (id, user1, user2) VALUES (?, ?, ?)";
         PreparedStatement ps = conn.prepareStatement(sql);
@@ -213,7 +221,12 @@ public class DataBaseManager {
         ps.executeUpdate();
         ps.close();
         conn.close();
+
+    }
+
+    public static void createPvChat(UUID chatId, String user1, String user2) throws SQLException {
         addToChatTable(chatId,"pv_chat");
+        addPvChat(chatId,user1,user2);
         createPvChatTable(chatId);
         addChatToUsers(chatId,user1,user2,"pv_chat");
         addChatToUsers(chatId,user2,user1,"pv_chat");
@@ -262,7 +275,8 @@ public class DataBaseManager {
             UUID messageId = UUID.fromString(rs.getString("id"));
             boolean readStatus = rs.getBoolean("read_status");
             java.util.Date date = new java.util.Date(rs.getTimestamp("datetime").getTime());
-            Message message = new Message(messageId,sender,chat.getId(),text,date,chat.getType(),readStatus);
+            boolean file = rs.getBoolean("file");
+            Message message = new Message(messageId,sender,chat.getId(),text,date,chat.getType(),readStatus,file);
             try{
                 UUID mucId = UUID.fromString(text.replace("\n",""));
                 MultiUserChat muc = getMultiChatDetails(mucId);
@@ -370,7 +384,7 @@ public class DataBaseManager {
     private static void createMultiChatMessageTable(UUID muc) throws SQLException {
         Connection conn = connectToDataBase();
         String tableName = "multi_user_chats.messages_" + muc.toString().replace("-","_");
-        String query = "CREATE TABLE "+ tableName + " ( id uuid PRIMARY KEY , sender text, message text, datetime TIMESTAMP, read_status boolean, FOREIGN KEY (sender) REFERENCES public.users(username))";
+        String query = "CREATE TABLE "+ tableName + " ( id uuid PRIMARY KEY , sender text, message text, datetime TIMESTAMP, read_status boolean, file boolean, file_data bytea, FOREIGN KEY (sender) REFERENCES public.users(username))";
         PreparedStatement ps = conn.prepareStatement(query);
         ps.executeUpdate();
         ps.close();
@@ -636,5 +650,28 @@ public class DataBaseManager {
         ps.executeUpdate();
         ps.close();
         conn.close();
+    }
+
+    public static byte[] downloadFile(UUID messageId, UUID chatId, String type) throws SQLException {
+        Connection conn = connectToDataBase();
+        String tableName = null;
+        switch(type){
+            case "pv_chat":
+                tableName = "pv_chats.chat_" + chatId.toString().replace("-","_");
+                break;
+            case "channel":
+            case "group":
+                tableName = "multi_user_chats.messages_" + chatId.toString().replace("-","_");
+                break;
+        }
+        String query = "SELECT * FROM " + tableName + " WHERE id = ?";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setObject(1,messageId);
+        ResultSet rs = ps.executeQuery();
+        if(rs.next()){
+            byte[] file = rs.getBytes("file_data");
+            return file;
+        }
+        return null;
     }
 }

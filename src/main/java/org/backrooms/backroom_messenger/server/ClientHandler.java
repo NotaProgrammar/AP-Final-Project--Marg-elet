@@ -115,7 +115,25 @@ public class ClientHandler implements Runnable {
             changeUserProperty(cupr);
         }else if(sr instanceof SetImageRequest sir){
             setImage(sir);
+        }else if(sr instanceof DownloadFileRequest dfr){
+            downloadFile(dfr);
         }
+    }
+
+    private void downloadFile(DownloadFileRequest dfr) throws SQLException {
+        UUID messageId = dfr.getMessageId();
+        UUID chatId = dfr.getChatId();
+        String type = dfr.getChatType();
+        String directory = dfr.getSaveDirectory();
+        String fileName = dfr.getFileName();
+        byte[] fileBytes = DataBaseManager.downloadFile(messageId,chatId,type);
+        String base64 = "";
+        if(fileBytes != null){
+            base64 = Base64.getEncoder().encodeToString(fileBytes);
+        }
+        String message = directory + "##" + base64 + "##" + fileName;
+        FileFoundResponse ffr = new FileFoundResponse(message);
+        sendResponse(ffr);
     }
 
     private void setImage(SetImageRequest sir) throws SQLException {
@@ -341,7 +359,6 @@ public class ClientHandler implements Runnable {
 
     private void searchUser(SearchRequest searchRequest) throws Exception {
         String searched = searchRequest.getSearchTerm();
-        //todo to be updated for group
         List<Chat> chats = new ArrayList<>();
         List<PrivateUser> searchedUsers = DataBaseManager.searchUser(searched);
         List<MultiUserChat> searchedMultiChats = DataBaseManager.searchMultiUserChat(searched);
@@ -416,7 +433,7 @@ public class ClientHandler implements Runnable {
 
     private UUID createChat(String user1, String user2) throws SQLException {
         UUID chatId = UUID.randomUUID();
-        addPvChat(chatId, user1,user2);
+        createPvChat(chatId, user1,user2);
         return chatId;
     }
 
@@ -436,7 +453,6 @@ public class ClientHandler implements Runnable {
                 int end = Math.min(request.length(), i + chunkSize);
                 writer.write(request, i, end - i);
                 writer.flush();
-                Thread.sleep(10);
             }
 
             writer.write(endMarker);

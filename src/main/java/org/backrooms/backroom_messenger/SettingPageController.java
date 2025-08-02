@@ -94,6 +94,7 @@ public class SettingPageController {
     @FXML
     public void logOut(ActionEvent event) throws IOException {
         Client.signOut();
+        user = null;
         toMainPage(event);
     }
 

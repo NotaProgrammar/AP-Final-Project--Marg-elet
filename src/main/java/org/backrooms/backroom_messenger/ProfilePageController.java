@@ -39,6 +39,7 @@ public class ProfilePageController {
         Scene scene = new Scene(pvChatLoader.load(), 560, 350);
         PvChatPageController pcpc  = pvChatLoader.getController();
         pcpc.setChatAndUser(chat, currentUser);
+        pcpc.setupCellFactories();
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(scene);
         stage.show();

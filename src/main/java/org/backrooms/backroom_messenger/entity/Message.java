@@ -27,6 +27,10 @@ public class Message {
     private boolean read;
     @JsonProperty
     private MultiUserChat linkToMultiUserChat = null;
+    @JsonProperty
+    private boolean fileExists = false;
+    @JsonProperty
+    private String fileBase64 = null;
 
     public Message(@JsonProperty("id") UUID id,
                    @JsonProperty("sender") String  sender,
@@ -34,7 +38,8 @@ public class Message {
                    @JsonProperty("message") String message,
                    @JsonProperty("timeDate") Date timeDate,
                    @JsonProperty("chatType") String chatType,
-                   @JsonProperty("read") boolean read) {
+                   @JsonProperty("read") boolean read,
+                   @JsonProperty("fileExist") boolean fileExists) {
         this.id = id;
         this.sender = sender;
         this.chat = chat;
@@ -42,6 +47,7 @@ public class Message {
         this.timeDate = timeDate;
         this.chatType = chatType;
         this.read = read;
+        this.fileExists = fileExists;
     }
 
     public UUID getId() {
@@ -121,5 +127,17 @@ public class Message {
 
     public MultiUserChat getLinkToMultiUserChat() {
         return linkToMultiUserChat;
+    }
+
+    public boolean isFileExists(){
+        return fileExists;
+    }
+
+    public String getFileBase64(){
+        return fileBase64;
+    }
+
+    public void setFileBase64(String fileBase64) {
+        this.fileBase64 = fileBase64;
     }
 }

@@ -11,13 +11,17 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.backrooms.backroom_messenger.client.Client;
 import org.backrooms.backroom_messenger.entity.Message;
 import org.backrooms.backroom_messenger.entity.MultiUserChat;
 import org.backrooms.backroom_messenger.entity.User;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -46,6 +50,9 @@ public class GroupChatPageController {
     private Label groupName;
     @FXML
     private Button sendButton;
+    @FXML
+    private Button openFileButton;
+
 
 
 
@@ -58,6 +65,9 @@ public class GroupChatPageController {
 
         joinButton.setDisable(false);
         joinButton.setVisible(true);
+
+        openFileButton.setVisible(true);
+        openFileButton.setDisable(false);
         hideMessageField(false);
 
         if(user.isSubed(chat))
@@ -107,6 +117,10 @@ public class GroupChatPageController {
                     chatButton.setOnAction(e -> {
                         openChat(e,message.getLinkToMultiUserChat());
                     });
+                    Button downloadbutton = new Button("Download File");
+                    downloadbutton.setOnAction(e -> {
+                        downloadFile(message);
+                    });
 
                     // Layout for the cell content
                     HBox cellBox = new HBox(10);
@@ -117,7 +131,9 @@ public class GroupChatPageController {
                     if (message.getLinkToMultiUserChat() != null) {
                         messageLabel.setText(message.getSender() + " : " + message.getLinkToMultiUserChat().getName(null));
                         cellBox.getChildren().addAll(messageLabel, chatButton);
-                    } else {
+                    } else if(message.isFileExists()){
+                        cellBox.getChildren().addAll(messageLabel, downloadbutton);
+                    }else{
                         cellBox.getChildren().add(messageLabel);
                     }
 
@@ -127,6 +143,16 @@ public class GroupChatPageController {
 
             }
         });
+    }
+
+    private void downloadFile(Message message) {
+        DirectoryChooser dc = new DirectoryChooser();
+        dc.setInitialDirectory(new File(System.getProperty("user.dir")));
+        dc.setTitle("Select Directory");
+        File directory = dc.showDialog(null);
+        if (directory != null) {
+            Client.downloadFile(message,directory.getAbsolutePath());
+        }
     }
 
     private void openChat(ActionEvent event, MultiUserChat chat) {
@@ -169,6 +195,9 @@ public class GroupChatPageController {
 
         sendButton.setDisable(bool);
         sendButton.setVisible(!bool);
+
+        openFileButton.setDisable(bool);
+        openFileButton.setVisible(!bool);
     }
 
     private void goToChannelPage(ActionEvent event,MultiUserChat selected) throws InterruptedException {
@@ -227,7 +256,7 @@ public class GroupChatPageController {
     public void sendMessage(ActionEvent event) {
         String content = messageField.getText().trim();
         if (!content.isEmpty()) {
-            chat.getMessage().add(Client.sendMessage(content, chat));
+            chat.getMessage().add(Client.sendMessage(content, chat,false));
             lock.lock();
             observableMessages.clear();
             observableMessages.setAll(chat.getMessage());
@@ -260,6 +289,24 @@ public class GroupChatPageController {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(scene);
         stage.show();
+    }
+
+    public void openFile(ActionEvent event){
+        try{
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Open File");
+            fileChooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("All Files", "*")
+            );
+            File file = fileChooser.showOpenDialog(null);
+            if(file != null){
+                byte[] bytes = Files.readAllBytes(file.toPath());
+                saveReceivedMessage(Client.sendFile(file.getName(),bytes,chat,true));
+            }
+        }catch (Exception e){
+            System.out.println(e);
+        }
+
     }
 
 

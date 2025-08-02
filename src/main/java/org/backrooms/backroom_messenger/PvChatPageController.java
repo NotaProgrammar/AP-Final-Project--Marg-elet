@@ -10,11 +10,15 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.backrooms.backroom_messenger.client.Client;
 import org.backrooms.backroom_messenger.entity.*;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Comparator;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -22,9 +26,10 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class PvChatPageController {
 
+    private static PvChatPageController instance;
     private static User user = null;
     private static PvChat pv = null;
-    private static ObservableList<Message> messages = FXCollections.observableArrayList();
+    private  ObservableList<Message> messages = FXCollections.observableArrayList();
     private static MultiUserChat opened = null;
     private static boolean isChannelOpened = false;
     private static Lock listViewLock = new ReentrantLock();
@@ -35,12 +40,17 @@ public class PvChatPageController {
     private ListView<Message> MessageListView;
 
 
+
     public void setChatAndUser(PvChat chat, User user) {
         pv = chat;
         PvChatPageController.user = user;
         pv.getMessage().sort(Comparator.comparing(org.backrooms.backroom_messenger.entity.Message::getDate));
         messages.clear();
         messages.setAll(pv.getMessage());
+    }
+
+    public PvChatPageController() {
+        instance = this;
     }
 
 
@@ -60,6 +70,10 @@ public class PvChatPageController {
                     chatButton.setOnAction(e -> {
                         openChat(e,message.getLinkToMultiUserChat());
                     });
+                    Button downloadbutton = new Button("Download File");
+                    downloadbutton.setOnAction(e -> {
+                        downloadFile(message);
+                    });
 
                     // Layout for the cell content
                     HBox cellBox = new HBox(10);
@@ -70,17 +84,28 @@ public class PvChatPageController {
                     if (message.getLinkToMultiUserChat() != null) {
                         messageLabel.setText(message.getLinkToMultiUserChat().getName(null));
                         cellBox.getChildren().addAll(messageLabel, chatButton);
-                    } else {
+                    } else if (message.isFileExists()){
+                        cellBox.getChildren().addAll(messageLabel,downloadbutton);
+                    } else{
                         cellBox.getChildren().add(messageLabel);
                     }
 
                     setText(null);
                     setGraphic(cellBox);
                 }
-
             }
         });
 
+    }
+
+    private void downloadFile(Message message) {
+        DirectoryChooser dc = new DirectoryChooser();
+        dc.setInitialDirectory(new File(System.getProperty("user.dir")));
+        dc.setTitle("Select Directory");
+        File directory = dc.showDialog(null);
+        if (directory != null) {
+            Client.downloadFile(message,directory.getAbsolutePath());
+        }
     }
 
 
@@ -145,13 +170,10 @@ public class PvChatPageController {
 
 
     public void sendMessage(ActionEvent event) {
-        String message = Message.getText().trim();
-        pv.getMessage().add(Client.sendMessage(message, pv));
-        listViewLock.lock();
-        messages.clear();
-        messages.addAll(pv.getMessage());
+        String messageString = Message.getText().trim();
+        Message messge = Client.sendMessage(messageString, pv,false);
+        saveReceivedMessage(messge);
         Message.clear();
-        listViewLock.unlock();
     }
 
 
@@ -159,8 +181,8 @@ public class PvChatPageController {
         try{
             listViewLock.lock();
             pv.getMessage().add(message);
-            messages.clear();
-            messages.addAll(pv.getMessage());
+            instance.messages.clear();
+            instance.messages.addAll(pv.getMessage());
             listViewLock.unlock();
         }catch (Exception e){
             System.out.println(e);
@@ -170,8 +192,8 @@ public class PvChatPageController {
 
     public static void refresh(){
         listViewLock.lock();
-        messages.clear();
-        messages.addAll(pv.getMessage());
+        instance.messages.clear();
+        instance.messages.addAll(pv.getMessage());
         listViewLock.unlock();
     }
 
@@ -206,6 +228,24 @@ public class PvChatPageController {
 
     public static PvChat getChat() {
         return pv;
+    }
+
+    public void openFile(ActionEvent event){
+        try{
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Open File");
+            fileChooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("All Files", "*")
+            );
+            File file = fileChooser.showOpenDialog(null);
+            if(file != null){
+                byte[] bytes = Files.readAllBytes(file.toPath());
+                saveReceivedMessage(Client.sendFile(file.getName(),bytes,pv,true));
+            }
+        }catch (Exception e){
+            System.out.println(e);
+        }
+
     }
 
 }

@@ -70,6 +70,7 @@ public class MainDisplayController implements Initializable {
             {
                 content.setPadding(new Insets(5));
                 openButton.setOnAction(event -> {
+                    chosenChat = null;
                     Chat selectedChat = getItem();
                     if (selectedChat != null) {
                         try {

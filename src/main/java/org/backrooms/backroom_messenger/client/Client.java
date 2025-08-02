@@ -55,6 +55,7 @@ public class Client  {
         mapper.registerSubtypes(new NamedType(ChatReadRequest.class, "chatReadRequest"));
         mapper.registerSubtypes(new NamedType(ChangeUserPropertyRequest.class,"changeUserPropertyRequest"));
         mapper.registerSubtypes(new NamedType(SetImageRequest.class,"setImageRequest"));
+        mapper.registerSubtypes(new NamedType(DownloadFileRequest.class,"downloadFileRequest"));
 
     }
 
@@ -83,11 +84,11 @@ public class Client  {
     }
 
     //for GUI
-    public static Message sendMessage(String messageString, Chat chat){
+    public static Message sendMessage(String messageString, Chat chat,boolean file){
         Message message = new Message(UUID.randomUUID(),
                 loggedUser.getUsername(), chat.getId(),
                 messageString,new Date(),chat.getType(),
-                false);
+                false,file);
 
         try{
             foundedChat = null;
@@ -212,7 +213,6 @@ public class Client  {
     //for GUI
     public static void changeUserRole(Chat chat,PrivateUser user){
         String role = null;
-        //todo change
         if(chat instanceof MultiUserChat channel){
             role = channel.getRole(user);
         }
@@ -275,6 +275,7 @@ public class Client  {
         try{
             SignOutRequest sor = new SignOutRequest(loggedUser.getUsername(),privateLoggedUser);
             sendRequest(sor);
+            loggedUser = null;
         }catch (Exception e){
             throw new RuntimeException(e);
         }
@@ -311,7 +312,6 @@ public class Client  {
             int end = Math.min(request.length(), i + chunkSize);
             writer.write(request, i, end - i);
             writer.flush();
-            Thread.sleep(10);
         }
 
         writer.write(endMarker);
@@ -454,5 +454,34 @@ public class Client  {
     public static User getUser(){
         return loggedUser;
     }
+
+    public static Message sendFile(String name, byte[] bytes, Chat chat, boolean file) {
+        try{
+            Message message = new Message(UUID.randomUUID(),
+                    loggedUser.getUsername(), chat.getId(),
+                    name,new Date(),chat.getType(),
+                    false,file);
+            String base64 = Base64.getEncoder().encodeToString(bytes);
+            message.setFileBase64(base64);
+            String messageJson = mapper.writeValueAsString(message);
+            SendMessageRequest smr = new SendMessageRequest(messageJson,privateLoggedUser);
+            sendRequest(smr);
+            return message;
+        }catch(Exception e){
+            System.out.println(e);
+        }
+        return null;
+    }
+
+    public static void downloadFile(Message message,String savePath){
+        try{
+            String messageString = message.getId().toString() + "##" + message.getChat() + "##" + message.getChatType() + "##" + savePath + "##" + message.getMessage();
+            DownloadFileRequest dfr = new DownloadFileRequest(messageString,privateLoggedUser);
+            sendRequest(dfr);
+        }catch(Exception e){
+            System.out.println(e);
+        }
+    }
+
 
 }
