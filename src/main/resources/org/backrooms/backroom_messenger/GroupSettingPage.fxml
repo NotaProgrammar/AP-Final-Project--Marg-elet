@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
 <AnchorPane prefHeight="629.0" prefWidth="770.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.backrooms.backroom_messenger.GroupSettingPageController">
@@ -26,5 +27,8 @@
         <Label fx:id="groupIdLabel" layoutX="154.0" layoutY="18.0" text="channel id :" />
         <Label fx:id="idLabel" layoutX="300.0" layoutY="18.0" text="Label" />
         <Button fx:id="groupIdButton" layoutX="528.0" layoutY="14.0" mnemonicParsing="false" onAction="#copyId" text="copy id" />
+      <Button fx:id="setImage" layoutX="274.0" layoutY="176.0" mnemonicParsing="false" onAction="#setImage" text="Set Image" />
+      <Button fx:id="deleteImage" layoutX="274.0" layoutY="215.0" mnemonicParsing="false" onAction="#deleteImage" text="Delete Image" />
+      <ImageView fx:id="imageView" fitHeight="137.0" fitWidth="200.0" layoutX="43.0" layoutY="153.0" pickOnBounds="true" preserveRatio="true" />
     </children>
 </AnchorPane>

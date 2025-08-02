@@ -31,5 +31,6 @@
       <Button layoutX="370.0" layoutY="152.0" mnemonicParsing="false" onAction="#changeBio" text="change bio" />
       <ImageView fx:id="imageView" fitHeight="150.0" fitWidth="200.0" layoutX="29.0" layoutY="330.0" pickOnBounds="true" preserveRatio="true" />
       <Button layoutX="264.0" layoutY="393.0" mnemonicParsing="false" onAction="#setImage" text="Set Profile" />
+      <Button layoutX="264.0" layoutY="429.0" mnemonicParsing="false" onAction="#deleteImage" text="Delete Profile" />
    </children>
 </AnchorPane>

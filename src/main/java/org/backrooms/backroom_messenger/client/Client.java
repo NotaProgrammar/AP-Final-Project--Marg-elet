@@ -247,11 +247,30 @@ public class Client  {
     }
 
     //for GUI
-    public static void setImage(byte[] image){
+    public static void setImageForUsers(byte[] image){
         try {
-            String base64 = Base64.getEncoder().encodeToString(image);
+            String base64 = null;
+            if(image != null){
+                base64 = Base64.getEncoder().encodeToString(image);
+            }
             loggedUser.setImageBase64(base64);
-            SetImageRequest sir = new SetImageRequest(base64,privateLoggedUser);
+            String message = base64+ "###user";
+            SetImageRequest sir = new SetImageRequest( message,privateLoggedUser );
+            sendRequest(sir);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void setImageForMuc(byte[] image,UUID id){
+        try {
+            String base64 = null;
+            if(image != null){
+                base64 = Base64.getEncoder().encodeToString(image);
+            }
+            loggedUser.setImageBase64(base64);
+            String message = base64+ "###muc###" + id.toString();
+            SetImageRequest sir = new SetImageRequest( message,privateLoggedUser );
             sendRequest(sir);
         } catch (Exception e) {
             throw new RuntimeException(e);

@@ -43,4 +43,7 @@ public abstract class Chat {
 
     @JsonIgnore
     public abstract String getType();
+
+    @JsonIgnore
+    public abstract String getProfile(User user);
 }

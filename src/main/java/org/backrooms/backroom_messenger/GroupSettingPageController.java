@@ -8,17 +8,24 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.backrooms.backroom_messenger.client.Client;
 import org.backrooms.backroom_messenger.entity.MultiUserChat;
 import org.backrooms.backroom_messenger.entity.PrivateUser;
 import org.backrooms.backroom_messenger.entity.User;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Base64;
 import java.util.Objects;
 
 public class GroupSettingPageController {
@@ -52,6 +59,12 @@ public class GroupSettingPageController {
     private Label groupIdLabel;
     @FXML
     private Button groupIdButton;
+    @FXML
+    private ImageView imageView;
+    @FXML
+    private Button setImage;
+    @FXML
+    private Button deleteImage;
 
 
     @FXML
@@ -99,6 +112,10 @@ public class GroupSettingPageController {
         nameLabel.setText(group.getName(user));
         descriptionLabel.setText(group.getDescription());
         membersLabel.setText(Integer.toString(count));
+        if(group.getProfile(null) != null){
+            byte[] imageBytes = Base64.getDecoder().decode(group.getImageBase64());
+            imageView.setImage(new Image(new ByteArrayInputStream(imageBytes)));
+        }
         if(!group.getPublicity()) {
             idLabel.setText(String.valueOf(group.getId()));
             groupIdLabel.setDisable(false);
@@ -132,6 +149,10 @@ public class GroupSettingPageController {
                     newNameTextField.setVisible(false);
                     newDescriptionTextField.setDisable(true);
                     newDescriptionTextField.setVisible(false);
+                    setImage.setDisable(true);
+                    setImage.setVisible(false);
+                    deleteImage.setDisable(true);
+                    deleteImage.setVisible(false);
                     break;
                 case "normal" :
                     hideAll();
@@ -211,6 +232,10 @@ public class GroupSettingPageController {
         groupIdLabel.setVisible(false);
         groupIdButton.setDisable(true);
         groupIdButton.setVisible(false);
+        setImage.setDisable(true);
+        setImage.setVisible(false);
+        deleteImage.setDisable(true);
+        deleteImage.setVisible(false);
     }
 
 
@@ -221,6 +246,29 @@ public class GroupSettingPageController {
         ClipboardContent content = new ClipboardContent();
         content.putString(id);
         clipboard.setContent(content);
+    }
+
+    public void setImage(ActionEvent event){
+        try{
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Select Image File");
+            fileChooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("Image File", "*.png", "*.jpg", "*.gif", "*.bmp")
+            );
+            File file = fileChooser.showOpenDialog(null);
+            byte[] image = Files.readAllBytes(file.toPath());
+            Client.setImageForMuc(image,group.getId());
+            if (file != null) {
+                imageView.setImage(new Image(file.toURI().toString()));
+            }
+        }catch(Exception ignored){
+
+        }
+    }
+
+    public void deleteImage(ActionEvent event){
+        Client.setImageForMuc(null,group.getId());
+        imageView.setImage(null);
     }
 
 }

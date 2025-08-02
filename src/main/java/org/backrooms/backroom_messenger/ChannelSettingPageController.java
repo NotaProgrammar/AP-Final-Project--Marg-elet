@@ -8,17 +8,24 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.backrooms.backroom_messenger.client.Client;
 import org.backrooms.backroom_messenger.entity.MultiUserChat;
 import org.backrooms.backroom_messenger.entity.PrivateUser;
 import org.backrooms.backroom_messenger.entity.User;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Base64;
 import java.util.Objects;
 
 public class ChannelSettingPageController {
@@ -53,6 +60,12 @@ public class ChannelSettingPageController {
     private Label channelIdLabel;
     @FXML
     private Button channelIdButton;
+    @FXML
+    private ImageView imageView;
+    @FXML
+    private Button setImage;
+    @FXML
+    private Button deleteImage;
 
 
     @FXML
@@ -100,6 +113,15 @@ public class ChannelSettingPageController {
         nameLabel.setText(channel.getName(user));
         descriptionLabel.setText(channel.getDescription());
         membersLabel.setText(Integer.toString(count));
+        if(channel.getProfile(null) != null){
+            byte[] imageBytes = Base64.getDecoder().decode(channel.getImageBase64());
+            imageView.setImage(new Image(new ByteArrayInputStream(imageBytes)));
+        }
+//        setImage.setDisable(false);
+//        setImage.setVisible(true);
+//        deleteImage.setDisable(false);
+//        deleteImage.setVisible(true);
+
         if(!channel.getPublicity()) {
             idLabel.setText(String.valueOf(channel.getId()));
             channelIdLabel.setDisable(false);
@@ -133,6 +155,10 @@ public class ChannelSettingPageController {
                     newNameTextField.setVisible(false);
                     newDescriptionTextField.setDisable(true);
                     newDescriptionTextField.setVisible(false);
+                    setImage.setDisable(true);
+                    setImage.setVisible(false);
+                    deleteImage.setDisable(true);
+                    deleteImage.setVisible(false);
                     break;
                 case "normal" :
                     hideAll();
@@ -214,6 +240,10 @@ public class ChannelSettingPageController {
         channelIdLabel.setVisible(false);
         channelIdButton.setDisable(true);
         channelIdButton.setVisible(false);
+        setImage.setDisable(true);
+        setImage.setVisible(false);
+        deleteImage.setDisable(true);
+        deleteImage.setVisible(false);
     }
 
 
@@ -224,6 +254,29 @@ public class ChannelSettingPageController {
         ClipboardContent content = new ClipboardContent();
         content.putString(id);
         clipboard.setContent(content);
+    }
+
+    public void setImage(ActionEvent event){
+        try{
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Select Image File");
+            fileChooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("Image File", "*.png", "*.jpg", "*.gif", "*.bmp")
+            );
+            File file = fileChooser.showOpenDialog(null);
+            byte[] image = Files.readAllBytes(file.toPath());
+            Client.setImageForMuc(image,channel.getId());
+            if (file != null) {
+                imageView.setImage(new Image(file.toURI().toString()));
+            }
+        }catch(Exception ignored){
+
+        }
+    }
+
+    public void deleteImage(ActionEvent event){
+        Client.setImageForMuc(null,channel.getId());
+        imageView.setImage(null);
     }
 
 

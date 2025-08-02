@@ -8,15 +8,19 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.backrooms.backroom_messenger.client.Client;
 import org.backrooms.backroom_messenger.entity.*;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -63,9 +67,10 @@ public class MainDisplayController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         chatListView.setCellFactory(listView -> new ListCell<>() {
+            private final ImageView profile = new ImageView();
             private final Label nameLabel = new Label();
             private final Button openButton = new Button("Open");
-            private final HBox content = new HBox(10, nameLabel, openButton);
+            private final HBox content = new HBox(10,profile, nameLabel, openButton);
 
             {
                 content.setPadding(new Insets(5));
@@ -100,6 +105,12 @@ public class MainDisplayController implements Initializable {
                     setGraphic(null);
                 } else {
                     nameLabel.setText(chat.getName(user));
+                    if(chat.getProfile(user) != null){
+                        byte[] imageBytes = Base64.getDecoder().decode(chat.getProfile(user));
+                        profile.setImage(new Image(new ByteArrayInputStream(imageBytes)));
+                        profile.setFitHeight(25);
+                        profile.setFitWidth(25);
+                    }
                     setGraphic(content);
                 }
             }

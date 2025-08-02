@@ -82,13 +82,19 @@ public class SettingPageController {
             );
             File file = fileChooser.showOpenDialog(null);
             byte[] image = Files.readAllBytes(file.toPath());
-            Client.setImage(image);
+            Client.setImageForUsers(image);
             if (file != null) {
                 imageView.setImage(new Image(file.toURI().toString()));
             }
         }catch(Exception ignored){
 
         }
+    }
+
+    @FXML
+    public void deleteImage(ActionEvent event){
+        Client.setImageForUsers(null);
+        imageView.setImage(null);
     }
 
     @FXML

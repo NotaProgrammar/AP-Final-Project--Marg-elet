@@ -23,6 +23,8 @@ public class MultiUserChat extends Chat{
     private boolean publicity;
     @JsonProperty
     private boolean isChannel;
+    @JsonProperty
+    private String imageBase64;
 
 
     public MultiUserChat(@JsonProperty("id") UUID id,
@@ -110,5 +112,16 @@ public class MultiUserChat extends Chat{
     @JsonIgnore
     public boolean isChannel(){
         return isChannel;
+    }
+
+    public String getImageBase64() {
+        return imageBase64;
+    }
+    public void setImageBase64(String imageBase64) {
+        this.imageBase64 = imageBase64;
+    }
+
+    public String getProfile(User user){
+        return imageBase64;
     }
 }

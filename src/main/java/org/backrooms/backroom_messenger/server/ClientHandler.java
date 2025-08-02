@@ -137,9 +137,37 @@ public class ClientHandler implements Runnable {
     }
 
     private void setImage(SetImageRequest sir) throws SQLException {
+        String type = sir.getType();
+        switch(type){
+            case "user":
+                setImageForUsers(sir);
+                break;
+            case "muc":
+                setImageForMultiChat(sir);
+                break;
+        }
+
+    }
+
+    private void setImageForMultiChat(SetImageRequest sir) throws SQLException {
         String base64 = sir.getImageBase64();
-        byte[] imageToBytes = Base64.getDecoder().decode(base64);
-        DataBaseManager.setImage(activeUser.getUsername(),imageToBytes);
+        UUID id = sir.getId();
+        byte[] imageBytes = null;
+        if(base64 != null){
+            imageBytes = Base64.getDecoder().decode(base64);
+        }
+
+        DataBaseManager.setImageForMuc(id,imageBytes);
+    }
+
+    private void setImageForUsers(SetImageRequest sir) throws SQLException {
+        String base64 = sir.getImageBase64();
+        byte[] imageBytes = null;
+        if(base64 != null){
+            imageBytes = Base64.getDecoder().decode(base64);
+        }
+
+        DataBaseManager.setImageForUsers(activeUser.getUsername(),imageBytes);
     }
 
     private void changeUserProperty(ChangeUserPropertyRequest cupr) throws SQLException {

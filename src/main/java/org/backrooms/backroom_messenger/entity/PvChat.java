@@ -56,5 +56,9 @@ public class PvChat extends Chat{
         }
     }
 
+    public String getProfile(User user){
+        return getUser(user).getImageBase64();
+    }
+
 
 }

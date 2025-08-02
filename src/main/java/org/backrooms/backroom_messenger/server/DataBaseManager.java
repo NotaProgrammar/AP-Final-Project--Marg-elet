@@ -342,6 +342,10 @@ public class DataBaseManager {
             String creator = rs.getString("creator");
             boolean channel = rs.getBoolean("channel");
             muc = new MultiUserChat(id,name,description,publicity,creator,channel);
+            byte[] imageBytes = rs.getBytes("image");
+            if(imageBytes != null){
+                muc.setImageBase64(Base64.getEncoder().encodeToString(imageBytes));
+            }
         }
         rs.close();
         ps.close();
@@ -641,12 +645,23 @@ public class DataBaseManager {
         conn.close();
     }
 
-    public static void setImage(String username, byte[] imageToBytes) throws SQLException {
+    public static void setImageForUsers(String username, byte[] imageToBytes) throws SQLException {
         Connection conn = connectToDataBase();
         String query = "UPDATE public.users SET image = ? WHERE username = ?";
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setBytes(1,imageToBytes);
         ps.setString(2,username);
+        ps.executeUpdate();
+        ps.close();
+        conn.close();
+    }
+
+    public static void setImageForMuc(UUID id, byte[] imageBytes) throws SQLException {
+        Connection conn = connectToDataBase();
+        String query = "UPDATE public.multi_user_chats SET image = ? WHERE id = ?";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setBytes(1,imageBytes);
+        ps.setObject(2,id);
         ps.executeUpdate();
         ps.close();
         conn.close();
