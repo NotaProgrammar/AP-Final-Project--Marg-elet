@@ -21,15 +21,15 @@ import static org.backrooms.backroom_messenger.StaticMethods.generateSalt;
 public class Client  {
 
 
-    static Chat foundedChat = null;
-    static boolean chatFound = false;
-    static ObjectMapper mapper = new ObjectMapper();
-    static User loggedUser;
-    static Socket socket;
-    static BufferedReader reader;
-    static BufferedWriter writer;
-    static int sender;
-    static PrivateUser privateLoggedUser;
+    private static Chat foundedChat = null;
+    private static boolean chatFound = false;
+    private static ObjectMapper mapper = new ObjectMapper();
+    private static User loggedUser;
+    private static Socket socket;
+    private static BufferedReader reader;
+    private  static BufferedWriter writer;
+    private static int sender;
+    private static PrivateUser privateLoggedUser;
 
     public static void initializeClient() throws IOException {
         socket = new Socket("localhost",8888);

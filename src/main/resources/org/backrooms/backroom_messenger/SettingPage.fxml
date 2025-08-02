@@ -20,9 +20,9 @@
       <Button layoutX="370.0" layoutY="188.0" mnemonicParsing="false" onAction="#changeName" text="change" />
       <Label fx:id="nameNotifLabel" layoutX="450.0" layoutY="192.0" text="                       " />
       <Button fx:id="changePasswordButton" layoutX="428.0" layoutY="285.0" mnemonicParsing="false" onAction="#changePassword" text="Chnge password" />
-      <Label fx:id="lastPasswordLabel" layoutX="106.0" layoutY="243.0" text="Enter your last password" />
+      <Label fx:id="lastPassLabel" layoutX="106.0" layoutY="243.0" text="Enter your last password" />
       <Button fx:id="checkPasswordButton" layoutX="427.0" layoutY="240.0" mnemonicParsing="false" onAction="#checkPassword" text="check" />
-      <Label fx:id="warning" layoutX="127.0" layoutY="290.0" />
+      <Label fx:id="warning" layoutX="523.0" layoutY="256.0" prefHeight="18.0" prefWidth="54.0" />
       <PasswordField fx:id="lastPasswordField" layoutX="248.0" layoutY="240.0" />
       <PasswordField fx:id="newPasswordField" layoutX="248.0" layoutY="285.0" />
       <Label layoutX="106.0" layoutY="127.0" text="bio :" />
@@ -32,5 +32,7 @@
       <ImageView fx:id="imageView" fitHeight="150.0" fitWidth="200.0" layoutX="29.0" layoutY="330.0" pickOnBounds="true" preserveRatio="true" />
       <Button layoutX="264.0" layoutY="393.0" mnemonicParsing="false" onAction="#setImage" text="Set Profile" />
       <Button layoutX="264.0" layoutY="429.0" mnemonicParsing="false" onAction="#deleteImage" text="Delete Profile" />
+      <Label fx:id="newPasslabel" layoutX="104.0" layoutY="289.0" text="Enter your new password" />
+      <Button layoutX="29.0" layoutY="23.0" mnemonicParsing="false" onAction="#goBack" text="go back" />
    </children>
 </AnchorPane>

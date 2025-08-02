@@ -23,6 +23,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Base64;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SettingPageController {
     private User user = null;
@@ -51,6 +53,10 @@ public class SettingPageController {
     private Label bioLabel;
     @FXML
     private ImageView imageView;
+    @FXML
+    private Label newPasslabel;
+    @FXML
+    private Label lastPassLabel;
 
 
 
@@ -131,17 +137,33 @@ public class SettingPageController {
     private void showPasswordTextField(boolean bool) throws IOException {
         newPasswordField.setVisible(bool);
         newPasswordField.setDisable(!bool);
+        newPasslabel.setVisible(bool);
         changePasswordButton.setVisible(bool);
         changePasswordButton.setDisable(!bool);
         checkPasswordButton.setDisable(bool);
         checkPasswordButton.setVisible(!bool);
         lastPasswordField.setDisable(bool);
         lastPasswordField.setVisible(!bool);
+        lastPassLabel.setVisible(!bool);
     }
 
     @FXML
     public void changePassword(ActionEvent event) throws Exception {
-        Client.changeUserProperty("password",newPasswordField.getText());
+        String password = newPasswordField.getText();
+        String passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$";
+        Pattern pattern = Pattern.compile(passwordRegex);
+        Matcher matcher = pattern.matcher(password);
+
+        if (!matcher.matches()) {
+            warning.setTextFill(Color.RED);
+            warning.setText("Password must contain uppercase, lowercase, number, and symbol (min 8 chars)");
+            return;
+        }
+        warning.setTextFill(Color.GREEN);
+        warning.setText("Your password has been changed!");
+        lastPasswordField.clear();
+        newPasswordField.clear();
+        Client.changeUserProperty("password",password);
         showPasswordTextField(false);
     }
 
@@ -150,8 +172,6 @@ public class SettingPageController {
     public void checkPassword(ActionEvent event) throws IOException {
         if(user.checkPassword(lastPasswordField.getText())) {
             showPasswordTextField(true);
-            warning.setTextFill(Color.BLACK);
-            warning.setText("Enter new Password: ");
         }else{
             warning.setTextFill(Color.RED);
             warning.setText("Wrong password!");
@@ -162,5 +182,15 @@ public class SettingPageController {
     public void changeBio(ActionEvent event) throws Exception {
         Client.changeUserProperty("bio",bioField.getText());
         bioLabel.setText(bioField.getText());
+    }
+    @FXML
+    public void goBack(ActionEvent event) throws IOException {
+        FXMLLoader mainDisplayLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("MainDisplay.fxml"));
+        Scene scene = new Scene(mainDisplayLoader.load(), 560, 350);
+        MainDisplayController mdc = mainDisplayLoader.getController();
+        mdc.setUser(user);
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(scene);
+        stage.show();
     }
 }

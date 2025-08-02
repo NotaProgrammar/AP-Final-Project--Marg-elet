@@ -117,10 +117,7 @@ public class ChannelSettingPageController {
             byte[] imageBytes = Base64.getDecoder().decode(channel.getImageBase64());
             imageView.setImage(new Image(new ByteArrayInputStream(imageBytes)));
         }
-//        setImage.setDisable(false);
-//        setImage.setVisible(true);
-//        deleteImage.setDisable(false);
-//        deleteImage.setVisible(true);
+
 
         if(!channel.getPublicity()) {
             idLabel.setText(String.valueOf(channel.getId()));

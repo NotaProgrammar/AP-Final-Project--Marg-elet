@@ -16,6 +16,8 @@ import org.backrooms.backroom_messenger.entity.User;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MainPageController {
 
@@ -24,22 +26,32 @@ public class MainPageController {
     @FXML
     private PasswordField Password;
     @FXML
-    private Button Enter;
-    @FXML
-    private Button Login;
-    @FXML
     private Label ErrorMessage;
 
-    @FXML
-    public void SignIn(ActionEvent event) throws IOException, SQLException {
-        String Username = this.Username.getText();
-        String Password = this.Password.getText();
-    }
 
     public void Enter(ActionEvent event) throws IOException, SQLException {
         try{
             String Username = this.Username.getText();
             String Password = this.Password.getText();
+            String passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$";
+            Pattern pattern = Pattern.compile(passwordRegex);
+            Matcher matcher = pattern.matcher(Password);
+
+            if (!matcher.matches()) {
+                ErrorMessage.setTextFill(Color.RED);
+                ErrorMessage.setText("Password must contain uppercase, lowercase, number, and symbol (min 8 chars)");
+                return;
+            }
+
+            String usernameRegex = "[\\-_=!@#$%^&*()/?.>;:'<,]";
+            pattern = Pattern.compile(usernameRegex);
+            matcher = pattern.matcher(Username);
+
+            if (matcher.find()) {
+                ErrorMessage.setTextFill(Color.RED);
+                ErrorMessage.setText("Username must not contain special characters like - or @");
+                return;
+            }
 
             if ((Username == null || Username.isEmpty()) || (Password == null || Password.isEmpty())) {
                 ErrorMessage.setTextFill(Color.RED);
