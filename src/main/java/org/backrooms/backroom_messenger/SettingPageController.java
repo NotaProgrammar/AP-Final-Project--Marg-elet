@@ -186,7 +186,7 @@ public class SettingPageController {
     @FXML
     public void goBack(ActionEvent event) throws IOException {
         FXMLLoader mainDisplayLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("MainDisplay.fxml"));
-        Scene scene = new Scene(mainDisplayLoader.load(), 560, 350);
+        Scene scene = new Scene(mainDisplayLoader.load(), 600, 400);
         MainDisplayController mdc = mainDisplayLoader.getController();
         mdc.setUser(user);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

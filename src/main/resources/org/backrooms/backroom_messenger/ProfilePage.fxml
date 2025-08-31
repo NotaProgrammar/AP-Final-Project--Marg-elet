@@ -2,18 +2,56 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="594.0" prefWidth="735.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.backrooms.backroom_messenger.ProfilePageController">
+<AnchorPane maxHeight="396.0" maxWidth="581.0" prefHeight="396.0" prefWidth="581.0" styleClass="profilePane" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.backrooms.backroom_messenger.ProfilePageController">
    <children>
-      <Label layoutX="140.0" layoutY="188.0" text="Name :" />
-      <Label layoutX="138.0" layoutY="233.0" text="Username :" />
-      <Label layoutX="140.0" layoutY="280.0" text="Info : " />
-      <Label fx:id="nameLabel" layoutX="286.0" layoutY="188.0" text="Label" />
-      <Label fx:id="usernameLabel" layoutX="286.0" layoutY="233.0" text="Label" />
-      <Label fx:id="bioLabel" layoutX="286.0" layoutY="280.0" text="Label" />
-      <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#goBack" text="go back" />
-      <ImageView fx:id="profileImage" fitHeight="150.0" fitWidth="200.0" layoutX="426.0" layoutY="56.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fitHeight="1025.0" fitWidth="770.0" layoutY="-625.0" opacity="0.2" pickOnBounds="true" preserveRatio="true" styleClass="profilePane">
+         <image>
+            <Image url="@Images/travel.jpeg" />
+         </image>
+      </ImageView>
+      <Label layoutX="258.0" layoutY="144.0" prefHeight="74.0" prefWidth="118.0" text="Name :" textFill="#b90000">
+         <font>
+            <Font name="Snell Roundhand" size="30.0" />
+         </font></Label>
+      <Label layoutX="258.0" layoutY="91.0" text="User Name :" textFill="#00288d">
+         <font>
+            <Font name="Snell Roundhand" size="30.0" />
+         </font></Label>
+      <Label layoutX="267.0" layoutY="203.0" prefHeight="67.0" prefWidth="81.0" text="Info : " textFill="#009a1a">
+         <font>
+            <Font name="Snell Roundhand" size="30.0" />
+         </font></Label>
+      <Label fx:id="nameLabel" layoutX="346.0" layoutY="161.0" text="Label" textFill="#5b5353">
+         <font>
+            <Font name="Snell Roundhand" size="30.0" />
+         </font></Label>
+      <Label fx:id="usernameLabel" layoutX="406.0" layoutY="91.0" text="Label" textFill="#5b5353">
+         <font>
+            <Font name="Snell Roundhand" size="30.0" />
+         </font></Label>
+      <Label fx:id="bioLabel" layoutX="341.0" layoutY="216.0" text="Label" textFill="#5b5353">
+         <font>
+            <Font name="Snell Roundhand" size="30.0" />
+         </font></Label>
+      <Button mnemonicParsing="false" onAction="#goBack" styleClass="goBackButton" text="go back" textFill="#43801a">
+         <font>
+            <Font name="SignPainter-HouseScript Semibold" size="21.0" />
+         </font></Button>
+      <ImageView fx:id="profileImage" fitHeight="154.0" fitWidth="146.0" layoutX="76.0" layoutY="98.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0" />
+      <ImageView blendMode="SCREEN" fitHeight="235.0" fitWidth="207.0" layoutX="65.0" layoutY="81.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0">
+         <image>
+            <Image url="@Images/Blank%20Postage%20Stamp%20stock%20image_%20Image%20of%20clean,%20isolated%20-%2012922335.jpeg" />
+         </image>
+      </ImageView>
+      <ImageView blendMode="MULTIPLY" fitHeight="150.0" fitWidth="200.0" layoutX="94.0" layoutY="143.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@Images/_%20(21).jpeg" />
+         </image>
+      </ImageView>
    </children>
 </AnchorPane>

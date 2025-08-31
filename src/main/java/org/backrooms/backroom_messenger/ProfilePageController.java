@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.backrooms.backroom_messenger.entity.PrivateUser;
 import org.backrooms.backroom_messenger.entity.PvChat;
@@ -23,6 +24,8 @@ public class ProfilePageController {
     private PvChat chat = null;
     private User currentUser;
 
+    @FXML
+    private AnchorPane profilePane;
     @FXML
     private Label nameLabel;
     @FXML

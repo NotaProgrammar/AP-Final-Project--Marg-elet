@@ -91,7 +91,7 @@ public class SearchPageController implements Initializable {
             Thread.sleep(100);
         }
         FXMLLoader pvChatLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("PvChatPage.fxml"));
-        Scene scene = new Scene(pvChatLoader.load(), 900, 550);
+        Scene scene = new Scene(pvChatLoader.load(), 733, 435);
         PvChatPageController cpc = pvChatLoader.getController();
         cpc.setChatAndUser((PvChat) chosenChat, user);
         cpc.setupCellFactories();
@@ -107,7 +107,7 @@ public class SearchPageController implements Initializable {
             Thread.sleep(100);
         }
         FXMLLoader channelLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("ChannelChatPage.fxml"));
-        Scene scene = new Scene(channelLoader.load(), 900, 550);
+        Scene scene = new Scene(channelLoader.load(), 733, 435);
         ChannelChatPageController ccpc = channelLoader.getController();
         ccpc.setUserAndChat(user, (MultiUserChat) chosenChat);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -122,7 +122,7 @@ public class SearchPageController implements Initializable {
             Thread.sleep(100);
         }
         FXMLLoader groupLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("GroupChatPage.fxml"));
-        Scene scene = new Scene(groupLoader.load(), 900, 550);
+        Scene scene = new Scene(groupLoader.load(), 733, 435);
         GroupChatPageController gcpc = groupLoader.getController();
         gcpc.setUserAndChat(user, (MultiUserChat) chosenChat);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -133,7 +133,7 @@ public class SearchPageController implements Initializable {
 
     public void goBack(ActionEvent event) throws IOException {
         FXMLLoader displayLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("MainDisplay.fxml"));
-        Scene scene = new Scene(displayLoader.load(), 560, 350);
+        Scene scene = new Scene(displayLoader.load(), 600, 400);
         MainDisplayController mdc  = displayLoader.getController();
         mdc.setUser(this.user);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

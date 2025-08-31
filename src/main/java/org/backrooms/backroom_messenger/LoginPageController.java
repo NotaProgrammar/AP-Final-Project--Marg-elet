@@ -1,21 +1,29 @@
 package org.backrooms.backroom_messenger;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import org.backrooms.backroom_messenger.client.Client;
 import org.backrooms.backroom_messenger.entity.User;
 import java.io.IOException;
 
 public class LoginPageController {
 
+    @FXML
+    private AnchorPane loginPane;
     @FXML
     private TextField username;
     @FXML
@@ -66,7 +74,8 @@ public class LoginPageController {
 
     public void toSignupPage(ActionEvent event) throws IOException {
         FXMLLoader signupLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("MainPage.fxml"));
-        Scene scene = new Scene(signupLoader.load(), 900, 500);
+        Scene scene = new Scene(signupLoader.load(), 600, 400);
+        scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(scene);
         stage.show();

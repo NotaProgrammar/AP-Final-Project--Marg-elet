@@ -60,7 +60,6 @@ public class GroupChatPageController {
         user = loggedUser;
         chat = openedChat;
 
-        groupName.setTextFill(Color.BLUE);
         groupName.setText(chat.getName(user));
 
         joinButton.setDisable(false);
@@ -74,6 +73,8 @@ public class GroupChatPageController {
         {
             alreadyJoined = true;
             joinButton.setText("leave");
+            joinButton.getStyleClass().remove("JoinButton");
+            joinButton.getStyleClass().add("LeftButton");
             String role = chat.getRole(User.changeToPrivate(user));
             switch(role){
                 case "creator":
@@ -89,6 +90,8 @@ public class GroupChatPageController {
         }else{
             alreadyJoined = false;
             joinButton.setText("Join");
+            joinButton.getStyleClass().remove("LeftButton");
+            joinButton.getStyleClass().add("JoinButton");
             hideMessageField(true);
         }
 
@@ -283,7 +286,7 @@ public class GroupChatPageController {
     @FXML
     public void goToSettingPage(ActionEvent event) throws IOException {
         FXMLLoader groupSettingLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("GroupSettingPage.fxml"));
-        Scene scene = new Scene(groupSettingLoader.load(), 560, 350);
+        Scene scene = new Scene(groupSettingLoader.load(), 770, 811);
         GroupSettingPageController cspc  = groupSettingLoader.getController();
         cspc.setUserAndGroup(user, chat);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

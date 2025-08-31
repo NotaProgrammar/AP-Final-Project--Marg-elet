@@ -1,0 +1,225 @@
+
+/*----------------------------------- Login and SignUp Pang ------------------------------------*/
+
+.loginPane {
+    -fx-background-image: url("Images/WelcomeToMyHome.jpeg");
+    -fx-background-size: cover;
+    -fx-background-position: center top;
+    -fx-padding: 20 10 10 10;
+}
+
+
+.signupPane {
+    -fx-background-image: url("Images/dreamcore.jpeg");
+    -fx-background-size: cover;
+    -fx-background-position: left top;
+    -fx-padding: 20 10 10 10;
+}
+
+
+.username, .password {
+    -fx-background-color: transparent; /* توخالی */
+    -fx-border-width: 1px; /* ضخامت بوردر */
+    -fx-border-color: #F9F4DE; /* رنگ بوردر */
+    -fx-background-radius: 0; /* حذف گردی */
+    -fx-border-radius: 0; /* هماهنگی بوردر */
+    -fx-text-fill: #F9F4DE; /* رنگ متن */
+    -fx-prompt-text-fill: #CCCCCC; /* رنگ متن Placeholder */
+}
+
+.userLabel, .passLabel {
+        -fx-text-fill: #F9F4DE;
+        -fx-effect: dropshadow(gaussian, #003300, 5, 0.8, 0, 0);
+        -fx-opacity: 0.9;
+        -fx-background-color: transparent;
+}
+
+.loginButton, .signupButton {
+    -fx-font-family: "Luminari";
+    -fx-effect: dropshadow(gaussian, #F9F4DE, 5, 0.5, 0, 0);
+    -fx-background-color: #DE2523;
+    -fx-text-fill: #F9F4DE;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.signupButton:pressed {
+    -fx-translate-y: 2px;
+}
+
+.signupLink, .loginLink {
+    -fx-text-fill: #F9F4DE;
+    -fx-background-color: transparent;
+}
+
+/*------------------------------------------ Main Display -----------------------------------------*/
+
+.mainPane {
+    -fx-background-image: url("Images/Yellowpaper.jpeg");
+    -fx-background-position: center top;
+}
+
+.chatList {
+    -fx-background-image: url("Images/_(17).jpeg");
+    -fx-background-position: center center;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 4, 0.5, 0, 0);
+}
+/*
+@font-face {
+    font-family: "Maiden Orange Regular";
+    src: url("/fonts/MaidenOrange.ttf");
+}
+*/
+.searchButton {
+    -fx-background-color: transparent;
+}
+
+.newChanelButton, .newGroupButton, .settingButton {
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+}
+
+.newChanelButton:hover, .newGroupButton:hover {
+    -fx-text-fill: white;
+ }
+
+
+.settingButton {
+    -fx-background-color: transparent;
+        -fx-text-fill: black;
+        -fx-background-image: url("Images/default.jpg");
+        -fx-background-size: cover;
+        -fx-background-position: center;
+        -fx-background-repeat: no-repeat;
+        -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 4, 0.5, 0, 0);
+        -fx-background-insets: 0;
+}
+
+
+
+.settingButton:hover {
+    -fx-background-image: url("Images/_(15).jpeg");
+    -fx-text-fill: #8605ff;
+        -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0.6, 0, 0);
+        -fx-border-width: 1px;
+        -fx-border-color: whith;
+}
+
+/*----------------------------------------- Profile Pane ---------------------------------------- */
+
+.profilePane {
+    -fx-background-color: #AAC1B6;
+    -fx-background-repeat: repeat;
+}
+
+/*------------------------------------ Setting Pane ---------------------------------------------*/
+
+
+.settingPane {
+    -fx-background-color: #B6B6B6;
+    -fx-background-image: url("Images/_(6).jpeg");
+}
+
+
+.settingButtonStyle {
+    -fx-border-width: 2px;
+    -fx-border-color: black;
+    -fx-background-color: #00E5FF;
+}
+
+/*------------------------------------ Create Chanel & Group ------------------------------------*/
+
+.createPane {
+    -fx-background-image: url("Images/BlackAndWhite.jpeg");
+    -fx-background-position: 30%  70%;
+}
+
+/*------------------------------------ Chanel & Group Setting -----------------------------------*/
+
+.chatSettingPane {
+    -fx-background-image: url("Images/_(23).jpeg");
+    -fx-background-position: left top;
+    -fx-background-size: cover;
+}
+
+.bubbelField {
+    -fx-background-radius:  0 20px;
+    -fx-background-color: #8cd5ff;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0.6, 0, 0);
+    -fx-opacity: 0.6;
+}
+
+.bubbelButton {
+    -fx-background-radius:  0 20px 20px 20px;
+    -fx-background-color: #e6e6e6;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0.6, 0, 0);
+}
+
+/*------------------------------------- Search Page ---------------------------------------------*/
+
+.searchPane {
+    -fx-background-image: url("Images/_(24).jpeg");
+    -fx-background-position: 30%  40%;
+}
+.searchList {
+    -fx-background-color: transparent;
+}
+
+.goBackButton {
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+}
+
+/*------------------------------------ Chat Pages --------------------------------------------*/
+
+.chatPage {
+    -fx-background-image: url("Images/_.jpeg");
+    -fx-background-position: center bottom;
+}
+
+.textField {
+    -fx-background-radius: 50px;
+    -fx-background-color: #F6F0E3;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 10, 0.6, 0, 0);
+}
+
+
+.sendButton {
+    -fx-background-color: #D7AF22;
+    -fx-background-radius: 25px;
+    -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.3), 10, 0.6, 0, 0);
+    -fx-cursor: hand;
+}
+
+.fileButton {
+    -fx-background-color: #98B0BE;
+    -fx-background-radius: 25px;
+    -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.3), 10, 0.6, 0, 0);
+    -fx-cursor: hand;
+}
+
+.profileButton {
+    -fx-background-color: #98B0BE;
+    -fx-text-fill: #000b59;
+    -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.3), 10, 0.6, 0, 0);
+    -fx-background-radius: 25px;
+    -fx-cursor: hand;
+}
+
+.JoinButton {
+    -fx-background-color: #D7AF22;
+    -fx-text-fill: #9a5413;
+    -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.3), 10, 0.6, 0, 0);
+    -fx-background-radius: 25px;
+    -fx-cursor: hand;
+}
+
+.LeftButton {
+    -fx-background-color: #F75151;
+    -fx-text-fill: #A40200;
+    -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.3), 10, 0.6, 0, 0);
+    -fx-background-radius: 25px;
+    -fx-cursor: hand;
+}
