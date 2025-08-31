@@ -70,7 +70,7 @@ public class CreateGroupPageController {
 
     public void goBack(ActionEvent event) throws IOException {
         FXMLLoader displayLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("MainDisplay.fxml"));
-        Scene scene = new Scene(displayLoader.load(), 560, 350);
+        Scene scene = new Scene(displayLoader.load(), 610, 400);
         MainDisplayController mdc  = displayLoader.getController();
         mdc.setUser(this.user);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

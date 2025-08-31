@@ -1,5 +1,6 @@
 package org.backrooms.backroom_messenger;
 
+import javafx.animation.ScaleTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -10,9 +11,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import org.backrooms.backroom_messenger.client.Client;
 import org.backrooms.backroom_messenger.entity.*;
 
@@ -31,6 +36,15 @@ public class MainDisplayController implements Initializable {
     private static boolean chatFound = false;
 
 
+
+    @FXML
+    private Button searchButton;
+    @FXML
+    private Button newChanelButton;
+    @FXML
+    private Button newGroupButton;
+    @FXML
+    private Button settingButton;
     @FXML
     private ListView<Chat> chatListView;
     @FXML
@@ -38,6 +52,17 @@ public class MainDisplayController implements Initializable {
     @FXML
     private Label searchResult;
 
+    @FXML
+    public void initialize() {
+        Font.loadFont(getClass().getResource("fonts/MaidenOrange.ttf").toExternalForm(), 18);
+        Font.loadFont(getClass().getResource("/fonts/MaShanZheng.ttf").toExternalForm(), 18);
+
+        searchButton.setFont(Font.font("Maiden Orange Regular", 18));
+        newChanelButton.setFont(Font.font("Ma Shan Zheng Regular", 20));
+        newGroupButton.setFont(Font.font("Ma Shan Zheng Regular", 18));
+        settingButton.setFont(Font.font("Ma Shan Zheng Regular", 18));
+
+    }
     @FXML
     public void setUser(User user) {
         this.user = user;
@@ -52,7 +77,7 @@ public class MainDisplayController implements Initializable {
     public void toSettingPage(ActionEvent event) throws IOException {
         try {
             FXMLLoader settingLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("SettingPage.fxml"));
-            Scene scene = new Scene(settingLoader.load(), 560, 350);
+            Scene scene = new Scene(settingLoader.load(), 654, 579);
             SettingPageController spc = settingLoader.getController();
             spc.setUser(this.user);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

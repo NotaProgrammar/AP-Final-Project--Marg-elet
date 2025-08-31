@@ -6,33 +6,100 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="596.0" prefWidth="751.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.backrooms.backroom_messenger.SettingPageController">
+<AnchorPane prefHeight="579.0" prefWidth="654.0" styleClass="settingPane" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.backrooms.backroom_messenger.SettingPageController">
    <children>
-      <Label layoutX="277.0" layoutY="14.0" text="SETTING" />
-      <Label layoutX="108.0" layoutY="80.0" text="Username : " />
-      <Label layoutX="106.0" layoutY="102.0" text="Name : " />
-      <Button layoutX="551.0" layoutY="85.0" mnemonicParsing="false" onAction="#logOut" text="log out" />
-      <Label fx:id="userNameLabel" layoutX="217.0" layoutY="80.0" text="just show username" />
-      <Label fx:id="nameLabel" layoutX="217.0" layoutY="102.0" text="Label" />
-      <Label layoutX="108.0" layoutY="192.0" text="New name : " />
-      <TextField fx:id="nameField" layoutX="195.0" layoutY="188.0" />
-      <Button layoutX="370.0" layoutY="188.0" mnemonicParsing="false" onAction="#changeName" text="change" />
-      <Label fx:id="nameNotifLabel" layoutX="450.0" layoutY="192.0" text="                       " />
-      <Button fx:id="changePasswordButton" layoutX="428.0" layoutY="285.0" mnemonicParsing="false" onAction="#changePassword" text="Chnge password" />
-      <Label fx:id="lastPassLabel" layoutX="106.0" layoutY="243.0" text="Enter your last password" />
-      <Button fx:id="checkPasswordButton" layoutX="427.0" layoutY="240.0" mnemonicParsing="false" onAction="#checkPassword" text="check" />
-      <Label fx:id="warning" layoutX="523.0" layoutY="256.0" prefHeight="18.0" prefWidth="54.0" />
-      <PasswordField fx:id="lastPasswordField" layoutX="248.0" layoutY="240.0" />
-      <PasswordField fx:id="newPasswordField" layoutX="248.0" layoutY="285.0" />
-      <Label layoutX="106.0" layoutY="127.0" text="bio :" />
-      <Label fx:id="bioLabel" layoutX="217.0" layoutY="127.0" text="Label" />
-      <TextField fx:id="bioField" layoutX="102.0" layoutY="152.0" prefHeight="26.0" prefWidth="230.0" />
-      <Button layoutX="370.0" layoutY="152.0" mnemonicParsing="false" onAction="#changeBio" text="change bio" />
-      <ImageView fx:id="imageView" fitHeight="150.0" fitWidth="200.0" layoutX="29.0" layoutY="330.0" pickOnBounds="true" preserveRatio="true" />
-      <Button layoutX="264.0" layoutY="393.0" mnemonicParsing="false" onAction="#setImage" text="Set Profile" />
-      <Button layoutX="264.0" layoutY="429.0" mnemonicParsing="false" onAction="#deleteImage" text="Delete Profile" />
-      <Label fx:id="newPasslabel" layoutX="104.0" layoutY="289.0" text="Enter your new password" />
-      <Button layoutX="29.0" layoutY="23.0" mnemonicParsing="false" onAction="#goBack" text="go back" />
+      <Label layoutX="274.0" layoutY="31.0" prefHeight="44.0" prefWidth="104.0" text="SETTING" textFill="WHITE">
+         <font>
+            <Font name="AppleMyungjo Regular" size="23.0" />
+         </font></Label>
+      <Label layoutX="130.0" layoutY="185.0" text="Username : " textFill="#83d8ff">
+         <font>
+            <Font name="Impact" size="13.0" />
+         </font></Label>
+      <Label layoutX="250.0" layoutY="165.0" rotate="25.6" text="Name : " textFill="#83d8ff">
+         <font>
+            <Font name="Impact" size="13.0" />
+         </font></Label>
+      <Button layoutX="176.0" layoutY="348.0" mnemonicParsing="false" onAction="#logOut" rotate="-24.3" styleClass="settingButtonStyle" stylesheets="@style.css" text="log out" textFill="RED">
+         <font>
+            <Font name="Khmer MN" size="13.0" />
+         </font></Button>
+      <Label fx:id="userNameLabel" layoutX="126.0" layoutY="201.0" prefHeight="28.0" prefWidth="134.0" text="just show username" textFill="#c8eeff">
+         <font>
+            <Font name="Hoefler Text Black" size="13.0" />
+         </font></Label>
+      <Label fx:id="nameLabel" layoutX="307.0" layoutY="154.0" rotate="-28.9" text="Label" textFill="#c8eeff">
+         <font>
+            <Font name="Hoefler Text Black" size="13.0" />
+         </font></Label>
+      <Label layoutX="110.0" layoutY="344.0" rotate="-14.4" text="New name : " textFill="#83d8ff">
+         <font>
+            <Font name="Impact" size="13.0" />
+         </font></Label>
+      <TextField fx:id="nameField" layoutX="197.0" layoutY="327.0">
+         <font>
+            <Font name="Hoefler Text Black" size="13.0" />
+         </font></TextField>
+      <Button layoutX="366.0" layoutY="348.0" mnemonicParsing="false" onAction="#changeName" rotate="-27.3" styleClass="settingButtonStyle" stylesheets="@style.css" text="change" textFill="#0035e5">
+         <font>
+            <Font name="Khmer MN" size="13.0" />
+         </font></Button>
+      <Label fx:id="nameNotifLabel" layoutX="175.0" layoutY="301.0" text="                       " />
+      <Button layoutX="469.0" layoutY="501.0" mnemonicParsing="false" onAction="#deleteImage" rotate="32.8" styleClass="settingButtonStyle" stylesheets="@style.css" text="Delete Profile" textFill="RED">
+         <font>
+            <Font name="Khmer MN" size="13.0" />
+         </font></Button>
+      <Button fx:id="changePasswordButton" layoutX="422.0" layoutY="473.0" mnemonicParsing="false" onAction="#changePassword" styleClass="settingButtonStyle" stylesheets="@style.css" text="Chnge password" textFill="#0035e5">
+         <font>
+            <Font name="Khmer MN" size="13.0" />
+         </font></Button>
+      <Label fx:id="lastPassLabel" layoutX="110.0" layoutY="430.0" text="Enter your last password :" textFill="#83d8ff">
+         <font>
+            <Font name="Impact" size="13.0" />
+         </font></Label>
+      <Button fx:id="checkPasswordButton" layoutX="370.0" layoutY="424.0" mnemonicParsing="false" onAction="#checkPassword" styleClass="settingButtonStyle" stylesheets="@style.css" text="check" textFill="#0035e5">
+         <font>
+            <Font name="Khmer MN" size="13.0" />
+         </font></Button>
+      <Label fx:id="warning" layoutX="113.0" layoutY="501.0" prefHeight="18.0" prefWidth="54.0" rotate="-6.5" textFill="RED" />
+      <PasswordField fx:id="lastPasswordField" layoutX="220.0" layoutY="425.0" rotate="37.9">
+         <font>
+            <Font name="Hoefler Text Black" size="13.0" />
+         </font></PasswordField>
+      <PasswordField fx:id="newPasswordField" layoutX="419.0" layoutY="366.0" rotate="70.7">
+         <font>
+            <Font name="Hoefler Text Black" size="13.0" />
+         </font></PasswordField>
+      <Label layoutX="376.0" layoutY="185.0" rotate="-15.9" text="bio :" textFill="#83d8ff">
+         <font>
+            <Font name="Impact" size="13.0" />
+         </font></Label>
+      <Label fx:id="bioLabel" layoutX="404.0" layoutY="174.0" rotate="92.4" text="Label" textFill="#c8eeff">
+         <font>
+            <Font name="Hoefler Text Black" size="13.0" />
+         </font></Label>
+      <TextField fx:id="bioField" layoutX="78.0" layoutY="262.0" prefHeight="26.0" prefWidth="230.0" rotate="-11.0">
+         <font>
+            <Font name="Hoefler Text Black" size="13.0" />
+         </font></TextField>
+      <Button layoutX="330.0" layoutY="253.0" mnemonicParsing="false" onAction="#changeBio" rotate="15.9" styleClass="settingButtonStyle" stylesheets="@style.css" text="change bio" textFill="#0035e5">
+         <font>
+            <Font name="Khmer MN" size="13.0" />
+         </font></Button>
+      <ImageView fx:id="imageView" blendMode="SCREEN" fitHeight="127.0" fitWidth="128.0" layoutX="481.0" layoutY="39.0" pickOnBounds="true" preserveRatio="true" rotate="11.7" />
+      <Button layoutX="476.0" layoutY="210.0" mnemonicParsing="false" onAction="#setImage" rotate="-77.4" styleClass="settingButtonStyle" stylesheets="@style.css" text="Set Profile" textFill="#0035e5">
+         <font>
+            <Font name="Khmer MN" size="13.0" />
+         </font></Button>
+      <Label fx:id="newPasslabel" layoutX="389.0" layoutY="199.0" rotate="83.4" text="Enter your new password :" textFill="#83d8ff">
+         <font>
+            <Font name="Impact" size="13.0" />
+         </font></Label>
+      <Button layoutX="19.0" layoutY="34.0" mnemonicParsing="false" onAction="#goBack" rotate="-38.7" styleClass="settingButtonStyle" stylesheets="@style.css" text="go back" textFill="#0035e5">
+         <font>
+            <Font name="Khmer MN" size="13.0" />
+         </font></Button>
    </children>
 </AnchorPane>

@@ -74,7 +74,7 @@ public class ChannelChatPageController {
 
     public void goToSetting(ActionEvent event) throws IOException {
         FXMLLoader channelSettingLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("ChannelSettingPage.fxml"));
-        Scene scene = new Scene(channelSettingLoader.load(), 560, 350);
+        Scene scene = new Scene(channelSettingLoader.load(), 770, 811);
         ChannelSettingPageController cspc  = channelSettingLoader.getController();
         cspc.setUserAndChannel(user, chat);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -101,12 +101,17 @@ public class ChannelChatPageController {
             Client.Subscribe(chat);
             if (alreadyJoined) {
                 alreadyJoined = false;
+                joinButton.setText("Join");
+                joinButton.getStyleClass().remove("LeftButton");
+                joinButton.getStyleClass().add("JoinButton");
                 goBack(event);
             }else{
                 alreadyJoined = true;
                 joinNotification.setText("You have joined the channel");
                 joinNotification.setTextFill(Color.GREEN);
-                joinButton.setText("Leave Channel");
+                joinButton.setText("Leave");
+                joinButton.getStyleClass().remove("JoinButton");
+                joinButton.getStyleClass().add("LeftButton");
             }
     }
 
@@ -123,7 +128,9 @@ public class ChannelChatPageController {
 
         if(user.isSubed(muc)){
             alreadyJoined = true;
-            joinButton.setText("Leave Channel");
+            joinButton.setText("Leave");
+            joinButton.getStyleClass().remove("JoinButton");
+            joinButton.getStyleClass().add("LeftButton");
             String role = muc.getRole(User.changeToPrivate(user));
             switch(role){
                 case "creator":
@@ -140,7 +147,9 @@ public class ChannelChatPageController {
         }else{
             alreadyJoined = false;
             hideMessageField(true);
-            joinButton.setText("Join Channel");
+            joinButton.setText("Join");
+            joinButton.getStyleClass().remove("LeftButton");
+            joinButton.getStyleClass().add("JoinButton");
         }
 
         channelName.setTextFill(Color.BLUE);

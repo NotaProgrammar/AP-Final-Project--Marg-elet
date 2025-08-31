@@ -5,17 +5,42 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.backrooms.backroom_messenger.CreateChannelPageController">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" styleClass="createPane" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.backrooms.backroom_messenger.CreateChannelPageController">
    <children>
-      <Label layoutX="82.0" layoutY="72.0" prefHeight="18.0" prefWidth="130.0" text="Name of the channel  : " />
-      <TextField fx:id="name" layoutX="226.0" layoutY="68.0" />
-      <Button layoutX="278.0" layoutY="340.0" mnemonicParsing="false" onAction="#create" text="Create" />
-      <Label fx:id="descriptionField" layoutX="82.0" layoutY="134.0" text="Description" />
-      <TextField fx:id="description" layoutX="166.0" layoutY="130.0" prefHeight="26.0" prefWidth="363.0" />
+      <Label layoutX="79.0" layoutY="118.0" prefHeight="18.0" prefWidth="144.0" text="Name of the channel : " textFill="YELLOW">
+         <font>
+            <Font name="Phosphate Inline" size="13.0" />
+         </font></Label>
+      <TextField fx:id="name" layoutX="222.0" layoutY="115.0" styleClass="createFeilds">
+         <font>
+            <Font name="Phosphate Inline" size="13.0" />
+         </font></TextField>
+      <Button layoutX="278.0" layoutY="340.0" mnemonicParsing="false" onAction="#create" text="Create" textFill="RED">
+         <font>
+            <Font name="Phosphate Inline" size="13.0" />
+         </font></Button>
+      <Label fx:id="descriptionField" layoutX="79.0" layoutY="180.0" text="Description :" textFill="YELLOW">
+         <font>
+            <Font name="Phosphate Inline" size="13.0" />
+         </font></Label>
+      <TextField fx:id="description" layoutX="163.0" layoutY="176.0" prefHeight="26.0" prefWidth="363.0">
+         <font>
+            <Font name="Phosphate Inline" size="13.0" />
+         </font></TextField>
       <Label fx:id="message" layoutX="287.0" layoutY="286.0" text="        " />
-      <CheckBox fx:id="publicity" layoutX="314.0" layoutY="211.0" mnemonicParsing="false" onAction="#setPublicityOfChannel" text="public" />
-      <Label layoutX="82.0" layoutY="211.0" text="Do you want the channel to be public?" />
-      <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#goBack" text="go back" />
+      <CheckBox fx:id="publicity" layoutX="338.0" layoutY="257.0" mnemonicParsing="false" onAction="#setPublicityOfChannel" text="Public" textFill="#00b5ac">
+         <font>
+            <Font name="Phosphate Inline" size="13.0" />
+         </font></CheckBox>
+      <Label layoutX="79.0" layoutY="257.0" text="Do you want the channel to be public ?" textFill="YELLOW">
+         <font>
+            <Font name="Phosphate Inline" size="13.0" />
+         </font></Label>
+      <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#goBack" text="go back" textFill="#0011ff">
+         <font>
+            <Font name="Phosphate Inline" size="13.0" />
+         </font></Button>
    </children>
 </AnchorPane>

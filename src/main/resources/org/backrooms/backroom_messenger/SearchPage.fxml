@@ -4,11 +4,63 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.backrooms.backroom_messenger.SearchPageController">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" styleClass="searchPane" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.backrooms.backroom_messenger.SearchPageController">
    <children>
-      <ListView fx:id="chatListView" layoutX="15.0" layoutY="39.0" prefHeight="350.0" prefWidth="385.0" />
-      <Label layoutX="460.0" layoutY="22.0" text="Search results" />
-      <Button layoutX="15.0" layoutY="10.0" mnemonicParsing="false" onAction="#goBack" text="go back" />
+      <ListView fx:id="chatListView" layoutX="15.0" layoutY="64.0" opacity="0.5" prefHeight="303.0" prefWidth="572.0" styleClass="searchList" />
+      <Label layoutX="193.0" layoutY="18.0" text="Search results">
+         <font>
+            <Font name="Copperplate Bold" size="26.0" />
+         </font>
+         <textFill>
+            <LinearGradient endX="1.0" endY="1.0">
+               <stops>
+                  <Stop>
+                     <color>
+                        <Color red="0.8980392217636108" green="1.0" />
+                     </color>
+                  </Stop>
+                  <Stop offset="0.006711409395973154">
+                     <color>
+                        <Color red="0.8980392217636108" green="1.0" />
+                     </color>
+                  </Stop>
+                  <Stop offset="1.0">
+                     <color>
+                        <Color green="1.0" blue="0.23211446404457092" />
+                     </color>
+                  </Stop>
+               </stops>
+            </LinearGradient>
+         </textFill></Label>
+      <Button layoutX="15.0" layoutY="10.0" mnemonicParsing="false" onAction="#goBack" styleClass="goBackButton" text="go back">
+         <font>
+            <Font name="Copperplate" size="13.0" />
+         </font>
+         <textFill>
+            <LinearGradient endX="1.0" endY="1.0">
+               <stops>
+                  <Stop>
+                     <color>
+                        <Color red="0.39824560284614563" green="0.7105262875556946" blue="0.125" />
+                     </color>
+                  </Stop>
+                  <Stop offset="0.006711409395973154">
+                     <color>
+                        <Color red="0.39824560284614563" green="0.7105262875556946" blue="0.125" />
+                     </color>
+                  </Stop>
+                  <Stop offset="1.0">
+                     <color>
+                        <Color red="0.9666666388511658" green="1.0" />
+                     </color>
+                  </Stop>
+               </stops>
+            </LinearGradient>
+         </textFill></Button>
    </children>
 </AnchorPane>

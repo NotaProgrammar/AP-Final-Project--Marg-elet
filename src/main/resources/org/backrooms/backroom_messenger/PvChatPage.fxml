@@ -1,19 +1,90 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="562.0" prefWidth="756.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.backrooms.backroom_messenger.PvChatPageController">
+<AnchorPane prefHeight="562.0" prefWidth="729.0" styleClass="chatPage" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.backrooms.backroom_messenger.PvChatPageController">
    <children>
-      <ListView fx:id="MessageListView" layoutX="115.0" layoutY="14.0" prefHeight="419.0" prefWidth="521.0" />
-      <Label layoutX="14.0" layoutY="461.0" text="Type your message" />
-      <TextField fx:id="Message" layoutX="124.0" layoutY="437.0" prefHeight="65.0" prefWidth="510.0" />
-      <Button layoutX="649.0" layoutY="479.0" mnemonicParsing="false" onAction="#sendMessage" text="Send" />
-      <Button layoutX="36.0" layoutY="14.0" mnemonicParsing="false" onAction="#goBack" text="go back" />
-      <Button layoutX="649.0" layoutY="14.0" mnemonicParsing="false" onAction="#toProfile" text="Show profile" />
-      <Button layoutX="649.0" layoutY="437.0" mnemonicParsing="false" onAction="#openFile" text="open file" />
+      <ListView fx:id="MessageListView" layoutY="50.0" prefHeight="439.0" prefWidth="735.0" styleClass="searchList" />
+      <TextField fx:id="Message" layoutX="62.0" layoutY="500.0" prefHeight="45.0" prefWidth="608.0" styleClass="textField">
+         <padding>
+            <Insets left="20.0" />
+         </padding>
+         <font>
+            <Font name="STSong" size="13.0" />
+         </font></TextField>
+      <Button layoutX="678.0" layoutY="501.0" mnemonicParsing="false" onAction="#sendMessage" prefHeight="41.0" prefWidth="46.0" styleClass="sendButton" />
+      <Button layoutX="8.0" layoutY="502.0" mnemonicParsing="false" onAction="#openFile" prefHeight="41.0" prefWidth="46.0" styleClass="fileButton" />
+      <ImageView blendMode="MULTIPLY" fitHeight="54.0" fitWidth="30.0" layoutX="686.0" layoutY="495.0" onMouseClicked="#sendMessage" pickOnBounds="true" preserveRatio="true" rotate="14.9">
+         <image>
+            <Image url="@Images/_(10).jpeg" />
+         </image>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </ImageView>
+      <ImageView blendMode="MULTIPLY" fitHeight="68.0" fitWidth="80.0" layoutX="-3.0" layoutY="489.0" onMouseClicked="#openFile" pickOnBounds="true" preserveRatio="true" rotate="-4.2">
+         <image>
+            <Image url="@Images/camera.jpeg" />
+         </image>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </ImageView>
+      <Rectangle arcHeight="5.0" arcWidth="5.0" height="275.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="735.0">
+         <fill>
+            <LinearGradient endX="0.833729216152019" endY="1.0" startX="0.836104513064133">
+               <stops>
+                  <Stop>
+                     <color>
+                        <Color red="1.0" green="1.0" blue="1.0" />
+                     </color>
+                  </Stop>
+                  <Stop offset="0.006711409395973154">
+                     <color>
+                        <Color red="1.0" green="1.0" blue="1.0" opacity="0.699999988079071" />
+                     </color>
+                  </Stop>
+                  <Stop offset="0.4878048780487805">
+                     <color>
+                        <Color red="1.0" green="1.0" blue="1.0" opacity="0.0" />
+                     </color>
+                  </Stop>
+                  <Stop offset="1.0">
+                     <color>
+                        <Color opacity="0.0" />
+                     </color>
+                  </Stop>
+               </stops>
+            </LinearGradient>
+         </fill>
+      </Rectangle>
+      <Button layoutX="625.0" layoutY="8.0" mnemonicParsing="false" onAction="#toProfile" prefHeight="37.0" prefWidth="97.0" styleClass="profileButton" text="Profile" textFill="#000b59">
+         <padding>
+            <Insets right="30.0" />
+         </padding></Button>
+      <Button layoutX="26.0" layoutY="4.0" mnemonicParsing="false" onAction="#goBack" prefHeight="36.0" prefWidth="52.0" styleClass="goBackButton" text="go back" textFill="#474d33">
+         <font>
+            <Font name="Zapfino" size="9.0" />
+         </font></Button>
+      <ImageView blendMode="MULTIPLY" fitHeight="48.0" fitWidth="41.0" layoutX="680.0" layoutY="7.0" onMouseClicked="#toProfile" pickOnBounds="true" preserveRatio="true" rotate="8.4">
+         <image>
+            <Image url="@Images/_(19).jpeg" />
+         </image>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </ImageView>
    </children>
 </AnchorPane>
