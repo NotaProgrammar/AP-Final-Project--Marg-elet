@@ -21,7 +21,7 @@
          <font>
             <Font name="Bodoni 72 Bold" size="13.0" />
          </font></TextField>
-      <Label layoutX="171.0" layoutY="317.0" text="Already have an account?" textFill="#e6005e">
+      <Label layoutX="171.0" layoutY="317.0" styleClass="ask" text="Already have an account?" textFill="#e6005e">
          <font>
             <Font name="Georgia" size="13.0" />
          </font></Label>

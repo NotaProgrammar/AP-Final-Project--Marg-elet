@@ -53,17 +53,6 @@ public class MainDisplayController implements Initializable {
     private Label searchResult;
 
     @FXML
-    public void initialize() {
-        Font.loadFont(getClass().getResource("fonts/MaidenOrange.ttf").toExternalForm(), 18);
-        Font.loadFont(getClass().getResource("/fonts/MaShanZheng.ttf").toExternalForm(), 18);
-
-        searchButton.setFont(Font.font("Maiden Orange Regular", 18));
-        newChanelButton.setFont(Font.font("Ma Shan Zheng Regular", 20));
-        newGroupButton.setFont(Font.font("Ma Shan Zheng Regular", 18));
-        settingButton.setFont(Font.font("Ma Shan Zheng Regular", 18));
-
-    }
-    @FXML
     public void setUser(User user) {
         this.user = user;
         if (user != null && user.getChats() != null) {
@@ -98,7 +87,9 @@ public class MainDisplayController implements Initializable {
             private final HBox content = new HBox(10,profile, nameLabel, openButton);
 
             {
+                content.getStyleClass().add("searchList");
                 content.setPadding(new Insets(5));
+                openButton.getStyleClass().add("openButton");
                 openButton.setOnAction(event -> {
                     chosenChat = null;
                     Chat selectedChat = getItem();
@@ -126,9 +117,11 @@ public class MainDisplayController implements Initializable {
             @Override
             protected void updateItem(Chat chat, boolean empty) {
                 super.updateItem(chat, empty);
+                profile.getStyleClass().add("profileImage");
                 if (empty || chat == null) {
                     setGraphic(null);
                 } else {
+                    nameLabel.getStyleClass().add("chatInfo");
                     nameLabel.setText(chat.getName(user));
                     if(chat.getProfile(user) != null){
                         byte[] imageBytes = Base64.getDecoder().decode(chat.getProfile(user));

@@ -30,7 +30,7 @@
             <Font name="Luminari" size="13.0" />
          </font></Button>
       <Label fx:id="ErrorMessage" layoutX="179.0" layoutY="280.0" prefHeight="17.0" prefWidth="239.0" />
-      <Label layoutX="171.0" layoutY="317.0" text="Wanna creat account?">
+      <Label layoutX="171.0" layoutY="317.0" styleClass="ask" text="Wanna creat account?">
          <font>
             <Font name="Georgia" size="13.0" />
          </font></Label>

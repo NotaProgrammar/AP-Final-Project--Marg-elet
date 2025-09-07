@@ -11,7 +11,7 @@ public class BackRoomMessengerApplication extends Application {
     public void start(Stage stage) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
-            fxmlLoader.setLocation(BackRoomMessengerApplication.class.getResource("MainDisplay.fxml"));
+            fxmlLoader.setLocation(BackRoomMessengerApplication.class.getResource("ChannelChatPage.fxml"));
             Scene scene = new Scene(fxmlLoader.load(), 600, 400);
             scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
             stage.setTitle("Margelet");

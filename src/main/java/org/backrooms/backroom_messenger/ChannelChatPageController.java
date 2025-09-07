@@ -171,19 +171,23 @@ public class ChannelChatPageController {
                     setText(null);
                 } else {
                     Label messageLabel = new Label(message.toString(user.getUsername()));
+                    messageLabel.getStyleClass().add("chatMessages");
 
                     Button chatButton = new Button("Open Chat");
+                    chatButton.getStyleClass().add("openChat");
                     chatButton.setOnAction(e -> {
                         openChat(e,message.getLinkToMultiUserChat());
                     });
 
                     Button downloadbutton = new Button("Download File");
+                    downloadbutton.getStyleClass().add("downloadButton");
                     downloadbutton.setOnAction(e -> {
                         downloadFile(message);
                     });
 
                     // Layout for the cell content
                     HBox cellBox = new HBox(10);
+                    cellBox.getStyleClass().add("searchList");
                     messageLabel.setAlignment(Pos.CENTER);
 
                     if (message.getLinkToMultiUserChat() != null) {

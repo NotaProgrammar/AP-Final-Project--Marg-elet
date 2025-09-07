@@ -177,13 +177,17 @@ public class ChannelSettingPageController {
                     setGraphic(null);
                 } else {
                     Label nameLabel = new Label(member.getName());
+                    nameLabel.getStyleClass().addAll("bubbelSettingFont", "users");
                     Label usernameLabel = new Label("@" + member.getUsername());
+                    usernameLabel.getStyleClass().addAll("bubbelSettingFont", "id");
                     HBox.setHgrow(nameLabel, Priority.ALWAYS);
                     HBox.setHgrow(usernameLabel, Priority.ALWAYS);
                     HBox hBox = new HBox(10, nameLabel, usernameLabel);
+                    hBox.getStyleClass().add("searchList");
 
                     if (!Objects.equals(channel.getRole(member), "creator") && !member.equals(user) && channel.getRole(user).equals("creator")) {
                         Button kickButton = new Button("Kick");
+                        kickButton.getStyleClass().addAll("kickButton", "bubbelSettingFont");
                         kickButton.setOnAction(e -> {
                             Client.removeUser(member, channel);
                             channel.getUsers().remove(member);
@@ -198,6 +202,7 @@ public class ChannelSettingPageController {
                         });
 
                         Button roleButton = new Button();
+                        roleButton.getStyleClass().addAll("changeAdminButton", "bubbelSettingFont");
                         boolean isAdmin = Objects.equals(channel.getRole(member), "admin");
                         roleButton.setText(isAdmin ? "Change to Normal" : "Change to Admin");
                         roleButton.setOnAction(e -> {
