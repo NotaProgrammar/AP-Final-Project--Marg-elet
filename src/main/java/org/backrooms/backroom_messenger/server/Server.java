@@ -16,6 +16,7 @@ import java.util.List;
 public class Server {
     private static ServerSocket serverSocket;
     private static List<ClientHandler> onlineClients = new ArrayList<>();
+
     public static void main(String[] args) {
         try {
             serverSocket = new ServerSocket(8888);

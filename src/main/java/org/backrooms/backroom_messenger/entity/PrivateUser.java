@@ -35,11 +35,9 @@ public class PrivateUser {
 
     public String toString(){
         if(online){
-            return " Name: " + name + " Online: " + online;
-        }else{
-            return " Name: " + name + " last seen : " + lastSeen;
+            return " Name: " + name +  " Online";
         }
-
+        return "Name : " + name + " Offline";
     }
 
     public boolean isOnline() {

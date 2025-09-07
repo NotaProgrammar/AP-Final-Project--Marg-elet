@@ -5,15 +5,15 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="594.0" prefWidth="735.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.backrooms.backroom_messenger.ProfilePageController">
+<AnchorPane prefHeight="380.0" prefWidth="389.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.backrooms.backroom_messenger.ProfilePageController">
    <children>
       <Label layoutX="140.0" layoutY="188.0" text="Name :" />
       <Label layoutX="138.0" layoutY="233.0" text="Username :" />
       <Label layoutX="140.0" layoutY="280.0" text="Info : " />
       <Label fx:id="nameLabel" layoutX="286.0" layoutY="188.0" text="Label" />
       <Label fx:id="usernameLabel" layoutX="286.0" layoutY="233.0" text="Label" />
-      <Label fx:id="bioLabel" layoutX="286.0" layoutY="280.0" text="Label" />
+      <Label fx:id="bioLabel" layoutX="286.0" layoutY="280.0" />
       <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#goBack" text="go back" />
-      <ImageView fx:id="profileImage" fitHeight="150.0" fitWidth="200.0" layoutX="426.0" layoutY="56.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="profileImage" fitHeight="150.0" fitWidth="200.0" layoutX="138.0" layoutY="27.0" pickOnBounds="true" preserveRatio="true" />
    </children>
 </AnchorPane>

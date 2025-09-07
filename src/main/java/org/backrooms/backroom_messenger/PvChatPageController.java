@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -34,6 +35,9 @@ public class PvChatPageController {
     private static boolean isChannelOpened = false;
     private static Lock listViewLock = new ReentrantLock();
 
+
+    @FXML
+    private Label lastSeen ;
     @FXML
     private TextField Message;
     @FXML
@@ -47,6 +51,11 @@ public class PvChatPageController {
         pv.getMessage().sort(Comparator.comparing(org.backrooms.backroom_messenger.entity.Message::getDate));
         messages.clear();
         messages.setAll(pv.getMessage());
+        if(chat.getUser(user).isOnline()){
+            lastSeen.setText("Online");
+        }else{
+            lastSeen.setText(chat.getUser(user).getLastSeen().toString());
+        }
     }
 
     public PvChatPageController() {
@@ -131,7 +140,7 @@ public class PvChatPageController {
         }
         try{
             FXMLLoader groupLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("GroupChatPage.fxml"));
-            Scene scene = new Scene(groupLoader.load(), 900, 550);
+            Scene scene = new Scene(groupLoader.load(), 600, 430);
             GroupChatPageController gcpc = groupLoader.getController();
             gcpc.setUserAndChat(user, opened);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -150,7 +159,7 @@ public class PvChatPageController {
         }
         try{
             FXMLLoader channelLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("ChannelChatPage.fxml"));
-            Scene scene = new Scene(channelLoader.load(), 900, 550);
+            Scene scene = new Scene(channelLoader.load(), 700, 550);
             ChannelChatPageController ccpc = channelLoader.getController();
             ccpc.setUserAndChat(user, opened);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -200,7 +209,7 @@ public class PvChatPageController {
     public void goBack(ActionEvent event) throws IOException {
         pv = null;
         FXMLLoader displayLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("MainDisplay.fxml"));
-        Scene scene = new Scene(displayLoader.load(), 560, 350);
+        Scene scene = new Scene(displayLoader.load(), 550, 430);
         MainDisplayController mdc  = displayLoader.getController();
         mdc.setUser(this.user);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -243,6 +252,15 @@ public class PvChatPageController {
             }
         }catch (Exception e){
             System.out.println(e);
+        }
+
+    }
+
+    public static void setLastSeen(boolean online, Date lastSeenDate){
+        if(online){
+            instance.lastSeen.setText("Online");
+        }else{
+            instance.lastSeen.setText(lastSeenDate.toString());
         }
 
     }

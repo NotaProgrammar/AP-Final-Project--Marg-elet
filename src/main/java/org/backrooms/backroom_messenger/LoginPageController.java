@@ -37,7 +37,7 @@ public class LoginPageController {
                 selectedUser = Client.login(Username, Password);
                 if (selectedUser == null) {
                     ErrorMessage.setTextFill(Color.RED);
-                    ErrorMessage.setText("login failed");
+                    ErrorMessage.setText("username or password is incorrect");
                 } else {
                     toMainDisplay(event, selectedUser);
                 }
@@ -52,7 +52,7 @@ public class LoginPageController {
     public void toMainDisplay(ActionEvent event, User user) throws IOException {
         try {
             FXMLLoader displayLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("MainDisplay.fxml"));
-            Scene scene = new Scene(displayLoader.load(), 500, 500);
+            Scene scene = new Scene(displayLoader.load(), 550, 430);
             MainDisplayController mdc = displayLoader.getController();
             mdc.setUser(user);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -66,7 +66,7 @@ public class LoginPageController {
 
     public void toSignupPage(ActionEvent event) throws IOException {
         FXMLLoader signupLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("MainPage.fxml"));
-        Scene scene = new Scene(signupLoader.load(), 900, 500);
+        Scene scene = new Scene(signupLoader.load(), 560, 400);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(scene);
         stage.show();

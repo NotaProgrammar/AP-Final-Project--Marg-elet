@@ -52,7 +52,7 @@ public class MainDisplayController implements Initializable {
     public void toSettingPage(ActionEvent event) throws IOException {
         try {
             FXMLLoader settingLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("SettingPage.fxml"));
-            Scene scene = new Scene(settingLoader.load(), 560, 350);
+            Scene scene = new Scene(settingLoader.load(), 560, 500);
             SettingPageController spc = settingLoader.getController();
             spc.setUser(this.user);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -125,7 +125,7 @@ public class MainDisplayController implements Initializable {
         }
         try{
             FXMLLoader channelLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("ChannelChatPage.fxml"));
-            Scene scene = new Scene(channelLoader.load(), 900, 550);
+            Scene scene = new Scene(channelLoader.load(), 700, 550);
             ChannelChatPageController ccpc = channelLoader.getController();
             ccpc.setUserAndChat(user, (MultiUserChat) chosenChat);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -144,7 +144,7 @@ public class MainDisplayController implements Initializable {
             Thread.sleep(100);
         }
         FXMLLoader groupLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("GroupChatPage.fxml"));
-        Scene scene = new Scene(groupLoader.load(), 900, 550);
+        Scene scene = new Scene(groupLoader.load(), 600, 430);
         GroupChatPageController gcpc = groupLoader.getController();
         gcpc.setUserAndChat(user, (MultiUserChat) chosenChat);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -164,7 +164,7 @@ public class MainDisplayController implements Initializable {
         pv.setUser(user1);
         pv.setUser(user2);
         FXMLLoader pvChatLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("PvChatPage.fxml"));
-        Scene scene = new Scene(pvChatLoader.load(), 900, 550);
+        Scene scene = new Scene(pvChatLoader.load(), 760, 550);
         PvChatPageController cpc = pvChatLoader.getController();
         cpc.setChatAndUser(pv, user);
         cpc.setupCellFactories();
@@ -189,6 +189,11 @@ public class MainDisplayController implements Initializable {
     public void search(ActionEvent event) throws Exception {
         chatFound = false;
         String searchText = searchTextField.getText();
+        if(searchText.isEmpty()){
+            searchResult.setTextFill(Color.RED);
+            searchResult.setText("Search bar shouldn't be empty");
+            return;
+        }
         Client.search(searchText);
         while(!chatFound){
             Thread.sleep(100);
@@ -199,7 +204,7 @@ public class MainDisplayController implements Initializable {
         }else{
             FXMLLoader searchLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("SearchPage.fxml"));
             try{
-                Scene scene = new Scene(searchLoader.load(), 900, 550);
+                Scene scene = new Scene(searchLoader.load(), 430, 420);
                 SearchPageController spc = searchLoader.getController();
                 spc.setChatList(searchedChatList, user);
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -212,9 +217,9 @@ public class MainDisplayController implements Initializable {
     }
 
 
-    public void goToCreatChannel(ActionEvent event) throws IOException {
+    public void goToCreateChannel(ActionEvent event) throws IOException {
         FXMLLoader creatChannelLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("CreatChannelPage.fxml"));
-        Scene scene = new Scene(creatChannelLoader.load(), 900, 550);
+        Scene scene = new Scene(creatChannelLoader.load(), 550, 350);
         CreateChannelPageController ccpc = creatChannelLoader.getController();
         ccpc.setUser(user);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -223,8 +228,8 @@ public class MainDisplayController implements Initializable {
     }
 
     public void goToCreateGroup(ActionEvent event) throws IOException{
-        FXMLLoader createGroupLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("CreatGroupPage.fxml"));
-        Scene scene = new Scene(createGroupLoader.load(), 900, 550);
+        FXMLLoader createGroupLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("CreateGroupPage.fxml"));
+        Scene scene = new Scene(createGroupLoader.load(), 550, 360);
         CreateGroupPageController cgpc = createGroupLoader.getController();
         cgpc.setUser(user);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

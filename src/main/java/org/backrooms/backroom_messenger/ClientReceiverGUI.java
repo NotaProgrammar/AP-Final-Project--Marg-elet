@@ -4,8 +4,10 @@ import org.backrooms.backroom_messenger.client.Client;
 import org.backrooms.backroom_messenger.entity.Chat;
 import org.backrooms.backroom_messenger.entity.Message;
 import org.backrooms.backroom_messenger.entity.MultiUserChat;
+import org.backrooms.backroom_messenger.entity.PvChat;
 import org.backrooms.backroom_messenger.response_and_requests.serverResopnse.UserReadResponse;
 
+import java.util.Date;
 import java.util.List;
 
 public class ClientReceiverGUI {
@@ -74,4 +76,9 @@ public class ClientReceiverGUI {
     }
 
 
+    public static void setLastSeen(PvChat pv, boolean online, Date lastSeen) {
+        if(PvChatPageController.getChat() != null && PvChatPageController.getChat().getId().equals(pv.getId())){
+            PvChatPageController.setLastSeen(online,lastSeen);
+        }
+    }
 }

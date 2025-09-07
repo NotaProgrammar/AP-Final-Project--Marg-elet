@@ -450,6 +450,7 @@ public class Client  {
                 PrivateUser loggedOutUser = pv.getUser(loggedUser);
                 loggedOutUser.setLastSeen(ulr.getLastSeen());
                 loggedOutUser.setOnline(online);
+                ClientReceiverGUI.setLastSeen(pv,online,ulr.getLastSeen());
                 break;
             }
         }

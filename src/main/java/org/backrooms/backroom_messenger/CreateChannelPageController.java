@@ -55,7 +55,7 @@ public class CreateChannelPageController {
 
     public void goToChannelPage(ActionEvent event) throws IOException {
         FXMLLoader channelLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("ChannelChatPage.fxml"));
-        Scene scene = new Scene(channelLoader.load(), 900, 550);
+        Scene scene = new Scene(channelLoader.load(), 700, 550);
         ChannelChatPageController ccpc = channelLoader.getController();
         ccpc.setUserAndChat(user, channel);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -66,7 +66,7 @@ public class CreateChannelPageController {
 
     public void goBack(ActionEvent event) throws IOException {
         FXMLLoader displayLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("MainDisplay.fxml"));
-        Scene scene = new Scene(displayLoader.load(), 560, 350);
+        Scene scene = new Scene(displayLoader.load(), 550, 430);
         MainDisplayController mdc  = displayLoader.getController();
         mdc.setUser(this.user);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

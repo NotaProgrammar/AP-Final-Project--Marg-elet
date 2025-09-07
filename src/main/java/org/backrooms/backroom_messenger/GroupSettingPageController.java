@@ -70,7 +70,7 @@ public class GroupSettingPageController {
     @FXML
     public void goBack(ActionEvent event) throws IOException {
         FXMLLoader groupPageLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("GroupChatPage.fxml"));
-        Scene scene = new Scene(groupPageLoader.load(), 560, 350);
+        Scene scene = new Scene(groupPageLoader.load(), 600, 430);
         GroupChatPageController ccpc  = groupPageLoader.getController();
         ccpc.setUserAndChat(user, group);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

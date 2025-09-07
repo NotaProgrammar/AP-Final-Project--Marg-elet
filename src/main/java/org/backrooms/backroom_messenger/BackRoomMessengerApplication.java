@@ -11,8 +11,8 @@ public class BackRoomMessengerApplication extends Application {
     public void start(Stage stage) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
-            fxmlLoader.setLocation(BackRoomMessengerApplication.class.getResource("MainPage.fxml"));
-            Scene scene = new Scene(fxmlLoader.load(), 520, 350);
+            fxmlLoader.setLocation(BackRoomMessengerApplication.class.getResource("LoginPage.fxml"));
+            Scene scene = new Scene(fxmlLoader.load(), 560, 400);
             stage.setTitle("Margelet");
             stage.setOnCloseRequest(event -> {
                 if(Client.getUser() != null) {

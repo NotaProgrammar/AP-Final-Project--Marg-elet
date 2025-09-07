@@ -36,7 +36,7 @@ public class ProfilePageController {
     @FXML
     public void goBack(ActionEvent event) throws IOException {
         FXMLLoader pvChatLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("PvChatPage.fxml"));
-        Scene scene = new Scene(pvChatLoader.load(), 560, 350);
+        Scene scene = new Scene(pvChatLoader.load(), 760, 550);
         PvChatPageController pcpc  = pvChatLoader.getController();
         pcpc.setChatAndUser(chat, currentUser);
         pcpc.setupCellFactories();

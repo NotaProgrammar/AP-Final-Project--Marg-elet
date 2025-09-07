@@ -71,7 +71,7 @@ public class ChannelSettingPageController {
     @FXML
     public void goBack(ActionEvent event) throws IOException {
         FXMLLoader channelPageLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("ChannelChatPage.fxml"));
-        Scene scene = new Scene(channelPageLoader.load(), 560, 350);
+        Scene scene = new Scene(channelPageLoader.load(), 700, 550);
         ChannelChatPageController ccpc  = channelPageLoader.getController();
         ccpc.setUserAndChat(user, channel);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -157,9 +157,8 @@ public class ChannelSettingPageController {
                     deleteImage.setDisable(true);
                     deleteImage.setVisible(false);
                     break;
-                case "normal" :
+                default:
                     hideAll();
-                    break;
             }
         }else {
             hideAll();

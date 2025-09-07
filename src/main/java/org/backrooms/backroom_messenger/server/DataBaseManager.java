@@ -72,9 +72,11 @@ public class DataBaseManager {
             String password = rs.getString("password");
             byte[] salt = rs.getBytes("salt");
             String bio = rs.getString("bio");
+            String name = rs.getString("name");
             byte[] imageBytes = rs.getBytes("image");
             user = new User(username, password, salt);
             user.setBio(bio);
+            user.setName(name);
             if(imageBytes != null){
                 String imageBase64 = Base64.getEncoder().encodeToString(imageBytes);
                 user.setImageBase64(imageBase64);
@@ -139,7 +141,9 @@ public class DataBaseManager {
         while(rs.next()) {
             String username = rs.getString("username");
             String name = rs.getString("name");
+            boolean online = rs.getBoolean("online");
             user = new PrivateUser(username, name);
+            user.setOnline(online);
             users.add(user);
         }
         rs.close();

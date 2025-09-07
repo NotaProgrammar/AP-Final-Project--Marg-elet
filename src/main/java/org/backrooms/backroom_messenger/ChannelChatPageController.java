@@ -63,7 +63,7 @@ public class ChannelChatPageController {
     public void goBack(ActionEvent event) throws IOException {
         chat = null;
         FXMLLoader displayLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("MainDisplay.fxml"));
-        Scene scene = new Scene(displayLoader.load(), 560, 350);
+        Scene scene = new Scene(displayLoader.load(), 550, 430);
         MainDisplayController mdc  = displayLoader.getController();
         mdc.setUser(this.user);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -74,7 +74,7 @@ public class ChannelChatPageController {
 
     public void goToSetting(ActionEvent event) throws IOException {
         FXMLLoader channelSettingLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("ChannelSettingPage.fxml"));
-        Scene scene = new Scene(channelSettingLoader.load(), 560, 350);
+        Scene scene = new Scene(channelSettingLoader.load(), 700, 570);
         ChannelSettingPageController cspc  = channelSettingLoader.getController();
         cspc.setUserAndChannel(user, chat);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -99,6 +99,8 @@ public class ChannelChatPageController {
     @FXML
     public void joinChannel(ActionEvent event) throws IOException {
             Client.Subscribe(chat);
+            chat.getUsers().add(user);
+            chat.getRoles().add("normal");
             if (alreadyJoined) {
                 alreadyJoined = false;
                 goBack(event);
@@ -249,7 +251,7 @@ public class ChannelChatPageController {
         }
         try{
             FXMLLoader groupLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("GroupChatPage.fxml"));
-            Scene scene = new Scene(groupLoader.load(), 900, 550);
+            Scene scene = new Scene(groupLoader.load(), 600, 430);
             GroupChatPageController gcpc = groupLoader.getController();
             gcpc.setUserAndChat(user, opened);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -267,7 +269,7 @@ public class ChannelChatPageController {
         }
         try{
             FXMLLoader channelLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("ChannelChatPage.fxml"));
-            Scene scene = new Scene(channelLoader.load(), 900, 550);
+            Scene scene = new Scene(channelLoader.load(), 700, 550);
             ChannelChatPageController ccpc = channelLoader.getController();
             ccpc.setUserAndChat(user, opened);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

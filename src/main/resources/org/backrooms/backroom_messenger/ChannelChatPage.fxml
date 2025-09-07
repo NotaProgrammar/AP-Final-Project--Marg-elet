@@ -8,15 +8,15 @@
 
 <AnchorPane prefHeight="561.0" prefWidth="733.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.backrooms.backroom_messenger.ChannelChatPageController">
    <children>
-      <Button fx:id="settingButton" layoutX="622.0" layoutY="14.0" mnemonicParsing="false" onAction="#goToSetting" text="channel info" />
+      <Button fx:id="settingButton" layoutX="594.0" layoutY="14.0" mnemonicParsing="false" onAction="#goToSetting" text="channel info" />
       <ListView fx:id="messageListView" layoutX="91.0" layoutY="47.0" prefHeight="456.0" prefWidth="491.0" />
       <Button layoutX="21.0" layoutY="14.0" mnemonicParsing="false" onAction="#goBack" text="go back" />
-      <Button fx:id="joinButton" layoutX="599.0" layoutY="440.0" mnemonicParsing="false" onAction="#joinChannel" prefHeight="26.0" prefWidth="126.0" text="     " />
+      <Button fx:id="joinButton" layoutX="589.0" layoutY="438.0" mnemonicParsing="false" onAction="#joinChannel" prefHeight="26.0" prefWidth="97.0" text="     " />
       <Label fx:id="joinNotification" layoutX="613.0" layoutY="482.0" text="                          " />
       <Label fx:id="messageLabel" layoutX="23.0" layoutY="521.0" text="message : " />
       <TextField fx:id="messageField" layoutX="91.0" layoutY="517.0" prefHeight="25.0" prefWidth="536.0" />
       <Button fx:id="sendButton" layoutX="635.0" layoutY="517.0" mnemonicParsing="false" onAction="#sendMessage" text="send" />
       <Label fx:id="channelName" layoutX="323.0" layoutY="18.0" text="      " />
-      <Button fx:id="openFileButton" layoutX="630.0" layoutY="487.0" mnemonicParsing="false" onAction="#openFile" text="Open File" />
+      <Button fx:id="openFileButton" layoutX="601.0" layoutY="487.0" mnemonicParsing="false" onAction="#openFile" prefHeight="26.0" prefWidth="73.0" text="Open File" />
    </children>
 </AnchorPane>

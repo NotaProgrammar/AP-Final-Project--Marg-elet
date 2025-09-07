@@ -29,10 +29,17 @@ public class MainPageController {
     private Label ErrorMessage;
 
 
-    public void Enter(ActionEvent event) throws IOException, SQLException {
+    public void Enter(ActionEvent event){
         try{
             String Username = this.Username.getText();
             String Password = this.Password.getText();
+
+            if ((Username == null || Username.isEmpty()) || (Password == null || Password.isEmpty())) {
+                ErrorMessage.setTextFill(Color.RED);
+                ErrorMessage.setText("Please Fill All Fields");
+                return;
+            }
+
             String passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$";
             Pattern pattern = Pattern.compile(passwordRegex);
             Matcher matcher = pattern.matcher(Password);
@@ -53,18 +60,13 @@ public class MainPageController {
                 return;
             }
 
-            if ((Username == null || Username.isEmpty()) || (Password == null || Password.isEmpty())) {
+            User selectedUser = null;
+            selectedUser = Client.signup(Username, Password);
+            if (selectedUser == null) {
                 ErrorMessage.setTextFill(Color.RED);
-                ErrorMessage.setText("Please Fill All Fields");
+                ErrorMessage.setText("username already taken");
             } else {
-                User selectedUser = null;
-                selectedUser = Client.signup(Username, Password);
-                if (selectedUser == null) {
-                    ErrorMessage.setTextFill(Color.RED);
-                    ErrorMessage.setText("username already taken");
-                } else {
-                    toMainDisplay(event, selectedUser);
-                }
+                toMainDisplay(event, selectedUser);
             }
         } catch (Exception e) {
             System.out.println(e);
@@ -73,7 +75,7 @@ public class MainPageController {
 
     public void toLoginPage(ActionEvent event) throws IOException, SQLException {
         FXMLLoader loginLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("LoginPage.fxml"));
-        Scene scene = new Scene(loginLoader.load(), 560, 350);
+        Scene scene = new Scene(loginLoader.load(), 560, 400);
         LoginPageController lpc = loginLoader.getController();
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(scene);
@@ -82,7 +84,7 @@ public class MainPageController {
 
     public void toMainDisplay(ActionEvent event, User user) throws IOException {
         FXMLLoader displayLoader = new FXMLLoader(BackRoomMessengerApplication.class.getResource("MainDisplay.fxml"));
-        Scene scene = new Scene(displayLoader.load(), 560, 400);
+        Scene scene = new Scene(displayLoader.load(), 550, 450);
         MainDisplayController mdc = displayLoader.getController();
         mdc.setUser(user);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

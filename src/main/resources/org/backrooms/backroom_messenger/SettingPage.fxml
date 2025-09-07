@@ -7,31 +7,31 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="596.0" prefWidth="751.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.backrooms.backroom_messenger.SettingPageController">
+<AnchorPane prefHeight="485.0" prefWidth="593.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.backrooms.backroom_messenger.SettingPageController">
    <children>
       <Label layoutX="277.0" layoutY="14.0" text="SETTING" />
       <Label layoutX="108.0" layoutY="80.0" text="Username : " />
       <Label layoutX="106.0" layoutY="102.0" text="Name : " />
-      <Button layoutX="551.0" layoutY="85.0" mnemonicParsing="false" onAction="#logOut" text="log out" />
+      <Button layoutX="423.0" layoutY="23.0" mnemonicParsing="false" onAction="#logOut" text="log out" />
       <Label fx:id="userNameLabel" layoutX="217.0" layoutY="80.0" text="just show username" />
       <Label fx:id="nameLabel" layoutX="217.0" layoutY="102.0" text="Label" />
       <Label layoutX="108.0" layoutY="192.0" text="New name : " />
       <TextField fx:id="nameField" layoutX="195.0" layoutY="188.0" />
       <Button layoutX="370.0" layoutY="188.0" mnemonicParsing="false" onAction="#changeName" text="change" />
-      <Label fx:id="nameNotifLabel" layoutX="450.0" layoutY="192.0" text="                       " />
+      <Label fx:id="nameNotifLabel" layoutX="103.0" layoutY="222.0" text="                       " />
       <Button fx:id="changePasswordButton" layoutX="428.0" layoutY="285.0" mnemonicParsing="false" onAction="#changePassword" text="Chnge password" />
       <Label fx:id="lastPassLabel" layoutX="106.0" layoutY="243.0" text="Enter your last password" />
       <Button fx:id="checkPasswordButton" layoutX="427.0" layoutY="240.0" mnemonicParsing="false" onAction="#checkPassword" text="check" />
-      <Label fx:id="warning" layoutX="523.0" layoutY="256.0" prefHeight="18.0" prefWidth="54.0" />
+      <Label fx:id="warning" layoutX="99.0" layoutY="266.0" prefHeight="18.0" prefWidth="134.0" />
       <PasswordField fx:id="lastPasswordField" layoutX="248.0" layoutY="240.0" />
       <PasswordField fx:id="newPasswordField" layoutX="248.0" layoutY="285.0" />
       <Label layoutX="106.0" layoutY="127.0" text="bio :" />
       <Label fx:id="bioLabel" layoutX="217.0" layoutY="127.0" text="Label" />
       <TextField fx:id="bioField" layoutX="102.0" layoutY="152.0" prefHeight="26.0" prefWidth="230.0" />
       <Button layoutX="370.0" layoutY="152.0" mnemonicParsing="false" onAction="#changeBio" text="change bio" />
-      <ImageView fx:id="imageView" fitHeight="150.0" fitWidth="200.0" layoutX="29.0" layoutY="330.0" pickOnBounds="true" preserveRatio="true" />
-      <Button layoutX="264.0" layoutY="393.0" mnemonicParsing="false" onAction="#setImage" text="Set Profile" />
-      <Button layoutX="264.0" layoutY="429.0" mnemonicParsing="false" onAction="#deleteImage" text="Delete Profile" />
+      <ImageView fx:id="imageView" fitHeight="137.0" fitWidth="173.0" layoutX="29.0" layoutY="330.0" pickOnBounds="true" preserveRatio="true" />
+      <Button layoutX="228.0" layoutY="372.0" mnemonicParsing="false" onAction="#setImage" text="Set Profile" />
+      <Button layoutX="226.0" layoutY="410.0" mnemonicParsing="false" onAction="#deleteImage" text="Delete Profile" />
       <Label fx:id="newPasslabel" layoutX="104.0" layoutY="289.0" text="Enter your new password" />
       <Button layoutX="29.0" layoutY="23.0" mnemonicParsing="false" onAction="#goBack" text="go back" />
    </children>

@@ -16,6 +16,6 @@
       <Button fx:id="Login" layoutX="292.0" layoutY="296.0" mnemonicParsing="false" onAction="#toLoginPage" text="Login" />
       <Button fx:id="Enter" layoutX="265.0" layoutY="175.0" mnemonicParsing="false" onAction="#Enter" text="Enter" />
       <PasswordField fx:id="Password" layoutX="218.0" layoutY="123.0" />
-      <Label fx:id="ErrorMessage" layoutX="322.0" layoutY="179.0" prefHeight="17.0" prefWidth="223.0" />
+      <Label fx:id="ErrorMessage" layoutX="55.0" layoutY="233.0" prefHeight="18.0" prefWidth="512.0" />
    </children>
 </AnchorPane>

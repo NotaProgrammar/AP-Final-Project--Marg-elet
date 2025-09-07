@@ -16,8 +16,6 @@ public class User extends PrivateUser{
     @JsonProperty
     private String password;
     @JsonProperty
-    private Date dateOfBirth;
-    @JsonProperty
     private byte[] salt;
 
     @JsonProperty
@@ -31,13 +29,6 @@ public class User extends PrivateUser{
 
     public byte[] getSalt() {
         return salt;
-    }
-
-    public void setDateOfBirth(Date dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-    public Date getDateOfBirth() {
-        return dateOfBirth;
     }
 
     public String getPassword() {
