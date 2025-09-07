@@ -129,6 +129,7 @@
     -fx-font-family: "Marker Felt";
     -fx-font-size: 22px;
     -fx-font-weight: thin;
+    -fx-background-image: url("Images/default.jpg");
     -fx-background-size: cover;
     -fx-background-position: center;
     -fx-background-repeat: no-repeat;
