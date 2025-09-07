@@ -56,7 +56,6 @@ public class PvChatPageController {
 
     public void setupCellFactories() {
         MessageListView.setItems(messages);
-
         MessageListView.setCellFactory(listView -> new ListCell<>() {
             @Override
             protected void updateItem(Message message, boolean empty) {
