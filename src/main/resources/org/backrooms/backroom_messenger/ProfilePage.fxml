@@ -49,13 +49,13 @@
          </styleClass></Button>
       <ImageView blendMode="SCREEN" fitHeight="235.0" fitWidth="207.0" layoutX="65.0" layoutY="81.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0">
          <image>
-            <Image url="@Images/Blank%20Postage%20Stamp%20stock%20image_%20Image%20of%20clean,%20isolated%20-%2012922335.jpeg" />
+            <Image url="@Images/stamp.jpeg" />
          </image>
       </ImageView>
       <ImageView fx:id="profileImage" fitHeight="154.0" fitWidth="146.0" layoutX="76.0" layoutY="98.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0" />
       <ImageView blendMode="MULTIPLY" fitHeight="150.0" fitWidth="200.0" layoutX="94.0" layoutY="143.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@Images/_%20(21).jpeg" />
+            <Image url="@Images/_(21).jpeg" />
          </image>
       </ImageView>
    </children>
