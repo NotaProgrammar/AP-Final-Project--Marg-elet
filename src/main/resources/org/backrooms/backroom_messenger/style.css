@@ -18,17 +18,29 @@
 
 
 .username, .password {
-    -fx-background-color: transparent; /* توخالی */
-    -fx-border-width: 1px; /* ضخامت بوردر */
-    -fx-border-color: #F9F4DE; /* رنگ بوردر */
-    -fx-background-radius: 0; /* حذف گردی */
-    -fx-border-radius: 0; /* هماهنگی بوردر */
-    -fx-text-fill: #F9F4DE; /* رنگ متن */
-    -fx-prompt-text-fill: #CCCCCC; /* رنگ متن Placeholder */
+    -fx-background-color: transparent;
+    -fx-font-family: "Bodoni 72";
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-border-width: 1px;
+    -fx-border-color: #F9F4DE;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+    -fx-text-fill: #F9F4DE;
+    -fx-prompt-text-fill: #CCCCCC;
+}
+
+.userLabel {
+    -fx-font-family: "Bodoni 72";
+}
+
+.passLabel {
+    -fx-font-family: "Kannada MN";
 }
 
 .userLabel, .passLabel {
         -fx-text-fill: #F9F4DE;
+        -fx-font-size: 21px;
         -fx-effect: dropshadow(gaussian, #003300, 5, 0.8, 0, 0);
         -fx-opacity: 0.9;
         -fx-background-color: transparent;
@@ -50,7 +62,14 @@
 
 .signupLink, .loginLink {
     -fx-text-fill: #F9F4DE;
+    -fx-font-family: "STSong";
+    -fx-font-size: 13px;
     -fx-background-color: transparent;
+}
+
+.ask {
+    -fx-font-family: "Georgia";
+    -fx-font-size: 13px;
 }
 
 /*------------------------------------------ Main Display -----------------------------------------*/
@@ -58,6 +77,11 @@
 .mainPane {
     -fx-background-image: url("Images/Yellowpaper.jpeg");
     -fx-background-position: center top;
+}
+
+.margelet {
+    -fx-font-family: "Trattatello";
+    -fx-font-size: 29;
 }
 
 .chatList {
@@ -72,13 +96,27 @@
 }
 */
 .searchButton {
+    -fx-font-family: "Marker Felt";
+    -fx-font-size: 20px;
+    -fx-font-weight: thin;
     -fx-background-color: transparent;
+}
+
+.searchField {
+    -fx-font-family: "Marker Felt";
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
 }
 
 .newChanelButton, .newGroupButton, .settingButton {
     -fx-background-color: transparent;
     -fx-cursor: hand;
 }
+
+.newChanelButton, .newGroupButton {
+    -fx-font-family: "Savoye LET";
+    -fx-font-size: 21px;
+ }
 
 .newChanelButton:hover, .newGroupButton:hover {
     -fx-text-fill: white;
@@ -87,13 +125,16 @@
 
 .settingButton {
     -fx-background-color: transparent;
-        -fx-text-fill: black;
-        -fx-background-image: url("Images/default.jpg");
-        -fx-background-size: cover;
-        -fx-background-position: center;
-        -fx-background-repeat: no-repeat;
-        -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 4, 0.5, 0, 0);
-        -fx-background-insets: 0;
+    -fx-text-fill: black;
+    -fx-font-family: "Marker Felt";
+    -fx-font-size: 22px;
+    -fx-font-weight: thin;
+    -fx-background-image: url("Images/default.jpg");
+    -fx-background-size: cover;
+    -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 4, 0.5, 0, 0);
+    -fx-background-insets: 0;
 }
 
 
@@ -101,9 +142,30 @@
 .settingButton:hover {
     -fx-background-image: url("Images/_(15).jpeg");
     -fx-text-fill: #8605ff;
-        -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0.6, 0, 0);
-        -fx-border-width: 1px;
-        -fx-border-color: whith;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0.6, 0, 0);
+    -fx-border-width: 1px;
+    -fx-border-color: whith;
+}
+
+.openButton {
+    -fx-font-family: "Marker Felt";
+    -fx-background-color: transparent;
+    -fx-text-fill: #17ab1c;
+    cursor: hand;
+}
+
+.profileImage {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0.6, 0, 0);
+    -fx-border-radius: 25px
+}
+
+.onlineProfileImage {
+    -fx-effect: dropshadow(gaussian, rgba(23,188,29,0.5), 10, 0.6, 0, 0);
+    -fx-border-radius: 25px
+}
+
+.chatInfo {
+    -fx-font-family: "Marker Felt";
 }
 
 /*----------------------------------------- Profile Pane ---------------------------------------- */
@@ -111,6 +173,17 @@
 .profilePane {
     -fx-background-color: #AAC1B6;
     -fx-background-repeat: repeat;
+}
+
+.goBackFont {
+    -fx-font-family: "SignPainter-HouseScript";
+    -fx-font-size: 21px;
+    -fx-text-fill: #43801a;
+}
+
+.profileLabels {
+    -fx-font-family: "Snell Roundhand";
+    -fx-font-size: 30px;
 }
 
 /*------------------------------------ Setting Pane ---------------------------------------------*/
@@ -121,11 +194,29 @@
     -fx-background-image: url("Images/_(6).jpeg");
 }
 
+.setting {
+    -fx-font-family: "AppleMyungjo";
+    -fx-font-size: 23px;
+}
+
 
 .settingButtonStyle {
+    -fx-font-family: "Khmer MN";
+    -fx-font-size: 13px;
     -fx-border-width: 2px;
     -fx-border-color: black;
     -fx-background-color: #00E5FF;
+}
+
+.settingLabels {
+    -fx-font-family: "Impact";
+    -fx-font-size: 13px;
+}
+
+.settingValue {
+    -fx-font-family: "Hoefler Text";
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
 }
 
 /*------------------------------------ Create Chanel & Group ------------------------------------*/
@@ -133,6 +224,12 @@
 .createPane {
     -fx-background-image: url("Images/BlackAndWhite.jpeg");
     -fx-background-position: 30%  70%;
+}
+
+.createFont {
+    -fx-font-family: "Phosphate";
+    -fx-font-size: 13px;
+    -fx-font-weight: inline;
 }
 
 /*------------------------------------ Chanel & Group Setting -----------------------------------*/
@@ -157,11 +254,43 @@
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0.6, 0, 0);
 }
 
+.bubbelSettingFont {
+    -fx-font-family: "Silom";
+}
+
+.kickButton {
+    -fx-background-radius:  0 20px 20px 20px;
+    -fx-background-color: #e6e6e6;
+    -fx-text-fill: red;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0.6, 0, 0);
+}
+
+.changeAdminButton {
+    -fx-background-radius:  0 20px 20px 20px;
+    -fx-background-color: #e6e6e6;
+    -fx-text-fill: #26da4a;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0.6, 0, 0);
+}
+
+.id {
+    -fx-text-fill: #2681c6;
+}
+
+.users {
+    -fx-text-fill: #ffffff;
+}
+
 /*------------------------------------- Search Page ---------------------------------------------*/
 
 .searchPane {
     -fx-background-image: url("Images/_(24).jpeg");
     -fx-background-position: 30%  40%;
+}
+
+.searchResult {
+    -fx-font-family: "Copperplate";
+    -fx-font-weight: bold;
+    -fx-font-size: 26px;
 }
 .searchList {
     -fx-background-color: transparent;
@@ -172,6 +301,29 @@
     -fx-cursor: hand;
 }
 
+.searchGoBack {
+    -fx-font-family: "Copperplate";
+    -fx-font-size: 13px;
+}
+
+.searchOpenButton {
+    -fx-font-family: "Copperplate";
+    -fx-background-color: linear-gradient(from 0.0% 0.0% to 100.0% 100.0%, #e5ff00 0.0%, #e5ff00 0.6711%, #00ff3b 100.0%);
+
+}
+
+.searchName {
+    -fx-font-family: "Copperplate";
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0.6, 0, 0);
+
+}
+
+.onlineSearchName {
+    -fx-font-family: "Copperplate";
+    -fx-text-fill: #ff6e30;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0.6, 0, 0);
+}
 /*------------------------------------ Chat Pages --------------------------------------------*/
 
 .chatPage {
@@ -183,6 +335,8 @@
     -fx-background-radius: 50px;
     -fx-background-color: #F6F0E3;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 10, 0.6, 0, 0);
+    -fx-font-family: "STSong";
+    -fx-font-size: 13px;
 }
 
 
@@ -222,4 +376,33 @@
     -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.3), 10, 0.6, 0, 0);
     -fx-background-radius: 25px;
     -fx-cursor: hand;
+}
+
+.chatGoBackFont {
+    -fx-font-family: "Zapfino";
+    -fx-font-size: 9px;
+}
+
+.chatMessages {
+    -fx-font-family: "Big Caslon";
+    -fx-font-size: 13px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 10, 0.6, 0, 0);
+}
+
+.openChat {
+    -fx-font-family: "Big Caslon";
+    -fx-font-size: 13px;
+    -fx-background-color: #37c700;
+    -fx-text-fill: #ebffef;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0.6, 0, 0);
+}
+
+.downloadButton {
+    -fx-font-family: "Big Caslon";
+    -fx-font-size: 13px;
+    -fx-background-color: #0071a1;
+    -fx-text-fill: #dcf5ff;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 10, 0.6, 0, 0);
 }

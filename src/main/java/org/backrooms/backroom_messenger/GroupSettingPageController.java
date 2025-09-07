@@ -174,13 +174,17 @@ public class GroupSettingPageController {
                     setGraphic(null);
                 } else {
                     Label nameLabel = new Label(member.getName());
+                    nameLabel.getStyleClass().addAll("bubbelSettingFont", "users");
                     Label usernameLabel = new Label("@" + member.getUsername());
+                    usernameLabel.getStyleClass().addAll("bubbelSettingFont", "id");
                     HBox.setHgrow(nameLabel, Priority.ALWAYS);
                     HBox.setHgrow(usernameLabel, Priority.ALWAYS);
                     HBox hBox = new HBox(10, nameLabel, usernameLabel);
+                    hBox.getStyleClass().add("searchList");
 
                     if (!Objects.equals(group.getRole(member), "creator") && !member.equals(user) && group.getRole(user).equals("creator")) {
                         Button kickButton = new Button("Kick");
+                        kickButton.getStyleClass().addAll("kickButton", "bubbelSettingFont");
                         kickButton.setOnAction(e -> {
                             Client.removeUser(member, group);
                             for(int i=0; i<group.getUsers().size() ; i++){
@@ -194,6 +198,7 @@ public class GroupSettingPageController {
                         });
 
                         Button roleButton = new Button();
+                        kickButton.getStyleClass().addAll("kickButton", "bubbelSettingFont");
                         boolean isAdmin = Objects.equals(group.getRole(member), "admin");
                         roleButton.setText(isAdmin ? "Ban the user" : "unban the user");
                         roleButton.setOnAction(e -> {

@@ -42,7 +42,9 @@ public class SearchPageController implements Initializable {
 
             {
                 nameLabel = new Label();
+                nameLabel.getStyleClass().add("searchName");
                 openButton = new Button("Open Chat");
+                openButton.getStyleClass().add("searchOpenButton");
                 openButton.setOnAction(event -> {
                     chatFound = false;
                     chosenChat = null;
@@ -67,6 +69,7 @@ public class SearchPageController implements Initializable {
                 });
 
                 content = new HBox(10, nameLabel, openButton);
+                content.getStyleClass().add("searchList");
                 content.setPadding(new Insets(5));
                 nameLabel.setPrefWidth(200);
             }

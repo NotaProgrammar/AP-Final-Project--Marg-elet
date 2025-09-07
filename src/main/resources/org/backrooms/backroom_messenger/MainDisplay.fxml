@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
@@ -21,7 +22,7 @@
          <font>
             <Font name="Marker Felt Thin" size="22.0" />
          </font></Button>
-      <Label layoutX="391.0" layoutY="14.0" prefHeight="57.0" prefWidth="155.0" text="MARGELET" textFill="WHITE">
+      <Label layoutX="391.0" layoutY="14.0" prefHeight="57.0" prefWidth="155.0" styleClass="margelet" text="MARGELET" textFill="WHITE">
          <font>
             <Font name="Trattatello" size="29.0" />
          </font></Label>
@@ -29,13 +30,17 @@
          <font>
             <Font name="Marker Felt Thin" size="20.0" />
          </font></Button>
-      <TextField fx:id="searchTextField" layoutX="382.0" layoutY="99.0" prefHeight="40.0" prefWidth="208.0" styleClass="password">
+      <TextField fx:id="searchTextField" layoutX="382.0" layoutY="99.0" prefHeight="40.0" prefWidth="208.0">
          <padding>
             <Insets left="25.0" />
          </padding>
          <font>
             <Font name="Futura Bold" size="13.0" />
-         </font></TextField>
+         </font>
+         <styleClass>
+            <String fx:value="password" />
+            <String fx:value="searchField" />
+         </styleClass></TextField>
       <Button fx:id="newChanelButton" layoutX="302.0" layoutY="170.0" mnemonicParsing="false" onAction="#goToCreatChannel" prefHeight="74.0" prefWidth="182.0" styleClass="newChanelButton" text="Creat new channel" textAlignment="RIGHT">
          <padding>
             <Insets top="15.0" />

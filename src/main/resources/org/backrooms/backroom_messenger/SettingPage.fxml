@@ -10,15 +10,15 @@
 
 <AnchorPane prefHeight="579.0" prefWidth="654.0" styleClass="settingPane" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.backrooms.backroom_messenger.SettingPageController">
    <children>
-      <Label layoutX="274.0" layoutY="31.0" prefHeight="44.0" prefWidth="104.0" text="SETTING" textFill="WHITE">
+      <Label layoutX="274.0" layoutY="31.0" prefHeight="44.0" prefWidth="104.0" styleClass="setting" text="SETTING" textFill="WHITE">
          <font>
             <Font name="AppleMyungjo Regular" size="23.0" />
          </font></Label>
-      <Label layoutX="130.0" layoutY="185.0" text="Username : " textFill="#83d8ff">
+      <Label layoutX="130.0" layoutY="185.0" styleClass="settingLabels" text="Username : " textFill="#83d8ff">
          <font>
             <Font name="Impact" size="13.0" />
          </font></Label>
-      <Label layoutX="250.0" layoutY="165.0" rotate="25.6" text="Name : " textFill="#83d8ff">
+      <Label layoutX="250.0" layoutY="165.0" rotate="25.6" styleClass="settingLabels" text="Name : " textFill="#83d8ff">
          <font>
             <Font name="Impact" size="13.0" />
          </font></Label>
@@ -26,19 +26,19 @@
          <font>
             <Font name="Khmer MN" size="13.0" />
          </font></Button>
-      <Label fx:id="userNameLabel" layoutX="126.0" layoutY="201.0" prefHeight="28.0" prefWidth="134.0" text="just show username" textFill="#c8eeff">
+      <Label fx:id="userNameLabel" layoutX="126.0" layoutY="201.0" prefHeight="28.0" prefWidth="134.0" styleClass="settingValue" text="just show username" textFill="#c8eeff">
          <font>
             <Font name="Hoefler Text Black" size="13.0" />
          </font></Label>
-      <Label fx:id="nameLabel" layoutX="307.0" layoutY="154.0" rotate="-28.9" text="Label" textFill="#c8eeff">
+      <Label fx:id="nameLabel" layoutX="307.0" layoutY="154.0" rotate="-28.9" styleClass="settingValue" text="Label" textFill="#c8eeff">
          <font>
             <Font name="Hoefler Text Black" size="13.0" />
          </font></Label>
-      <Label layoutX="110.0" layoutY="344.0" rotate="-14.4" text="New name : " textFill="#83d8ff">
+      <Label layoutX="110.0" layoutY="344.0" rotate="-14.4" styleClass="settingLabels" text="New name : " textFill="#83d8ff">
          <font>
             <Font name="Impact" size="13.0" />
          </font></Label>
-      <TextField fx:id="nameField" layoutX="197.0" layoutY="327.0">
+      <TextField fx:id="nameField" layoutX="197.0" layoutY="327.0" styleClass="settingValue">
          <font>
             <Font name="Hoefler Text Black" size="13.0" />
          </font></TextField>
@@ -55,7 +55,7 @@
          <font>
             <Font name="Khmer MN" size="13.0" />
          </font></Button>
-      <Label fx:id="lastPassLabel" layoutX="110.0" layoutY="430.0" text="Enter your last password :" textFill="#83d8ff">
+      <Label fx:id="lastPassLabel" layoutX="110.0" layoutY="430.0" styleClass="settingLabels" text="Enter your last password :" textFill="#83d8ff">
          <font>
             <Font name="Impact" size="13.0" />
          </font></Label>
@@ -64,23 +64,23 @@
             <Font name="Khmer MN" size="13.0" />
          </font></Button>
       <Label fx:id="warning" layoutX="113.0" layoutY="501.0" prefHeight="18.0" prefWidth="54.0" rotate="-6.5" textFill="RED" />
-      <PasswordField fx:id="lastPasswordField" layoutX="220.0" layoutY="425.0" rotate="37.9">
+      <PasswordField fx:id="lastPasswordField" layoutX="220.0" layoutY="425.0" rotate="37.9" styleClass="settingValue">
          <font>
             <Font name="Hoefler Text Black" size="13.0" />
          </font></PasswordField>
-      <PasswordField fx:id="newPasswordField" layoutX="419.0" layoutY="366.0" rotate="70.7">
+      <PasswordField fx:id="newPasswordField" layoutX="419.0" layoutY="366.0" rotate="70.7" styleClass="settingValue">
          <font>
             <Font name="Hoefler Text Black" size="13.0" />
          </font></PasswordField>
-      <Label layoutX="376.0" layoutY="185.0" rotate="-15.9" text="bio :" textFill="#83d8ff">
+      <Label layoutX="376.0" layoutY="185.0" rotate="-15.9" styleClass="settingLabels" text="bio :" textFill="#83d8ff">
          <font>
             <Font name="Impact" size="13.0" />
          </font></Label>
-      <Label fx:id="bioLabel" layoutX="404.0" layoutY="174.0" rotate="92.4" text="Label" textFill="#c8eeff">
+      <Label fx:id="bioLabel" layoutX="404.0" layoutY="174.0" rotate="92.4" styleClass="settingValue" text="Label" textFill="#c8eeff">
          <font>
             <Font name="Hoefler Text Black" size="13.0" />
          </font></Label>
-      <TextField fx:id="bioField" layoutX="78.0" layoutY="262.0" prefHeight="26.0" prefWidth="230.0" rotate="-11.0">
+      <TextField fx:id="bioField" layoutX="78.0" layoutY="262.0" prefHeight="26.0" prefWidth="230.0" rotate="-11.0" styleClass="settingValue">
          <font>
             <Font name="Hoefler Text Black" size="13.0" />
          </font></TextField>
@@ -93,7 +93,7 @@
          <font>
             <Font name="Khmer MN" size="13.0" />
          </font></Button>
-      <Label fx:id="newPasslabel" layoutX="389.0" layoutY="199.0" rotate="83.4" text="Enter your new password :" textFill="#83d8ff">
+      <Label fx:id="newPasslabel" layoutX="389.0" layoutY="199.0" rotate="83.4" styleClass="settingLabels" text="Enter your new password :" textFill="#83d8ff">
          <font>
             <Font name="Impact" size="13.0" />
          </font></Label>

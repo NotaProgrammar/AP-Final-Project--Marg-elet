@@ -9,35 +9,35 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" styleClass="createPane" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.backrooms.backroom_messenger.CreateGroupPageController">
    <children>
-      <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#goBack" text="go back" textFill="#0011ff">
+      <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#goBack" styleClass="createFont" text="go back" textFill="#0011ff">
          <font>
             <Font name="Phosphate Inline" size="13.0" />
          </font></Button>
-      <Label layoutX="79.0" layoutY="118.0" text="Name of the group : " textFill="YELLOW">
+      <Label layoutX="79.0" layoutY="118.0" styleClass="createFont" text="Name of the group : " textFill="YELLOW">
          <font>
             <Font name="Phosphate Inline" size="13.0" />
          </font></Label>
-      <TextField fx:id="name" layoutX="212.0" layoutY="114.0">
+      <TextField fx:id="name" layoutX="212.0" layoutY="114.0" styleClass="createFont">
          <font>
             <Font name="Phosphate Inline" size="13.0" />
          </font></TextField>
-      <Label layoutX="79.0" layoutY="180.0" text="Description : " textFill="YELLOW">
+      <Label layoutX="79.0" layoutY="180.0" styleClass="createFont" text="Description : " textFill="YELLOW">
          <font>
             <Font name="Phosphate Inline" size="13.0" />
          </font></Label>
-      <TextField fx:id="description" layoutX="169.0" layoutY="176.0" prefHeight="25.0" prefWidth="391.0">
+      <TextField fx:id="description" layoutX="169.0" layoutY="176.0" prefHeight="25.0" prefWidth="391.0" styleClass="createFont">
          <font>
             <Font name="Phosphate Inline" size="13.0" />
          </font></TextField>
-      <Label layoutX="79.0" layoutY="257.0" text="Do you wnt the group to be public ?" textFill="YELLOW">
+      <Label layoutX="79.0" layoutY="257.0" styleClass="createFont" text="Do you wnt the group to be public ?" textFill="YELLOW">
          <font>
             <Font name="Phosphate Inline" size="13.0" />
          </font></Label>
-      <CheckBox fx:id="publicity" layoutX="338.0" layoutY="257.0" mnemonicParsing="false" onAction="#setPublicityOfGroup" text="public" textFill="#00b5ac">
+      <CheckBox fx:id="publicity" layoutX="338.0" layoutY="257.0" mnemonicParsing="false" onAction="#setPublicityOfGroup" styleClass="createFont" text="public" textFill="#00dacf">
          <font>
             <Font name="Phosphate Inline" size="13.0" />
          </font></CheckBox>
-      <Button layoutX="278.0" layoutY="340.0" mnemonicParsing="false" onAction="#create" text="Create" textFill="RED">
+      <Button layoutX="278.0" layoutY="340.0" mnemonicParsing="false" onAction="#create" styleClass="createFont" text="Create" textFill="RED">
          <font>
             <Font name="Phosphate Inline" size="13.0" />
          </font></Button>
