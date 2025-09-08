@@ -1,6 +1,6 @@
 # 🌙 Margelet – Dreamcore Messenger
 
-![chat page](main/resources/org/backrooms/backroom_messenger/Images/chatPage.png)
+![chat page](src/main/resources/org/backrooms/backroom_messenger/Images/chatPage.png)
 
 
 
@@ -55,10 +55,10 @@ cd AP-Final-Project--Marg-elet
 ## 🖼️ Margelet Gallery
 
 <div style="display: flex; gap: 10px; align-items: center;">
-  <img src="main/resources/org/backrooms/backroom_messenger/Images/chatPage.png" alt="Screenshot 1" width="175"/>
-  <img src="main/resources/org/backrooms/backroom_messenger/Images/mainDisplay.png" alt="Screenshot 2" width="200"/>
-  <img src="main/resources/org/backrooms/backroom_messenger/Images/ChannelSetting.png" alt="Screenshot 3" width="125"/>
-  <img src="main/resources/org/backrooms/backroom_messenger/Images/signup.png" alt="Screenshot 4" width="200"/>
+  <img src="src/main/resources/org/backrooms/backroom_messenger/Images/chatPage.png" alt="Screenshot 1" width="175"/>
+  <img src="src/main/resources/org/backrooms/backroom_messenger/Images/mainDisplay.png" alt="Screenshot 2" width="200"/>
+  <img src="src/main/resources/org/backrooms/backroom_messenger/Images/ChannelSetting.png" alt="Screenshot 3" width="125"/>
+  <img src="src/main/resources/org/backrooms/backroom_messenger/Images/signup.png" alt="Screenshot 4" width="200"/>
 </div>
 
 ---
